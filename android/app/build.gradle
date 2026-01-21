@@ -11,12 +11,14 @@ android {
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        // Ahora apuntamos a Java 17
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        // Kotlin también debe apuntar a JVM 17
+        jvmTarget = "17"
     }
 
     defaultConfig {
@@ -35,7 +37,12 @@ android {
     buildTypes {
         release {
             // Firma con la clave de debug por ahora
-            signingConfig = signingConfigs.debug
+            signingConfig signingConfigs.debug
+
+            // Activamos minificación y reglas de ProGuard
+            minifyEnabled false
+            shrinkResources false
+            //proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }
@@ -43,4 +50,5 @@ android {
 flutter {
     source = "../.."
 }
+
 

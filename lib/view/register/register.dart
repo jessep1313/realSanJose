@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:swastha_doctor_flutter/common/widget/borderradius.dart';
 import 'package:swastha_doctor_flutter/common/widget/custombutton.dart';
 import 'package:swastha_doctor_flutter/common/widget/customtextfield.dart';
@@ -72,55 +71,23 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   Future<void> _procesarIne(File imagen) async {
-    final inputImage = InputImage.fromFile(imagen);
-    final recognizer = TextRecognizer(script: TextRecognitionScript.latin);
-    final RecognizedText texto = await recognizer.processImage(inputImage);
-    final full = texto.text;
+  // OCR deshabilitado temporalmente (ML Kit removido)
 
-    // Heurísticas simples (ajusta según el layout de tu INE)
-    final curpRegex = RegExp(r'CURP\s*[:]?\s*([A-Z0-9]{18})'); 
-    final rfcRegex = RegExp(r'RFC\s*[:]?\s*([A-Z0-9]{12,13})'); 
-    final nombreRegex = RegExp(r'NOMBRE\(S\)\s*[:]?\s*(.+)'); 
-    final apellidosRegex = RegExp(r'APELLIDO\(S\)\s*[:]?\s*(.+)'); 
-    final domicilioRegex = RegExp(r'DOMICILIO\s*[:]?\s*(.+)'); 
-    final fechaRegex = RegExp(r'(\d{2}\/\d{2}\/\d{4})');
-    
-    for (final line in full.split('\n')) {
-      if (curpCtrl.text.isEmpty) {
-        final m = curpRegex.firstMatch(line);
-        if (m != null) curpCtrl.text = m.group(1)!.trim();
-      }
-      if (rfcCtrl.text.isEmpty) {
-        final m = rfcRegex.firstMatch(line);
-        if (m != null) rfcCtrl.text = m.group(1)!.trim();
-      }
-      if (nombreCtrl.text.isEmpty) {
-        final m = nombreRegex.firstMatch(line);
-        if (m != null) {
-          // Algunas INE traen nombre y apellidos en la misma línea
-          final valor = m.group(2)!.trim();
-          // Intento dividir por espacios para separar apellidos si vienen juntos
-          final partes = valor.split(' ');
-          if (partes.length >= 3) {
-            nombreCtrl.text = partes.sublist(0, partes.length - 2).join(' ');
-            apellidosCtrl.text = partes.sublist(partes.length - 2).join(' ');
-          } else {
-            nombreCtrl.text = valor;
-          }
-        }
-      }
-      if (domicilioCtrl.text.isEmpty) {
-        final m = domicilioRegex.firstMatch(line);
-        if (m != null) domicilioCtrl.text = m.group(2)!.trim();
-      }
-      if (fechaCtrl.text.isEmpty) {
-        final m = fechaRegex.firstMatch(line);
-        if (m != null) fechaCtrl.text = (m.group(2) ?? '').trim();
-      }
-    }
+  // Si quieres, puedes dejar un mensaje o simplemente no hacer nada
+  debugPrint('OCR deshabilitado temporalmente');
 
-    await recognizer.close();
-  }
+  // Ejemplo opcional: limpiar campos para que el usuario los llene manualmente
+  // nombreCtrl.clear();
+  // apellidosCtrl.clear();
+  // fechaCtrl.clear();
+  // domicilioCtrl.clear();
+  // municipioCtrl.clear();
+  // cpCtrl.clear();
+  // estadoCtrl.clear();
+  // rfcCtrl.clear();
+  // curpCtrl.clear();
+}
+
 
   bool _validarCampos() {
     String error = '';

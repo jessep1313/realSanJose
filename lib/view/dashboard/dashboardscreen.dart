@@ -37,13 +37,13 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
     final textos = {
       'es': {
         'home': 'Inicio',
-        'schedule': 'Agenda',
+        'schedule': 'Citas',
         'chat': 'Chat',
         'profile': 'Perfil',
       },
       'en': {
         'home': 'Home',
-        'schedule': 'Schedule',
+        'schedule': 'Appointments',
         'chat': 'Chat',
         'profile': 'Profile',
       }
@@ -53,7 +53,7 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
       context,
       controller: controller,
       screens: [
-        HomeTab(), // 👈 Nuevo Home rediseñado
+        HomeTab(),
         ScheduleScreen(),
         ChatScreen(),
         Profilescreen(),
@@ -88,7 +88,7 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
         gradient: LinearGradient(
           colors: [
             AppColor.appAlternateColor,
-            const Color(0xFF003DA5), // Pantone azul
+            const Color(0xFF003DA5),
           ],
         ),
       ),
@@ -97,7 +97,7 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 }
 
-/// Home rediseñado con cards pequeñas y banner desplazable
+/// Home con grid bilingüe
 class HomeTab extends ConsumerWidget {
   HomeTab({super.key});
 
@@ -111,21 +111,25 @@ class HomeTab extends ConsumerWidget {
       'es': {
         'hola': 'Hola',
         'rfcCurp': 'RFC / CURP',
-        'agenda': 'Agenda',
-        'visitas': 'Visitas',
-        'recetas': 'Recetas',
-        'informativo': 'Informativo',
-        'resultados': 'Resultados',
+        'agendar': 'Agendar cita',
+        'misCitas': 'Mis citas',
+        'lab': 'Resultados laboratorio',
+        'rayosx': 'Rayos X',
+        'notas': 'Notas médicas',
+        'personas': 'Personas autorizadas',
+        'expediente': 'Ver expediente',
         'ayuda': 'Ayuda',
       },
       'en': {
         'hola': 'Hello',
         'rfcCurp': 'RFC / CURP',
-        'agenda': 'Schedule',
-        'visitas': 'Visits',
-        'recetas': 'Prescriptions',
-        'informativo': 'Information',
-        'resultados': 'Results',
+        'agendar': 'Book appointment',
+        'misCitas': 'My appointments',
+        'lab': 'Lab results',
+        'rayosx': 'X-Rays',
+        'notas': 'Medical notes',
+        'personas': 'Authorized persons',
+        'expediente': 'View record',
         'ayuda': 'Help',
       }
     };
@@ -197,30 +201,29 @@ class HomeTab extends ConsumerWidget {
 
               const SizedBox(height: 16),
 
-              // Grid de servicios (cards más pequeñas)
+              // Grid bilingüe
               GridView.count(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 3, // 👈 más columnas, cards más chicas
+                crossAxisCount: 3,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
                 children: [
-                  _serviceCard(textos[lang]!['agenda']!, Icons.calendar_today),
-                  _serviceCard(textos[lang]!['visitas']!, Icons.people_outline),
-                  _serviceCard(
-                      textos[lang]!['recetas']!, Icons.medical_services_outlined),
-                  _serviceCard(
-                      textos[lang]!['informativo']!, Icons.info_outline),
-                  _serviceCard(
-                      textos[lang]!['resultados']!, Icons.science_outlined),
+                  _serviceCard(textos[lang]!['agendar']!, Icons.add_circle_outline),
+                  _serviceCard(textos[lang]!['misCitas']!, Icons.event_note),
+                  _serviceCard(textos[lang]!['lab']!, Icons.biotech),
+                  _serviceCard(textos[lang]!['rayosx']!, Icons.image_search),
+                  _serviceCard(textos[lang]!['notas']!, Icons.description_outlined),
+                  _serviceCard(textos[lang]!['personas']!, Icons.group),
+                  _serviceCard(textos[lang]!['expediente']!, Icons.folder_shared),
                   _serviceCard(textos[lang]!['ayuda']!, Icons.help_outline),
                 ],
               ),
 
               const SizedBox(height: 16),
 
-              // Banner desplazable (slider)
+              // Banner desplazable
               SizedBox(
                 height: 150,
                 child: PageView(
@@ -244,7 +247,7 @@ class HomeTab extends ConsumerWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: const BorderSide(
-          color: Color(0xFF003DA5), // azul Pantone 293
+          color: Color(0xFF003DA5),
           width: 2,
         ),
       ),
@@ -253,12 +256,12 @@ class HomeTab extends ConsumerWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: Color(0xFF009639), size: 28), // verde Pantone 354
+            Icon(icon, color: Color(0xFF009639), size: 28),
             const SizedBox(height: 6),
             Text(
               title,
               style: const TextStyle(
-                color: Color(0xFF009639), // verde Pantone 354
+                color: Color(0xFF009639),
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
               ),
@@ -286,4 +289,5 @@ class _SliderImage extends StatelessWidget {
     );
   }
 }
+
 

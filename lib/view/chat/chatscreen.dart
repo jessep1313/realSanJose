@@ -36,29 +36,40 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.white,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset('assets/icons/logo.jpg', height: 30),
-              const SizedBox(width: 8),
-              const Text(
+          // Texto "Chat" alineado a la izquierda
+          leading: const Padding(
+            padding: EdgeInsets.only(left: 12.0),
+            child: Center(
+              child: Text(
                 "Chat",
                 style: TextStyle(
                   color: Color(0xFF003DA5), // azul Pantone
                   fontWeight: FontWeight.bold,
+                  fontSize: 18,
                 ),
               ),
-            ],
+            ),
           ),
+          // Logo centrado y grande
+          title: Center(
+            child: Image.asset(
+              'assets/icons/logo.jpg',
+              height: 90,
+            ),
+          ),
+          // Campanita a la derecha
           actions: [
             GestureDetector(
               onTap: () {
                 context.push(NotificationScreen.routeName);
               },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                child: const Icon(Icons.notifications_none_outlined,
-                    size: 28, color: Color(0xFF003DA5)),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15.0),
+                child: Icon(
+                  Icons.notifications_none_outlined,
+                  size: 28,
+                  color: Color(0xFF003DA5),
+                ),
               ),
             )
           ],
@@ -133,4 +144,5 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     );
   }
 }
+
 

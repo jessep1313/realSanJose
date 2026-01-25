@@ -3,22 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:swastha_doctor_flutter/utils/routes.dart';
 
-// 👇 Import necesario para inicializar los datos de localización
-import 'package:intl/date_symbol_data_local.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // Inicializa los formatos de fecha para los idiomas que vas a usar
-  await initializeDateFormatting('es_ES', null);
-  await initializeDateFormatting('en_US', null);
-
+void main() {
   runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
@@ -27,10 +20,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'GoogleSans',
         appBarTheme: const AppBarTheme(
-          systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarIconBrightness: Brightness.light,
-          ),
-        ),
+            systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarIconBrightness: Brightness.light)),
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),

@@ -9,16 +9,6 @@ import 'package:swastha_doctor_flutter/view/schedule/schedule.dart';
 import 'package:swastha_doctor_flutter/view/chat/chatscreen.dart';
 import 'package:swastha_doctor_flutter/view/profile/profilescreen.dart';
 
-// 👇 Importamos las nuevas pantallas
-import 'package:swastha_doctor_flutter/view/agendar/agendar_screen.dart';
-import 'package:swastha_doctor_flutter/view/lab/lab_results_screen.dart';
-import 'package:swastha_doctor_flutter/view/rayosx/rayosx_screen.dart';
-import 'package:swastha_doctor_flutter/view/notas/notas_screen.dart';
-import 'package:swastha_doctor_flutter/view/personas/personas_screen.dart';
-import 'package:swastha_doctor_flutter/view/expediente/expediente_screen.dart';
-import 'package:swastha_doctor_flutter/view/ayuda/ayuda_screen.dart';
-
-
 class DashboardScreen extends ConsumerStatefulWidget {
   static String routeName = '/dashboardscreen';
 
@@ -211,6 +201,7 @@ class HomeTab extends ConsumerWidget {
 
               const SizedBox(height: 16),
 
+              // Grid bilingüe
               GridView.count(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -219,33 +210,16 @@ class HomeTab extends ConsumerWidget {
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
                 children: [
-                  _serviceCard(textos[lang]!['agendar']!, Icons.add_circle_outline, () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const AgendarScreen()));
-                  }),
-                  _serviceCard(textos[lang]!['misCitas']!, Icons.event_note, () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => ScheduleScreen()));
-                  }),
-                  _serviceCard(textos[lang]!['lab']!, Icons.biotech, () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const LabResultsScreen()));
-                  }),
-                  _serviceCard(textos[lang]!['rayosx']!, Icons.image_search, () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const RayosXScreen()));
-                  }),
-                  _serviceCard(textos[lang]!['notas']!, Icons.description_outlined, () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const NotasScreen()));
-                  }),
-                  _serviceCard(textos[lang]!['personas']!, Icons.group, () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const PersonasScreen()));
-                  }),
-                  _serviceCard(textos[lang]!['expediente']!, Icons.folder_shared, () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const ExpedienteScreen()));
-                  }),
-                  _serviceCard(textos[lang]!['ayuda']!, Icons.help_outline, () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const AyudaScreen()));
-                  }),
+                  _serviceCard(textos[lang]!['agendar']!, Icons.add_circle_outline),
+                  _serviceCard(textos[lang]!['misCitas']!, Icons.event_note),
+                  _serviceCard(textos[lang]!['lab']!, Icons.biotech),
+                  _serviceCard(textos[lang]!['rayosx']!, Icons.image_search),
+                  _serviceCard(textos[lang]!['notas']!, Icons.description_outlined),
+                  _serviceCard(textos[lang]!['personas']!, Icons.group),
+                  _serviceCard(textos[lang]!['expediente']!, Icons.folder_shared),
+                  _serviceCard(textos[lang]!['ayuda']!, Icons.help_outline),
                 ],
               ),
-
 
               const SizedBox(height: 16),
 
@@ -267,41 +241,37 @@ class HomeTab extends ConsumerWidget {
     );
   }
 
- Widget _serviceCard(String title, IconData icon, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      child: Card(
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: const BorderSide(
-            color: Color(0xFF003DA5),
-            width: 2,
-          ),
+  Widget _serviceCard(String title, IconData icon) {
+    return Card(
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: const BorderSide(
+          color: Color(0xFF003DA5),
+          width: 2,
         ),
-        elevation: 2,
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, color: const Color(0xFF009639), size: 28),
-              const SizedBox(height: 6),
-              Text(
-                title,
-                style: const TextStyle(
-                  color: Color(0xFF009639),
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
+      ),
+      elevation: 2,
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: Color(0xFF009639), size: 28),
+            const SizedBox(height: 6),
+            Text(
+              title,
+              style: const TextStyle(
+                color: Color(0xFF009639),
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
               ),
-            ],
-          ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );
   }
-
 }
 
 class _SliderImage extends StatelessWidget {

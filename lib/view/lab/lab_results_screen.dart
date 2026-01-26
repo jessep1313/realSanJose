@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:swastha_doctor_flutter/common/widget/custom_header.dart';
 import 'package:swastha_doctor_flutter/view/onboarding/onboardingscreen.dart';
+import 'lab_result_detail_screen.dart'; // 👈 importamos la pantalla de detalle
 
 class LabResultsScreen extends ConsumerWidget {
   const LabResultsScreen({super.key});
@@ -13,6 +14,12 @@ class LabResultsScreen extends ConsumerWidget {
       'es': {'title': 'Resultados de laboratorio', 'desc': 'Consulta tus análisis clínicos'},
       'en': {'title': 'Lab results', 'desc': 'Check your clinical tests'},
     };
+
+    final resultados = [
+      {"nombre": lang == 'es' ? "Biometría Hemática" : "Blood Count", "fecha": "12/01/2026"},
+      {"nombre": lang == 'es' ? "Química sanguínea" : "Blood Chemistry", "fecha": "05/01/2026"},
+      {"nombre": lang == 'es' ? "Perfil lipídico" : "Lipid Profile", "fecha": "20/12/2025"},
+    ];
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -37,22 +44,41 @@ class LabResultsScreen extends ConsumerWidget {
                     style: const TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                   const SizedBox(height: 20),
-                  Card(
+                ],
+              ),
+            ),
+
+            // Listado con scroll independiente
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: resultados.length,
+                itemBuilder: (context, index) {
+                  final r = resultados[index];
+                  return Card(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                       side: const BorderSide(color: Color(0xFF003DA5), width: 2),
                     ),
                     child: ListTile(
                       leading: const Icon(Icons.biotech, color: Color(0xFF009639)),
-                      title: Text(lang == 'es' ? "Biometría Hemática" : "Blood Count"),
-                      subtitle: Text("12/01/2026"),
+                      title: Text(r["nombre"]!),
+                      subtitle: Text(r["fecha"]!),
                       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                       onTap: () {
-                        // TODO: abrir detalle de resultado
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => LabResultDetailScreen(
+                              nombre: r["nombre"]!,
+                              fecha: r["fecha"]!,
+                            ),
+                          ),
+                        );
                       },
                     ),
-                  ),
-                ],
+                  );
+                },
               ),
             ),
           ],

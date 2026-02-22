@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:swastha_doctor_flutter/model/time.dart';
+import 'package:real_san_jose/model/time.dart';
 
 final serviceMangementProvider =
     ChangeNotifierProvider.autoDispose<ServiceManagementProvider>(

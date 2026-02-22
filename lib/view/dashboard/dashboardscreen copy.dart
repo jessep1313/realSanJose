@@ -2,12 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
-import 'package:swastha_doctor_flutter/provider/configprovider.dart';
-import 'package:swastha_doctor_flutter/utils/appcolor.dart';
-import 'package:swastha_doctor_flutter/view/chat/chatscreen.dart';
-import 'package:swastha_doctor_flutter/view/home/homescreen.dart';
-import 'package:swastha_doctor_flutter/view/profile/profilescreen.dart';
-import 'package:swastha_doctor_flutter/view/schedule/schedule.dart';
+import 'package:real_san_jose/provider/configprovider.dart';
+import 'package:real_san_jose/utils/appcolor.dart';
+import 'package:real_san_jose/view/chat/chatscreen.dart';
+import 'package:real_san_jose/view/home/homescreen.dart';
+import 'package:real_san_jose/view/profile/profilescreen.dart';
+import 'package:real_san_jose/view/schedule/schedule.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   static String routeName = '/dashboardscreen';

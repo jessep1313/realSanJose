@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:swastha_doctor_flutter/common/widget/custom_header.dart';
-import 'package:swastha_doctor_flutter/view/onboarding/onboardingscreen.dart';
+import 'package:real_san_jose/common/widget/custom_header.dart';
+import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
 
 class AyudaScreen extends ConsumerWidget {
   const AyudaScreen({super.key});

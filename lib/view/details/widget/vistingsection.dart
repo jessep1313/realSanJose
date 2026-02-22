@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:swastha_doctor_flutter/utils/appcolor.dart';
+import 'package:real_san_jose/utils/appcolor.dart';
 
 class VistingSection extends ConsumerWidget {
   @override

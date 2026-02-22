@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:swastha_doctor_flutter/utils/routes.dart';
+import 'package:real_san_jose/utils/routes.dart';
 
 
 void main() {

@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:swastha_doctor_flutter/common/widget/borderradius.dart';
-import 'package:swastha_doctor_flutter/common/widget/searchsection.dart';
-import 'package:swastha_doctor_flutter/provider/chatprovider.dart';
-import 'package:swastha_doctor_flutter/provider/scheduleprovider.dart';
-import 'package:swastha_doctor_flutter/utils/appcolor.dart';
-import 'package:swastha_doctor_flutter/utils/decoration.dart';
-import 'package:swastha_doctor_flutter/view/chat/widget/conversation.dart';
-import 'package:swastha_doctor_flutter/view/chat/widget/headersection.dart';
-import 'package:swastha_doctor_flutter/view/chat/widget/story.dart';
-import 'package:swastha_doctor_flutter/view/notification/notificationscreen.dart';
+import 'package:real_san_jose/common/widget/borderradius.dart';
+import 'package:real_san_jose/common/widget/searchsection.dart';
+import 'package:real_san_jose/provider/chatprovider.dart';
+import 'package:real_san_jose/provider/scheduleprovider.dart';
+import 'package:real_san_jose/utils/appcolor.dart';
+import 'package:real_san_jose/utils/decoration.dart';
+import 'package:real_san_jose/view/chat/widget/conversation.dart';
+import 'package:real_san_jose/view/chat/widget/headersection.dart';
+import 'package:real_san_jose/view/chat/widget/story.dart';
+import 'package:real_san_jose/view/notification/notificationscreen.dart';
 
 class ChatScreen extends ConsumerWidget {
   @override

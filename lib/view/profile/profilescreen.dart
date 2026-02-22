@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:swastha_doctor_flutter/common/widget/borderradius.dart';
-import 'package:swastha_doctor_flutter/provider/configprovider.dart';
-import 'package:swastha_doctor_flutter/utils/appcolor.dart';
-import 'package:swastha_doctor_flutter/utils/decoration.dart';
-import 'package:swastha_doctor_flutter/view/editprofile/editprofilescreen.dart';
-import 'package:swastha_doctor_flutter/view/notification/notificationscreen.dart';
+import 'package:real_san_jose/common/widget/borderradius.dart';
+import 'package:real_san_jose/provider/configprovider.dart';
+import 'package:real_san_jose/utils/appcolor.dart';
+import 'package:real_san_jose/utils/decoration.dart';
+import 'package:real_san_jose/view/editprofile/editprofilescreen.dart';
+import 'package:real_san_jose/view/notification/notificationscreen.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:swastha_doctor_flutter/view/onboarding/onboardingscreen.dart';
+import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
 
 
 

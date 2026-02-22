@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.cninfotech.swastha_doctor_flutter"
+    namespace = "com.cninfotech.real_san_jose"
     compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
@@ -23,7 +23,7 @@ android {
 
     defaultConfig {
         // Identificador único de la aplicación
-        applicationId = "com.cninfotech.swastha_doctor_flutter"
+        applicationId = "com.cninfotech.real_san_jose"
 
         // Configuración mínima y objetivo de SDK
         minSdk = 24

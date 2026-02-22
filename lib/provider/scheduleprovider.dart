@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:swastha_doctor_flutter/model/schedule.dart';
+import 'package:real_san_jose/model/schedule.dart';
 
 final scheduleProvider = ChangeNotifierProvider.autoDispose<ScheduleProvider>(
   (ref) => ScheduleProvider(),

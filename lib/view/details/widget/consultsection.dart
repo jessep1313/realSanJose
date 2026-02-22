@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:swastha_doctor_flutter/common/widget/borderradius.dart';
-import 'package:swastha_doctor_flutter/common/widget/buttomsheet.dart';
-import 'package:swastha_doctor_flutter/common/widget/custombutton.dart';
-import 'package:swastha_doctor_flutter/utils/appcolor.dart';
-import 'package:swastha_doctor_flutter/view/callscreen/callscreen.dart';
-import 'package:swastha_doctor_flutter/view/chatdetails/chatdetailscreen.dart';
+import 'package:real_san_jose/common/widget/borderradius.dart';
+import 'package:real_san_jose/common/widget/buttomsheet.dart';
+import 'package:real_san_jose/common/widget/custombutton.dart';
+import 'package:real_san_jose/utils/appcolor.dart';
+import 'package:real_san_jose/view/callscreen/callscreen.dart';
+import 'package:real_san_jose/view/chatdetails/chatdetailscreen.dart';
 
 class ConsultSection extends ConsumerWidget {
   @override

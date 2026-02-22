@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:swastha_doctor_flutter/common/widget/borderradius.dart';
-import 'package:swastha_doctor_flutter/common/widget/custombutton.dart';
-import 'package:swastha_doctor_flutter/provider/servicemanagementprovider.dart';
-import 'package:swastha_doctor_flutter/utils/appcolor.dart';
-import 'package:swastha_doctor_flutter/utils/appconstants.dart';
-import 'package:swastha_doctor_flutter/utils/decoration.dart';
-import 'package:swastha_doctor_flutter/view/notification/notificationscreen.dart';
-import 'package:swastha_doctor_flutter/view/servicemanagment/widget/availabletimesection.dart';
-import 'package:swastha_doctor_flutter/view/servicemanagment/widget/personalcallsection.dart';
-import 'package:swastha_doctor_flutter/view/servicemanagment/widget/sendmessagesection.dart';
+import 'package:real_san_jose/common/widget/borderradius.dart';
+import 'package:real_san_jose/common/widget/custombutton.dart';
+import 'package:real_san_jose/provider/servicemanagementprovider.dart';
+import 'package:real_san_jose/utils/appcolor.dart';
+import 'package:real_san_jose/utils/appconstants.dart';
+import 'package:real_san_jose/utils/decoration.dart';
+import 'package:real_san_jose/view/notification/notificationscreen.dart';
+import 'package:real_san_jose/view/servicemanagment/widget/availabletimesection.dart';
+import 'package:real_san_jose/view/servicemanagment/widget/personalcallsection.dart';
+import 'package:real_san_jose/view/servicemanagment/widget/sendmessagesection.dart';
 
 class AvailabletimeselectScreen extends ConsumerStatefulWidget {
   static var routeName = "/availabletimeselect";

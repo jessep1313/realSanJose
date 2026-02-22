@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:swastha_doctor_flutter/common/widget/borderradius.dart';
-import 'package:swastha_doctor_flutter/common/widget/custombutton.dart';
-import 'package:swastha_doctor_flutter/common/widget/customtextfield.dart';
-import 'package:swastha_doctor_flutter/utils/decoration.dart';
-import 'package:swastha_doctor_flutter/view/dashboard/dashboardscreen.dart';
-import 'package:swastha_doctor_flutter/view/login/loginscreen.dart';
-import 'package:swastha_doctor_flutter/view/onboarding/onboardingscreen.dart';
+import 'package:real_san_jose/common/widget/borderradius.dart';
+import 'package:real_san_jose/common/widget/custombutton.dart';
+import 'package:real_san_jose/common/widget/customtextfield.dart';
+import 'package:real_san_jose/utils/decoration.dart';
+import 'package:real_san_jose/view/dashboard/dashboardscreen.dart';
+import 'package:real_san_jose/view/login/loginscreen.dart';
+import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   static var routeName = "/registerscreen";
@@ -22,10 +22,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final picker = ImagePicker();
   XFile? documentoImagen;
 
-  // Controladores (algunos se prellenan con OCR si el documento es INE)
+  // Controladores
   final nombreCtrl = TextEditingController();
   final apellidosCtrl = TextEditingController();
-  final fechaCtrl = TextEditingController();
+  final fechaCtrl = TextEditingController(); // formato sugerido: DD/MM/AAAA
   final domicilioCtrl = TextEditingController();
   final municipioCtrl = TextEditingController();
   final cpCtrl = TextEditingController();
@@ -33,8 +33,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final rfcCtrl = TextEditingController();
   final curpCtrl = TextEditingController();
 
-  // Tipo de documento seleccionado
-  String tipoDocumento = 'INE'; // INE | Pasaporte | CURP
+  // Nacionalidad y tipo de documento
+  String nacionalidad = 'Mexicano'; // Mexicano | Extranjero
+  String tipoDocumento = 'INE';     // INE | Pasaporte
 
   @override
   void dispose() {
@@ -51,7 +52,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   Future<void> _pickFromCamera() async {
-    final archivo = await picker.pickImage(source: ImageSource.camera);
+    final archivo = await picker.pickImage(
+      source: ImageSource.camera,
+      preferredCameraDevice: CameraDevice.rear,
+      maxWidth: 1080,
+      maxHeight: 1920,
+    );
     if (archivo != null) {
       setState(() => documentoImagen = archivo);
       if (tipoDocumento == 'INE') {
@@ -71,35 +77,69 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   Future<void> _procesarIne(File imagen) async {
-  // OCR deshabilitado temporalmente (ML Kit removido)
+    // OCR deshabilitado temporalmente (ML Kit removido)
+    debugPrint('OCR deshabilitado temporalmente');
+  }
 
-  // Si quieres, puedes dejar un mensaje o simplemente no hacer nada
-  debugPrint('OCR deshabilitado temporalmente');
+  bool validarCurpConDatos() {
+    final curp = curpCtrl.text.toUpperCase().trim();
+    if (curp.length < 10) return false;
 
-  // Ejemplo opcional: limpiar campos para que el usuario los llene manualmente
-  // nombreCtrl.clear();
-  // apellidosCtrl.clear();
-  // fechaCtrl.clear();
-  // domicilioCtrl.clear();
-  // municipioCtrl.clear();
-  // cpCtrl.clear();
-  // estadoCtrl.clear();
-  // rfcCtrl.clear();
-  // curpCtrl.clear();
-}
+    final nombre = nombreCtrl.text.trim().toUpperCase();
+    final apellidos = apellidosCtrl.text.trim().toUpperCase();
 
+    if (nombre.isEmpty || apellidos.isEmpty) return false;
+    if (fechaCtrl.text.trim().isEmpty) return false;
+
+    // Se espera fecha en formato DD/MM/AAAA
+    final partes = fechaCtrl.text.split('/');
+    if (partes.length != 3) return false;
+
+    final dd = partes[0].padLeft(2, '0');
+    final mm = partes[1].padLeft(2, '0');
+    final yyyy = partes[2];
+    if (yyyy.length != 4) return false;
+
+    final aa = yyyy.substring(2, 4);
+    final fechaCurp = '$aa$mm$dd';
+
+    // Fecha en CURP posiciones 5–10 (índices 4–9)
+    if (curp.length < 10 || curp.substring(4, 10) != fechaCurp) return false;
+
+    // Primera letra del primer apellido debe coincidir con la primera letra de la CURP
+    if (apellidos.isEmpty || curp[0] != apellidos[0]) return false;
+
+    return true;
+  }
 
   bool _validarCampos() {
     String error = '';
-    if (nombreCtrl.text.trim().isEmpty) error = 'Nombre es obligatorio';
-    else if (apellidosCtrl.text.trim().isEmpty) error = 'Apellidos son obligatorios';
-    else if (fechaCtrl.text.trim().isEmpty) error = 'Fecha de nacimiento es obligatoria';
-    else if (domicilioCtrl.text.trim().isEmpty) error = 'Domicilio es obligatorio';
-    else if (municipioCtrl.text.trim().isEmpty) error = 'Municipio es obligatorio';
-    else if (cpCtrl.text.trim().isEmpty || !RegExp(r'^\d{5}$').hasMatch(cpCtrl.text)) error = 'Código Postal inválido';
-    else if (estadoCtrl.text.trim().isEmpty) error = 'Estado es obligatorio';
-    else if (rfcCtrl.text.trim().isEmpty || !RegExp(r'^[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}$').hasMatch(rfcCtrl.text.toUpperCase())) error = 'RFC inválido';
-    else if (curpCtrl.text.trim().isEmpty || !RegExp(r'^[A-Z]{4}\d{6}[HM][A-Z]{5}\d{2}$').hasMatch(curpCtrl.text.toUpperCase())) error = 'CURP inválida';
+    if (nombreCtrl.text.trim().isEmpty) {
+      error = 'Nombre es obligatorio';
+    } else if (apellidosCtrl.text.trim().isEmpty) {
+      error = 'Apellidos son obligatorios';
+    } else if (fechaCtrl.text.trim().isEmpty) {
+      error = 'Fecha de nacimiento es obligatoria';
+    } else if (domicilioCtrl.text.trim().isEmpty) {
+      error = 'Domicilio es obligatorio';
+    } else if (municipioCtrl.text.trim().isEmpty) {
+      error = 'Municipio es obligatorio';
+    } else if (cpCtrl.text.trim().isEmpty ||
+        !RegExp(r'^\d{5}$').hasMatch(cpCtrl.text)) {
+      error = 'Código Postal inválido';
+    } else if (estadoCtrl.text.trim().isEmpty) {
+      error = 'Estado es obligatorio';
+    } else if (rfcCtrl.text.trim().isEmpty ||
+        !RegExp(r'^[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}$')
+            .hasMatch(rfcCtrl.text.toUpperCase())) {
+      error = 'RFC inválido';
+    } else if (curpCtrl.text.trim().isEmpty ||
+        !RegExp(r'^[A-Z]{4}\d{6}[HM][A-Z]{5}\d{2}$')
+            .hasMatch(curpCtrl.text.toUpperCase())) {
+      error = 'CURP inválida';
+    } else if (!validarCurpConDatos()) {
+      error = 'CURP no coincide con los datos personales';
+    }
 
     if (error.isNotEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -117,15 +157,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final textos = {
       'es': {
         'titulo': 'Registro de usuario',
+        'nacionalidad': 'Nacionalidad',
+        'mexicano': 'Mexicano',
+        'extranjero': 'Extranjero',
+        'tipo': 'Tipo de documento',
         'doc': 'Documento oficial',
         'docHint': '(INE con OCR / Pasaporte / CURP)',
-        'pick': 'Capturar / Adjuntar documento',
         'camera': 'Tomar foto',
         'gallery': 'Elegir de galería',
-        'tipo': 'Tipo de documento',
         'nombre': 'Nombre',
         'apellidos': 'Apellidos',
-        'fecha': 'Fecha de nacimiento',
+        'fecha': 'Fecha de nacimiento (DD/MM/AAAA)',
         'domicilio': 'Domicilio',
         'municipio': 'Municipio',
         'cp': 'Código Postal',
@@ -138,15 +180,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       },
       'en': {
         'titulo': 'User Registration',
+        'nacionalidad': 'Nationality',
+        'mexicano': 'Mexican',
+        'extranjero': 'Foreigner',
+        'tipo': 'Document type',
         'doc': 'Official document',
         'docHint': '(INE with OCR / Passport / CURP)',
-        'pick': 'Capture / Attach document',
         'camera': 'Take photo',
         'gallery': 'Choose from gallery',
-        'tipo': 'Document type',
         'nombre': 'First Name',
         'apellidos': 'Last Name',
-        'fecha': 'Date of Birth',
+        'fecha': 'Date of Birth (DD/MM/YYYY)',
         'domicilio': 'Address',
         'municipio': 'Municipality',
         'cp': 'Postal Code',
@@ -167,7 +211,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           backgroundColor: Colors.white,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Color(0xFF003DA5)),
-            onPressed: () => context.push(LoginScreen.routeName),
+            onPressed: () => context.push(OnboardingScreen.routeName),
           ),
           actions: [
             DropdownButton<String>(
@@ -201,6 +245,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const SizedBox(height: 10),
                         Center(
                           child: Image.asset(
                             'assets/icons/logo.jpg',
@@ -220,6 +265,39 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         ),
                         const SizedBox(height: 20),
 
+                        // Nacionalidad
+                        Text(
+                          textos[lang]!['nacionalidad']!,
+                          style: const TextStyle(fontSize: 15),
+                        ),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 10,
+                          children: [
+                            ChoiceChip(
+                              label: Text(textos[lang]!['mexicano']!),
+                              selected: nacionalidad == 'Mexicano',
+                              onSelected: (_) {
+                                setState(() {
+                                  nacionalidad = 'Mexicano';
+                                  tipoDocumento = 'INE';
+                                });
+                              },
+                            ),
+                            ChoiceChip(
+                              label: Text(textos[lang]!['extranjero']!),
+                              selected: nacionalidad == 'Extranjero',
+                              onSelected: (_) {
+                                setState(() {
+                                  nacionalidad = 'Extranjero';
+                                  tipoDocumento = 'Pasaporte';
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+
                         // Tipo de documento
                         Text(
                           textos[lang]!['tipo']!,
@@ -229,78 +307,25 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         Wrap(
                           spacing: 10,
                           children: [
-                            ChoiceChip(
-                              label: const Text('INE'),
-                              selected: tipoDocumento == 'INE',
-                              onSelected: (_) => setState(() => tipoDocumento = 'INE'),
-                            ),
+                            if (nacionalidad == 'Mexicano')
+                              ChoiceChip(
+                                label: const Text('INE'),
+                                selected: tipoDocumento == 'INE',
+                                onSelected: (_) =>
+                                    setState(() => tipoDocumento = 'INE'),
+                              ),
                             ChoiceChip(
                               label: const Text('Pasaporte'),
                               selected: tipoDocumento == 'Pasaporte',
-                              onSelected: (_) => setState(() => tipoDocumento = 'Pasaporte'),
-                            ),
-                            ChoiceChip(
-                              label: const Text('CURP'),
-                              selected: tipoDocumento == 'CURP',
-                              onSelected: (_) => setState(() => tipoDocumento = 'CURP'),
+                              onSelected: (_) =>
+                                  setState(() => tipoDocumento = 'Pasaporte'),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
-
-                        // Documento oficial
-                        Row(
-                          children: [
-                            Text(
-                              '${textos[lang]!['doc']!} ',
-                              style: const TextStyle(fontSize: 15),
-                            ),
-                            Text(
-                              textos[lang]!['docHint']!,
-                              style: const TextStyle(fontSize: 13, color: Colors.black54),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                icon: const Icon(Icons.camera_alt),
-                                label: Text(textos[lang]!['camera']!),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  side: const BorderSide(color: Color(0xFF003DA5), width: 2),
-                                ),
-                                onPressed: _pickFromCamera,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                icon: const Icon(Icons.photo_library),
-                                label: Text(textos[lang]!['gallery']!),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  side: const BorderSide(color: Color(0xFF003DA5), width: 2),
-                                ),
-                                onPressed: _pickFromGallery,
-                              ),
-                            ),
-                          ],
-                        ),
-                        if (documentoImagen != null)
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Image.file(
-                              File(documentoImagen!.path),
-                              height: 160,
-                            ),
-                          ),
 
                         const SizedBox(height: 20),
 
-                        // Campos obligatorios (algunos se llenan con OCR si INE)
+                        // Datos personales
                         CustomTextField(
                           hintText: textos[lang]!['nombre']!,
                           controller: nombreCtrl,
@@ -334,7 +359,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         CustomTextField(
                           hintText: textos[lang]!['cp']!,
                           controller: cpCtrl,
-                          leadingIconData: const Icon(Icons.markunread_mailbox),
+                          leadingIconData:
+                              const Icon(Icons.markunread_mailbox),
                           color: Colors.grey.withOpacity(0.2),
                         ),
                         CustomTextField(
@@ -352,9 +378,80 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         CustomTextField(
                           hintText: textos[lang]!['curp']!,
                           controller: curpCtrl,
-                          leadingIconData: const Icon(Icons.assignment_ind),
+                          leadingIconData:
+                              const Icon(Icons.assignment_ind),
                           color: Colors.grey.withOpacity(0.2),
                         ),
+
+                        const SizedBox(height: 20),
+
+                        // Documento oficial (después de datos personales)
+                        Row(
+                          children: [
+                            Text(
+                              '${textos[lang]!['doc']!} ',
+                              style: const TextStyle(fontSize: 15),
+                            ),
+                            Text(
+                              textos[lang]!['docHint']!,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: Colors.black54,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                icon: const Icon(Icons.camera_alt),
+                                label: Text(textos[lang]!['camera']!),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  side: const BorderSide(
+                                    color: Color(0xFF003DA5),
+                                    width: 2,
+                                  ),
+                                ),
+                                onPressed: _pickFromCamera,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                icon: const Icon(Icons.photo_library),
+                                label: Text(textos[lang]!['gallery']!),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  side: const BorderSide(
+                                    color: Color(0xFF003DA5),
+                                    width: 2,
+                                  ),
+                                ),
+                                onPressed: _pickFromGallery,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        if (documentoImagen != null)
+                          Container(
+                            margin: const EdgeInsets.only(top: 15),
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Colors.grey.shade400,
+                              ),
+                            ),
+                            child: Image.file(
+                              File(documentoImagen!.path),
+                              height: 200,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
 
                         const SizedBox(height: 20),
                         CustomButton(
@@ -374,7 +471,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -406,4 +504,3 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     );
   }
 }
-

@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:swastha_doctor_flutter/model/conversation.dart';
+import 'package:real_san_jose/model/conversation.dart';
 
 import '../model/chartmessage.dart';
 

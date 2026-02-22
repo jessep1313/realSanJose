@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:swastha_doctor_flutter/utils/appcolor.dart';
+import 'package:real_san_jose/utils/appcolor.dart';
 
 
 class CustomDecoration extends ConsumerWidget {

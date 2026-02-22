@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:swastha_doctor_flutter/common/widget/borderradius.dart';
-import 'package:swastha_doctor_flutter/provider/scheduleprovider.dart';
-import 'package:swastha_doctor_flutter/utils/decoration.dart';
-import 'package:swastha_doctor_flutter/view/onboarding/onboardingscreen.dart';
+import 'package:real_san_jose/common/widget/borderradius.dart';
+import 'package:real_san_jose/provider/scheduleprovider.dart';
+import 'package:real_san_jose/utils/decoration.dart';
+import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
 
 class ScheduleScreen extends ConsumerStatefulWidget {
   static String routeName = "/schedulescreen";

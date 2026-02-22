@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:swastha_doctor_flutter/provider/chatprovider.dart';
-import 'package:swastha_doctor_flutter/utils/appcolor.dart';
-import 'package:swastha_doctor_flutter/view/callscreen/callscreen.dart';
+import 'package:real_san_jose/provider/chatprovider.dart';
+import 'package:real_san_jose/utils/appcolor.dart';
+import 'package:real_san_jose/view/callscreen/callscreen.dart';
 
 import '../../common/widget/borderradius.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:swastha_doctor_flutter/model/patient.dart';
-import 'package:swastha_doctor_flutter/model/schedule.dart';
+import 'package:real_san_jose/model/patient.dart';
+import 'package:real_san_jose/model/schedule.dart';
 
 final pateintProvider = ChangeNotifierProvider.autoDispose<PatientProvider>(
   (ref) => PatientProvider(),

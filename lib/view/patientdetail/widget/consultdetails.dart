@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:swastha_doctor_flutter/common/widget/custombutton.dart';
-import 'package:swastha_doctor_flutter/common/widget/customtextfield.dart';
-import 'package:swastha_doctor_flutter/utils/appcolor.dart';
+import 'package:real_san_jose/common/widget/custombutton.dart';
+import 'package:real_san_jose/common/widget/customtextfield.dart';
+import 'package:real_san_jose/utils/appcolor.dart';
 
 class ConsultDetailsSection extends ConsumerWidget {
   @override

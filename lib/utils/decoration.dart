@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:swastha_doctor_flutter/utils/appcolor.dart';
+import 'package:real_san_jose/utils/appcolor.dart';
 
 BoxDecoration bgDecoration() {
   return const BoxDecoration(

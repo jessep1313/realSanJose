@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:swastha_doctor_flutter/common/widget/borderradius.dart';
-import 'package:swastha_doctor_flutter/common/widget/custombutton.dart';
-import 'package:swastha_doctor_flutter/provider/notificationprovider.dart';
-import 'package:swastha_doctor_flutter/utils/appcolor.dart';
-import 'package:swastha_doctor_flutter/utils/decoration.dart';
+import 'package:real_san_jose/common/widget/borderradius.dart';
+import 'package:real_san_jose/common/widget/custombutton.dart';
+import 'package:real_san_jose/provider/notificationprovider.dart';
+import 'package:real_san_jose/utils/appcolor.dart';
+import 'package:real_san_jose/utils/decoration.dart';
 
 class NotificationScreen extends ConsumerWidget {
   static var routeName = "/notification";

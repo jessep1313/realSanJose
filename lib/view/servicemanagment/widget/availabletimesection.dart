@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:swastha_doctor_flutter/provider/servicemanagementprovider.dart';
-import 'package:swastha_doctor_flutter/view/servicemanagment/widget/availabletimeselect.dart';
+import 'package:real_san_jose/provider/servicemanagementprovider.dart';
+import 'package:real_san_jose/view/servicemanagment/widget/availabletimeselect.dart';
 
 import '../../../common/widget/customtextfield.dart';
 import '../../../utils/appcolor.dart';

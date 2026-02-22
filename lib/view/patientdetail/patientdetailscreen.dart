@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:swastha_doctor_flutter/common/widget/borderradius.dart';
-import 'package:swastha_doctor_flutter/model/schedule.dart';
-import 'package:swastha_doctor_flutter/provider/scheduleprovider.dart';
-import 'package:swastha_doctor_flutter/utils/appcolor.dart';
-import 'package:swastha_doctor_flutter/utils/decoration.dart';
-import 'package:swastha_doctor_flutter/view/details/detailscreen.dart';
-import 'package:swastha_doctor_flutter/view/details/widget/patientdetailsection.dart';
-import 'package:swastha_doctor_flutter/view/notification/notificationscreen.dart';
-import 'package:swastha_doctor_flutter/view/patientdetail/widget/additionalinforamtion.dart';
-import 'package:swastha_doctor_flutter/view/patientdetail/widget/consultdetails.dart';
-import 'package:swastha_doctor_flutter/view/patientdetail/widget/patientdetailsection.dart';
-import 'package:swastha_doctor_flutter/view/patientdetail/widget/vistingsection.dart';
+import 'package:real_san_jose/common/widget/borderradius.dart';
+import 'package:real_san_jose/model/schedule.dart';
+import 'package:real_san_jose/provider/scheduleprovider.dart';
+import 'package:real_san_jose/utils/appcolor.dart';
+import 'package:real_san_jose/utils/decoration.dart';
+import 'package:real_san_jose/view/details/detailscreen.dart';
+import 'package:real_san_jose/view/details/widget/patientdetailsection.dart';
+import 'package:real_san_jose/view/notification/notificationscreen.dart';
+import 'package:real_san_jose/view/patientdetail/widget/additionalinforamtion.dart';
+import 'package:real_san_jose/view/patientdetail/widget/consultdetails.dart';
+import 'package:real_san_jose/view/patientdetail/widget/patientdetailsection.dart';
+import 'package:real_san_jose/view/patientdetail/widget/vistingsection.dart';
 
 class PatientDetailsScreen extends ConsumerStatefulWidget {
   static var routeName = "/patientdetailscreen";

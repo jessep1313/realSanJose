@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:swastha_doctor_flutter/utils/appcolor.dart';
+import 'package:real_san_jose/utils/appcolor.dart';
 
 class ConsultCompleteSection extends ConsumerWidget {
   @override

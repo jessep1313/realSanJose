@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:horizontal_week_calendar/horizontal_week_calendar.dart';
-import 'package:swastha_doctor_flutter/provider/scheduleprovider.dart';
+import 'package:real_san_jose/provider/scheduleprovider.dart';
 
 import '../../../utils/appcolor.dart';
 

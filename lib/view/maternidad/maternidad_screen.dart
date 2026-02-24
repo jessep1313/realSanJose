@@ -74,17 +74,17 @@ class MaternidadScreen extends ConsumerWidget {
 
     final sections = [
       {
-        'img': 'piso_maternidad.jpg',
+        'img': 'piso_maternidad.avif',
         'title': 'piso_title',
         'text': 'piso_text',
       },
       {
-        'img': 'wellness.jpg',
+        'img': 'wellness.avif',
         'title': 'wellness_title',
         'text': 'wellness_text',
       },
       {
-        'img': 'alojamiento.jpg',
+        'img': 'alojamiento.avif',
         'title': 'alojamiento_title',
         'text': 'alojamiento_text',
       },
@@ -182,21 +182,19 @@ class MaternidadScreen extends ConsumerWidget {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Imagen
-                  Container(
-                    height: 180,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "Imagen: ${s['img']}",
-                        style: const TextStyle(color: Colors.black54),
-                      ),
+
+
+
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.asset(
+                      'assets/images/${s['img']}',
+                      height: 180,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
                     ),
                   ),
+
 
                   const SizedBox(height: 15),
 

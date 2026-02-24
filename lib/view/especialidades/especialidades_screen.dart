@@ -171,18 +171,13 @@ class EspecialidadesScreen extends ConsumerWidget {
                   const SizedBox(height: 10),
 
                   // Espacio para imagen
-                  Container(
-                    height: 160,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "Imagen: $key.jpg",
-                        style: const TextStyle(color: Colors.black54),
-                      ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.asset(
+                      'assets/images/$key.avif',
+                      height: 160,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
                     ),
                   ),
 

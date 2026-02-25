@@ -8,13 +8,9 @@ import 'package:real_san_jose/utils/decoration.dart';
 import 'package:real_san_jose/view/editprofile/editprofilescreen.dart';
 import 'package:real_san_jose/view/notification/notificationscreen.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+// ⭐ IMPORT CORRECTO DEL PROVIDER DE IDIOMA
 import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
-
-
-
-
-
-
 
 class Profilescreen extends ConsumerWidget {
   static var routeName = "/profilescreen";
@@ -26,17 +22,23 @@ class Profilescreen extends ConsumerWidget {
     final textos = {
       'es': {
         'perfil': 'Perfil',
-        'facturas': 'Facturas',
-        'documentos': 'Documentos',
+        'correo': 'Correo',
+        'telefono': 'Teléfono',
+        'rfc': 'RFC',
+        'curp': 'CURP',
+        'editar': 'Editar perfil',
       },
       'en': {
         'perfil': 'Profile',
-        'facturas': 'Invoices',
-        'documentos': 'Documents',
+        'correo': 'Email',
+        'telefono': 'Phone',
+        'rfc': 'Tax ID',
+        'curp': 'National ID',
+        'editar': 'Edit profile',
       }
     };
 
-    // Datos de ejemplo, vendrán de tu modelo de usuario
+    // Datos de ejemplo (luego se reemplazan con tu modelo real)
     final nombreCliente = "Juan Pérez";
     final correoCliente = "juanperez@gmail.com";
     final telefonoCliente = "+52 3312345678";
@@ -93,7 +95,7 @@ class Profilescreen extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Datos del cliente
+                          // ⭐ DATOS DEL PERFIL
                           Container(
                             width: double.infinity,
                             padding: const EdgeInsets.all(12),
@@ -101,7 +103,7 @@ class Profilescreen extends ConsumerWidget {
                               borderRadius: BorderRadius.circular(15),
                               color: Colors.white,
                               border: Border.all(
-                                color: const Color(0xFF003DA5), // azul Pantone
+                                color: const Color(0xFF003DA5),
                                 width: 2,
                               ),
                             ),
@@ -122,19 +124,27 @@ class Profilescreen extends ConsumerWidget {
                                         nombreCliente,
                                         style: const TextStyle(
                                           fontSize: 18,
-                                          color: Color(0xFF009639), // verde Pantone
+                                          color: Color(0xFF009639),
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                       const SizedBox(height: 5),
-                                      Text("Correo: $correoCliente",
-                                          style: const TextStyle(fontSize: 12)),
-                                      Text("Teléfono: $telefonoCliente",
-                                          style: const TextStyle(fontSize: 12)),
-                                      Text("RFC: $rfcCliente",
-                                          style: const TextStyle(fontSize: 12)),
-                                      Text("CURP: $curpCliente",
-                                          style: const TextStyle(fontSize: 12)),
+                                      Text(
+                                        "${textos[lang]!['correo']}: $correoCliente",
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
+                                      Text(
+                                        "${textos[lang]!['telefono']}: $telefonoCliente",
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
+                                      Text(
+                                        "${textos[lang]!['rfc']}: $rfcCliente",
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
+                                      Text(
+                                        "${textos[lang]!['curp']}: $curpCliente",
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -147,10 +157,21 @@ class Profilescreen extends ConsumerWidget {
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(5)),
-                                    child: const Padding(
-                                      padding: EdgeInsets.all(6),
-                                      child: Icon(Icons.edit,
-                                          color: Colors.white, size: 16),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(6),
+                                      child: Row(
+                                        children: [
+                                          const Icon(Icons.edit,
+                                              color: Colors.white, size: 16),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            textos[lang]!['editar']!,
+                                            style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 )
@@ -160,34 +181,7 @@ class Profilescreen extends ConsumerWidget {
 
                           const SizedBox(height: 20),
 
-                          // Botones Facturas y Documentos
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _customActionButton(
-                                  title: textos[lang]!['facturas']!,
-                                  icon: Icons.receipt_long,
-                                  onTap: () {
-                                    // TODO: Navegar a pantalla de facturas
-                                  },
-                                ),
-                              ),
-                              const SizedBox(width: 20),
-                              Expanded(
-                                child: _customActionButton(
-                                  title: textos[lang]!['documentos']!,
-                                  icon: Icons.folder_open,
-                                  onTap: () {
-                                    // TODO: Navegar a pantalla de documentos
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 20),
-
-                          // Banner / imágenes
+                          // ⭐ BANNERS
                           GestureDetector(
                             onTap: () {
                               launchUrl(Uri.parse(
@@ -195,7 +189,8 @@ class Profilescreen extends ConsumerWidget {
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
-                              child: Image.asset('assets/images/profilebaner1.png'),
+                              child: Image.asset(
+                                  'assets/images/profilebaner1.png'),
                             ),
                           ),
                           const SizedBox(height: 20),
@@ -206,7 +201,8 @@ class Profilescreen extends ConsumerWidget {
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
-                              child: Image.asset('assets/images/profilebaner2.png'),
+                              child: Image.asset(
+                                  'assets/images/profilebaner2.png'),
                             ),
                           ),
                         ],
@@ -222,45 +218,4 @@ class Profilescreen extends ConsumerWidget {
       ),
     );
   }
-
-  Widget _customActionButton({
-    required String title,
-    required IconData icon,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Card(
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: const BorderSide(
-            color: Color(0xFF003DA5), // azul Pantone
-            width: 2,
-          ),
-        ),
-        elevation: 2,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, color: const Color(0xFF009639), size: 28),
-              const SizedBox(height: 8),
-              Text(
-                title,
-                style: const TextStyle(
-                  color: Color(0xFF009639), // verde Pantone
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }
-
-

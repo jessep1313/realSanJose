@@ -36,10 +36,9 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
       }
     };
 
-    // ⭐ OPCIONES ACTUALIZADAS
     final tipos = {
-      'es': ['Consulta Médica', 'Rayos X', 'Laboratorio'],
-      'en': ['Medical Consultation', 'X-Rays', 'Laboratory']
+      'es': ['Cita médica', 'Consulta', 'Rayos X', 'Exámenes'],
+      'en': ['Medical appointment', 'Consultation', 'X-Rays', 'Tests']
     };
 
     final horarios = ["08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM", "12:00 PM"];
@@ -49,8 +48,10 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
       body: SafeArea(
         child: Column(
           children: [
+            // Header fijo
             const CustomHeader(title: "Agendar"),
 
+            // Contenido con scroll
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
@@ -60,65 +61,33 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
                     Text(
                       textos[lang]!['title']!,
                       style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF003DA5),
-                      ),
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF003DA5)),
                     ),
-
                     const SizedBox(height: 10),
-
                     Text(
                       textos[lang]!['desc']!,
                       style: const TextStyle(fontSize: 16, color: Colors.black87),
                     ),
-
                     const SizedBox(height: 20),
 
-                    // ⭐ DROPDOWN PREMIUM ANCHO COMPLETO
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: const Color(0xFF003DA5),
-                          width: 2,
-                        ),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          isExpanded: true,
-                          value: tipoCita,
-                          hint: Text(
-                            textos[lang]!['tipo']!,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.black54,
-                            ),
-                          ),
-                          items: tipos[lang]!
-                              .map(
-                                (e) => DropdownMenuItem(
-                                  value: e,
-                                  child: Text(
-                                    e,
-                                    style: const TextStyle(fontSize: 16),
-                                  ),
-                                ),
-                              )
-                              .toList(),
-                          onChanged: (value) {
-                            setState(() => tipoCita = value);
-                          },
-                        ),
-                      ),
+                    // Selección de tipo de cita
+                    DropdownButton<String>(
+                      value: tipoCita,
+                      hint: Text(textos[lang]!['tipo']!),
+                      items: tipos[lang]!
+                          .map((e) =>
+                              DropdownMenuItem(value: e, child: Text(e)))
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() => tipoCita = value);
+                      },
                     ),
 
                     const SizedBox(height: 20),
 
-                    // Calendario
+                    // Calendario nativo (DatePicker inline simulado)
                     CalendarDatePicker(
                       initialDate: DateTime.now(),
                       firstDate: DateTime(2020),
@@ -128,17 +97,14 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
                       },
                     ),
 
+                    const SizedBox(height: 20),
 
                     // Horarios disponibles
-                    Text(
-                      textos[lang]!['horarios']!,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF003DA5),
-                      ),
-                    ),
-
+                    Text(textos[lang]!['horarios']!,
+                        style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF003DA5))),
                     Wrap(
                       spacing: 10,
                       children: horarios.map((h) {
@@ -148,8 +114,7 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
                           selected: selected,
                           selectedColor: const Color(0xFF003DA5),
                           labelStyle: TextStyle(
-                            color: selected ? Colors.white : Colors.black,
-                          ),
+                              color: selected ? Colors.white : Colors.black),
                           onSelected: (_) {
                             setState(() => horarioSeleccionado = h);
                           },
@@ -157,7 +122,7 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
                       }).toList(),
                     ),
 
-                    const SizedBox(height: 80),
+                    const SizedBox(height: 80), // espacio para no tapar el footer
                   ],
                 ),
               ),
@@ -166,7 +131,7 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
         ),
       ),
 
-      // Footer con botón
+      // Footer fijo con botón
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton.icon(
@@ -178,31 +143,25 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
             ),
           ),
           icon: const Icon(Icons.check, color: Colors.white),
-          label: Text(
-            textos[lang]!['agendar']!,
-            style: const TextStyle(color: Colors.white),
-          ),
+          label: Text(textos[lang]!['agendar']!,
+              style: const TextStyle(color: Colors.white)),
           onPressed: () {
             if (tipoCita != null &&
                 selectedDay != null &&
                 horarioSeleccionado != null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(
-                    lang == 'es'
-                        ? "Cita agendada correctamente"
-                        : "Appointment booked successfully",
-                  ),
+                  content: Text(lang == 'es'
+                      ? "Cita agendada correctamente"
+                      : "Appointment booked successfully"),
                 ),
               );
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(
-                    lang == 'es'
-                        ? "Completa todos los campos"
-                        : "Please complete all fields",
-                  ),
+                  content: Text(lang == 'es'
+                      ? "Completa todos los campos"
+                      : "Please complete all fields"),
                 ),
               );
             }
@@ -212,6 +171,5 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
     );
   }
 }
-
 
 

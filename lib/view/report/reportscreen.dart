@@ -13,6 +13,8 @@ import 'package:real_san_jose/view/notification/notificationscreen.dart';
 class ReportScreen extends ConsumerStatefulWidget {
   static var routeName = "/reportscreen";
 
+  const ReportScreen({super.key});
+
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => ReportScreenState();
 }
@@ -37,11 +39,8 @@ class ReportScreenState extends ConsumerState<ReportScreen> {
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                child: Icon(
-                  Icons.notifications_none_outlined,
-                  size: 30,
-                  color: AppColor.textPrimaryColor
-                ),
+                child: Icon(Icons.notifications_none_outlined,
+                    size: 30, color: AppColor.textPrimaryColor),
               ),
             )
           ],

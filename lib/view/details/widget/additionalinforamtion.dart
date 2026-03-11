@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:real_san_jose/utils/appcolor.dart';
 
 class AdditionalInformation extends ConsumerWidget {
+  const AdditionalInformation({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(

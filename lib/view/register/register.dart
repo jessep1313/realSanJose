@@ -14,6 +14,8 @@ import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
 class RegisterScreen extends ConsumerStatefulWidget {
   static var routeName = "/registerscreen";
 
+  const RegisterScreen({super.key});
+
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _RegisterScreenState();
 }
@@ -35,7 +37,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   // Nacionalidad y tipo de documento
   String nacionalidad = 'Mexicano'; // Mexicano | Extranjero
-  String tipoDocumento = 'INE';     // INE | Pasaporte
+  String tipoDocumento = 'INE'; // INE | Pasaporte
 
   @override
   void dispose() {
@@ -359,8 +361,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         CustomTextField(
                           hintText: textos[lang]!['cp']!,
                           controller: cpCtrl,
-                          leadingIconData:
-                              const Icon(Icons.markunread_mailbox),
+                          leadingIconData: const Icon(Icons.markunread_mailbox),
                           color: Colors.grey.withOpacity(0.2),
                         ),
                         CustomTextField(
@@ -378,8 +379,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         CustomTextField(
                           hintText: textos[lang]!['curp']!,
                           controller: curpCtrl,
-                          leadingIconData:
-                              const Icon(Icons.assignment_ind),
+                          leadingIconData: const Icon(Icons.assignment_ind),
                           color: Colors.grey.withOpacity(0.2),
                         ),
 

@@ -6,6 +6,8 @@ import '../../../common/widget/customtextfield.dart';
 import '../../../utils/appcolor.dart';
 
 class PersonalCallSection extends ConsumerWidget {
+  const PersonalCallSection({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Card(

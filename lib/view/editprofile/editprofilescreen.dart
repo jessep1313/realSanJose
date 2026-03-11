@@ -17,6 +17,8 @@ import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
 class EditProfileScreen extends ConsumerStatefulWidget {
   static var routeName = "/editprofilescreen";
 
+  const EditProfileScreen({super.key});
+
   @override
   ConsumerState<EditProfileScreen> createState() => _EditProfileScreenState();
 }
@@ -158,7 +160,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                   borderRadius: borderRadius(),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                   child: SafeArea(
                     child: SingleChildScrollView(
                       child: Column(
@@ -167,7 +170,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                           // ⭐ FOTO DE PERFIL
                           GestureDetector(
                             onTap: () {
-                              ref.read(editProfileProvider).getImageFromGallery();
+                              ref
+                                  .read(editProfileProvider)
+                                  .getImageFromGallery();
                             },
                             child: Center(
                               child: ClipRRect(
@@ -197,7 +202,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                                         child: Center(
                                           child: Text(
                                             t[lang]!['editarFoto']!,
-                                            style: const TextStyle(color: Colors.white, fontSize: 12),
+                                            style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12),
                                           ),
                                         ),
                                       ),
@@ -211,27 +218,45 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                           const SizedBox(height: 20),
 
                           // ⭐ CAMPOS
-                          CustomTextField(hintText: t[lang]!['nombre']!, controller: nombreCtrl),
-                          CustomTextField(hintText: t[lang]!['apellidos']!, controller: apellidosCtrl),
-                          CustomTextField(hintText: t[lang]!['fecha']!, controller: fechaCtrl),
-                          CustomTextField(hintText: t[lang]!['domicilio']!, controller: domicilioCtrl),
-                          CustomTextField(hintText: t[lang]!['municipio']!, controller: municipioCtrl),
-                          CustomTextField(hintText: t[lang]!['cp']!, controller: cpCtrl),
-                          CustomTextField(hintText: t[lang]!['estado']!, controller: estadoCtrl),
-                          CustomTextField(hintText: t[lang]!['rfc']!, controller: rfcCtrl),
-                          CustomTextField(hintText: t[lang]!['curp']!, controller: curpCtrl),
+                          CustomTextField(
+                              hintText: t[lang]!['nombre']!,
+                              controller: nombreCtrl),
+                          CustomTextField(
+                              hintText: t[lang]!['apellidos']!,
+                              controller: apellidosCtrl),
+                          CustomTextField(
+                              hintText: t[lang]!['fecha']!,
+                              controller: fechaCtrl),
+                          CustomTextField(
+                              hintText: t[lang]!['domicilio']!,
+                              controller: domicilioCtrl),
+                          CustomTextField(
+                              hintText: t[lang]!['municipio']!,
+                              controller: municipioCtrl),
+                          CustomTextField(
+                              hintText: t[lang]!['cp']!, controller: cpCtrl),
+                          CustomTextField(
+                              hintText: t[lang]!['estado']!,
+                              controller: estadoCtrl),
+                          CustomTextField(
+                              hintText: t[lang]!['rfc']!, controller: rfcCtrl),
+                          CustomTextField(
+                              hintText: t[lang]!['curp']!,
+                              controller: curpCtrl),
 
                           const SizedBox(height: 20),
 
                           // ⭐ DOCUMENTO
-                          Text(t[lang]!['doc']!, style: const TextStyle(fontSize: 15)),
+                          Text(t[lang]!['doc']!,
+                              style: const TextStyle(fontSize: 15)),
                           const SizedBox(height: 8),
                           ElevatedButton.icon(
                             icon: const Icon(Icons.photo_library),
                             label: Text(t[lang]!['gallery']!),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
-                              side: const BorderSide(color: Color(0xFF003DA5), width: 2),
+                              side: const BorderSide(
+                                  color: Color(0xFF003DA5), width: 2),
                             ),
                             onPressed: _pickFromGallery,
                           ),
@@ -251,7 +276,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                               ),
                             ),
 
-                          const SizedBox(height: 40), // ⭐ ESPACIO PARA QUE NO SE OCUPE EL BOTÓN
+                          const SizedBox(
+                              height:
+                                  40), // ⭐ ESPACIO PARA QUE NO SE OCUPE EL BOTÓN
                         ],
                       ),
                     ),
@@ -306,4 +333,3 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     );
   }
 }
-

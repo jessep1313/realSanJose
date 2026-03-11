@@ -16,6 +16,8 @@ import 'package:real_san_jose/view/register/register.dart';
 class LoginScreen extends ConsumerWidget {
   static var routeName = "/loginscreen";
 
+  const LoginScreen({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(

@@ -167,11 +167,10 @@ class ServiciosScreen extends ConsumerWidget {
                     ),
                   ),
 
-
                   const SizedBox(height: 30),
                 ],
               );
-            }).toList(),
+            }),
           ],
         ),
       ),

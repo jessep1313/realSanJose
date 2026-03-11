@@ -16,6 +16,8 @@ import 'package:real_san_jose/view/servicemanagment/widget/sendmessagesection.da
 class ServiceManagementScreen extends ConsumerStatefulWidget {
   static var routeName = "/servicemanagement";
 
+  const ServiceManagementScreen({super.key});
+
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
       ServicemanagementScreenState();

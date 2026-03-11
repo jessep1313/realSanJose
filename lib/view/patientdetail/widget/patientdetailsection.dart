@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:real_san_jose/utils/appcolor.dart';
 
 class PatientDetail extends ConsumerWidget {
+  const PatientDetail({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(

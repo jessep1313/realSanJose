@@ -19,10 +19,9 @@ class MaternidadScreen extends ConsumerWidget {
 
         // Secciones de la imagen
         'piso_title': 'Piso exclusivo de maternidad',
-        'piso_text':
-            'Que nada interrumpa tu tranquilidad y felicidad.\n'
-                'Con nuestros pisos exclusivos de maternidad, enfócate en tu recuperación y la bienvenida de tu bebé.\n'
-                '¡Te sentirás tan cómoda que casi olvidarás que estás en un hospital!',
+        'piso_text': 'Que nada interrumpa tu tranquilidad y felicidad.\n'
+            'Con nuestros pisos exclusivos de maternidad, enfócate en tu recuperación y la bienvenida de tu bebé.\n'
+            '¡Te sentirás tan cómoda que casi olvidarás que estás en un hospital!',
 
         'wellness_title': 'Ambiente Wellness',
         'wellness_text':
@@ -47,22 +46,17 @@ class MaternidadScreen extends ConsumerWidget {
         'login': 'Sign in',
         'title': 'Maternity',
         'intro': 'We are with you from the very first moment',
-
         'piso_title': 'Exclusive Maternity Floor',
-        'piso_text':
-            'Let nothing interrupt your peace and happiness.\n'
-                'With our exclusive maternity floors, focus on your recovery and welcoming your baby.\n'
-                'You will feel so comfortable that you may forget you are in a hospital!',
-
+        'piso_text': 'Let nothing interrupt your peace and happiness.\n'
+            'With our exclusive maternity floors, focus on your recovery and welcoming your baby.\n'
+            'You will feel so comfortable that you may forget you are in a hospital!',
         'wellness_title': 'Wellness Environment',
         'wellness_text':
             'We offer suite rooms that allow decoration and candy bar setups for your family’s reception.\n'
                 'Providing a wellness space for the patient, family, and friends.',
-
         'alojamiento_title': 'Rooming-in',
         'alojamiento_text':
             'If you choose, your baby may stay with you in the room under constant supervision from our nurses.',
-
         'tec_title': 'Cutting-edge Technology',
         'seguridad_title': 'Comprehensive Baby Safety',
         'seguridad_text':
@@ -156,7 +150,6 @@ class MaternidadScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             // Título
             Text(
               t[lang]!['title']!,
@@ -182,9 +175,6 @@ class MaternidadScreen extends ConsumerWidget {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
-
-
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.asset(
@@ -194,7 +184,6 @@ class MaternidadScreen extends ConsumerWidget {
                       fit: BoxFit.cover,
                     ),
                   ),
-
 
                   const SizedBox(height: 15),
 
@@ -219,7 +208,7 @@ class MaternidadScreen extends ConsumerWidget {
                   const SizedBox(height: 30),
                 ],
               );
-            }).toList(),
+            }),
 
             // ---------------------- TECNOLOGÍA ----------------------
             Text(

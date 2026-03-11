@@ -11,6 +11,8 @@ final languageProvider = StateProvider<String>((ref) => 'es');
 class OnboardingScreen extends ConsumerStatefulWidget {
   static var routeName = "/onboardingscreen";
 
+  const OnboardingScreen({super.key});
+
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
       OnBoardingScreenState();
@@ -94,9 +96,9 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-
               ListTile(
-                leading: const Icon(Icons.local_hospital, color: Color(0xFF009639)),
+                leading:
+                    const Icon(Icons.local_hospital, color: Color(0xFF009639)),
                 title: Text(texts[lang]!['hospital1']!),
                 onTap: () {
                   Navigator.pop(context);
@@ -104,9 +106,9 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
                       "https://maps.google.com/?q=Av.+Lázaro+Cárdenas+4149,+Zapopan,+Jalisco");
                 },
               ),
-
               ListTile(
-                leading: const Icon(Icons.local_hospital, color: Color(0xFF003DA5)),
+                leading:
+                    const Icon(Icons.local_hospital, color: Color(0xFF003DA5)),
                 title: Text(texts[lang]!['hospital2']!),
                 onTap: () {
                   Navigator.pop(context);
@@ -271,7 +273,8 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
                     OutlinedButton(
                       style: OutlinedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 50),
-                        side: const BorderSide(color: Color(0xFF003DA5), width: 2),
+                        side: const BorderSide(
+                            color: Color(0xFF003DA5), width: 2),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),

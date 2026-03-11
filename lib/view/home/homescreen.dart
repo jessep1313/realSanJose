@@ -19,16 +19,17 @@ import 'package:url_launcher/url_launcher.dart';
 class Homescreen extends ConsumerWidget {
   static var routeName = "/homescreen";
   final GlobalKey<AnimatedCircularChartState> _chartKey =
-      new GlobalKey<AnimatedCircularChartState>();
+      GlobalKey<AnimatedCircularChartState>();
+
+  Homescreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     List<CircularStackEntry> data = <CircularStackEntry>[
-      new CircularStackEntry(
+      CircularStackEntry(
         <CircularSegmentEntry>[
-          new CircularSegmentEntry(200.0, AppColor.appThemeColor,
-              rankKey: 'Q1'),
-          new CircularSegmentEntry(50.0, AppColor.cardColor, rankKey: 'Q2'),
+          CircularSegmentEntry(200.0, AppColor.appThemeColor, rankKey: 'Q1'),
+          CircularSegmentEntry(50.0, AppColor.cardColor, rankKey: 'Q2'),
         ],
         rankKey: 'Quarterly Profits',
       ),
@@ -67,14 +68,14 @@ class Homescreen extends ConsumerWidget {
                                 const Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Consults for today,',
                                       style: TextStyle(
                                           fontSize: 20,
                                           color: AppColor.textPrimaryColor,
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    const Text(
+                                    Text(
                                       '6 of 10 Completed',
                                       style: TextStyle(
                                           fontSize: 15,

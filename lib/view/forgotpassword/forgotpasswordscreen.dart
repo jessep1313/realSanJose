@@ -13,6 +13,8 @@ import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
 class ForgotPasswordScreen extends ConsumerWidget {
   static var routeName = "/forgotscreen";
 
+  const ForgotPasswordScreen({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final lang = ref.watch(languageProvider);
@@ -149,4 +151,3 @@ class ForgotPasswordScreen extends ConsumerWidget {
     );
   }
 }
-

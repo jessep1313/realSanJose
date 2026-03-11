@@ -9,13 +9,16 @@ import 'package:real_san_jose/view/notification/notificationscreen.dart';
 class ChatScreen extends ConsumerStatefulWidget {
   static String routeName = "/chatscreen";
 
+  const ChatScreen({super.key});
+
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
-  final List<Map<String, String>> _messages = []; // {role: 'user'/'bot', text: '...'}
+  final List<Map<String, String>> _messages =
+      []; // {role: 'user'/'bot', text: '...'}
 
   void _sendMessage() {
     final text = _controller.text.trim();
@@ -90,9 +93,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     final msg = _messages[index];
                     final isUser = msg['role'] == 'user';
                     return Align(
-                      alignment: isUser
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
+                      alignment:
+                          isUser ? Alignment.centerRight : Alignment.centerLeft,
                       child: Container(
                         margin: const EdgeInsets.symmetric(vertical: 6),
                         padding: const EdgeInsets.all(12),
@@ -144,5 +146,3 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     );
   }
 }
-
-

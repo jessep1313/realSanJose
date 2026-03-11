@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:real_san_jose/utils/appcolor.dart';
 
 class ConsultCompleteSection extends ConsumerWidget {
+  const ConsultCompleteSection({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Column(

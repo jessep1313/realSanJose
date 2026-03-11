@@ -15,10 +15,9 @@ class EspecialidadesScreen extends ConsumerWidget {
       'es': {
         'login': 'Iniciar sesión',
         'title': 'Especialidades',
-        'intro':
-            'Unidades de alta especialidad\n'
-                'Hospital Real San José | Valle Real se preocupa por estar a la vanguardia en todos los aspectos, '
-                'por lo que aquí podrás conocer más de nuestros servicios bajo tecnología de vanguardia.',
+        'intro': 'Unidades de alta especialidad\n'
+            'Hospital Real San José | Valle Real se preocupa por estar a la vanguardia en todos los aspectos, '
+            'por lo que aquí podrás conocer más de nuestros servicios bajo tecnología de vanguardia.',
         'gine': 'GINECOLOGÍA / OBSTETRICIA',
         'plast': 'CIRUGÍA PLÁSTICA',
         'general': 'CIRUGÍA GENERAL',
@@ -34,10 +33,9 @@ class EspecialidadesScreen extends ConsumerWidget {
       'en': {
         'login': 'Sign in',
         'title': 'Specialties',
-        'intro':
-            'High Specialty Units\n'
-                'Hospital Real San José | Valle Real is committed to staying at the forefront in every aspect, '
-                'offering advanced medical services supported by cutting-edge technology.',
+        'intro': 'High Specialty Units\n'
+            'Hospital Real San José | Valle Real is committed to staying at the forefront in every aspect, '
+            'offering advanced medical services supported by cutting-edge technology.',
         'gine': 'GYNECOLOGY / OBSTETRICS',
         'plast': 'PLASTIC SURGERY',
         'general': 'GENERAL SURGERY',
@@ -132,7 +130,6 @@ class EspecialidadesScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             // Título
             Text(
               t[lang]!['title']!,
@@ -184,7 +181,7 @@ class EspecialidadesScreen extends ConsumerWidget {
                   const SizedBox(height: 30),
                 ],
               );
-            }).toList(),
+            }),
           ],
         ),
       ),

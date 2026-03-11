@@ -8,6 +8,8 @@ import 'package:real_san_jose/provider/scheduleprovider.dart';
 import '../../../utils/appcolor.dart';
 
 class DateSection extends ConsumerWidget {
+  const DateSection({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isVisible = ref.watch(scheduleProvider).isVisible;

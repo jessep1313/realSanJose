@@ -11,6 +11,8 @@ final languageProvider = StateProvider<String>((ref) => 'es');
 class OnboardingScreen extends ConsumerStatefulWidget {
   static var routeName = "/onboardingscreen";
 
+  const OnboardingScreen({super.key});
+
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
       OnBoardingScreenState();
@@ -207,5 +209,3 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
     );
   }
 }
-
-

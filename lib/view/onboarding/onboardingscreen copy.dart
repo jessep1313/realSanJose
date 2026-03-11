@@ -14,6 +14,8 @@ import '../../provider/onboardingprovider.dart';
 class OnboardingScreen extends ConsumerStatefulWidget {
   static var routeName = "/onboardingscreen";
 
+  const OnboardingScreen({super.key});
+
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
       OnBoardingScreenState();

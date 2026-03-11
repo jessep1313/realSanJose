@@ -11,6 +11,8 @@ import 'package:real_san_jose/view/schedule/widget/datesection.dart';
 import 'package:real_san_jose/view/schedule/widget/headersection.dart';
 
 class ScheduleScreen extends ConsumerStatefulWidget {
+  const ScheduleScreen({super.key});
+
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => ScheduleScreenState();
 }

@@ -6,6 +6,8 @@ import '../../../common/widget/customtextfield.dart';
 import '../../../utils/appcolor.dart';
 
 class SendMessageSection extends ConsumerWidget {
+  const SendMessageSection({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Card(

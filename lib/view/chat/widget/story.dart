@@ -8,6 +8,8 @@ import 'package:real_san_jose/view/chatdetails/chatdetailscreen.dart';
 import '../../../provider/chatprovider.dart';
 
 class Story extends ConsumerWidget {
+  const Story({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final conversationList = ref.read(chatProvider).conversationList;

@@ -9,15 +9,70 @@ import 'package:real_san_jose/view/dashboard/dashboardscreen.dart';
 import 'package:real_san_jose/view/forgotpassword/forgotpasswordscreen.dart';
 import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
 import 'package:real_san_jose/view/register/register.dart';
+import 'package:real_san_jose/provider/auth_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Reutilizamos el provider de idioma definido en OnboardingScreen
 import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
 
-class LoginScreen extends ConsumerWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   static var routeName = "/loginscreen";
 
+  const LoginScreen({super.key});
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  final userController = TextEditingController();
+  final passController = TextEditingController();
+
+  bool isLoading = false;
+
+  void showAlert(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  Future<void> doLogin() async {
+    final user = userController.text.trim();
+    final pass = passController.text.trim();
+
+    if (user.isEmpty || pass.isEmpty) {
+      showAlert("Usuario y contraseña son obligatorios");
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    try {
+      final result = await ref.read(
+        loginProvider({
+          "identificator": user,
+          "password": pass,
+        }).future,
+      );
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString("token_usuario", result["token"]);
+      await prefs.setString("fullname", result["Fullname"]);
+      await prefs.setString("curp", result["Curp"]);
+
+      context.push(DashboardScreen.routeName);
+    } catch (e) {
+      showAlert("Datos incorrectos");
+    }
+
+    setState(() => isLoading = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final lang = ref.watch(languageProvider);
 
     final texts = {
@@ -115,7 +170,7 @@ class LoginScreen extends ConsumerWidget {
                       CustomTextField(
                         color: Colors.grey.withOpacity(0.2),
                         hintText: texts[lang]!['user']!,
-                        controller: TextEditingController(),
+                        controller: userController,
                         textInputType: TextInputType.text,
                         leadingIconData: const Icon(Icons.person),
                       ),
@@ -131,7 +186,7 @@ class LoginScreen extends ConsumerWidget {
                       CustomTextField(
                         color: Colors.grey.withOpacity(0.2),
                         hintText: texts[lang]!['password']!,
-                        controller: TextEditingController(),
+                        controller: passController,
                         textInputType: TextInputType.visiblePassword,
                         isPassword: true,
                         leadingIconData: const Icon(Icons.lock),
@@ -157,11 +212,10 @@ class LoginScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 10),
                       CustomButton(
-                        title: texts[lang]!['login']!,
-                        ontap: () {
-                          context.push(DashboardScreen.routeName);
-                        },
-                        color: const Color(0xFF003DA5), // Pantone 293 (azul)
+                        title:
+                            isLoading ? "Cargando..." : texts[lang]!['login']!,
+                        ontap: isLoading ? null : () => doLogin(),
+                        color: const Color(0xFF003DA5),
                         textColor: Colors.white,
                       ),
                     ],
@@ -205,4 +259,3 @@ class LoginScreen extends ConsumerWidget {
     );
   }
 }
-

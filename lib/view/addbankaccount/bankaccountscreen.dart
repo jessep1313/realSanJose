@@ -15,6 +15,8 @@ import '../notification/notificationscreen.dart';
 class BankAccountScreen extends ConsumerWidget {
   static var routeName = "/bankaccountsecreen";
 
+  const BankAccountScreen({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
@@ -58,146 +60,129 @@ class BankAccountScreen extends ConsumerWidget {
                   child: SafeArea(
                     child: SingleChildScrollView(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Image.asset("assets/images/visa.png"),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10.0),
+                          child: Text(
+                            "Securely enter bank account details below to have payments from patients automatically deposited inot your account",
+                            style: TextStyle(
+                                fontSize: 12, color: AppColor.textPrimaryColor),
+                          ),
+                        ),
+                        const Text(
+                          "Firstname",
+                          style: TextStyle(
+                              fontSize: 14, color: AppColor.textPrimaryColor),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        CustomTextField(
+                            hintText: "", controller: TextEditingController()),
+                        const Text(
+                          "Lastname",
+                          style: TextStyle(
+                              fontSize: 14, color: AppColor.textPrimaryColor),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        CustomTextField(
+                            hintText: "", controller: TextEditingController()),
+                        const Text(
+                          "Account Type",
+                          style: TextStyle(
+                              fontSize: 14, color: AppColor.textPrimaryColor),
+                        ),
+                        Row(
                           children: [
-                            Image.asset("assets/images/visa.png"),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10.0),
-                              child: Text(
-                                "Securely enter bank account details below to have payments from patients automatically deposited inot your account",
+                            Radio<int>(
+                              value: 1,
+                              activeColor: AppColor.appAlternateColor,
+                              groupValue:
+                                  ref.watch(accountProvider).selectedOption,
+                              onChanged: (value) {
+                                ref.watch(accountProvider).onChnaged(value!);
+                              },
+                            ),
+                            Text(
+                              "Checking",
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal,
+                                  color: AppColor.textPrimaryColor),
+                            ),
+                            Radio<int>(
+                              value: 2,
+                              activeColor: AppColor.appAlternateColor,
+                              groupValue:
+                                  ref.watch(accountProvider).selectedOption,
+                              onChanged: (value) {
+                                ref.watch(accountProvider).onChnaged(value!);
+                              },
+                            ),
+                            Text("Saving",
+                                style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal,
+                                    color: AppColor.textPrimaryColor)),
+                          ],
+                        ),
+                        Text("Account Number",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: AppColor.textPrimaryColor,
+                            )),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        CustomTextField(
+                            hintText: "", controller: TextEditingController()),
+                        const Text(
+                          "Routing Number",
+                          style: TextStyle(
+                              fontSize: 14, color: AppColor.textPrimaryColor),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        CustomTextField(
+                            hintText: "", controller: TextEditingController()),
+                        Row(
+                          children: [
+                            Checkbox(
+                              checkColor: Colors.white,
+                              activeColor: AppColor.appAlternateColor,
+                              value: ref.watch(accountProvider).isSelected,
+                              onChanged: (value) {
+                                ref
+                                    .watch(accountProvider)
+                                    .onChnagedCheckBox(value!);
+                              },
+                            ),
+                            Expanded(
+                              child: const Text(
+                                " I understand and accept the payment terms and I authorize the application to deposit funds into my account.",
                                 style: TextStyle(
-                                    fontSize: 12,
-                                    color: AppColor.textPrimaryColor),
+                                    fontSize: 14, color: Colors.black),
                               ),
                             ),
-                            const Text(
-                              "Firstname",
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: AppColor.textPrimaryColor),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            CustomTextField(
-                                hintText: "",
-                                controller: TextEditingController()),
-                            const Text(
-                              "Lastname",
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: AppColor.textPrimaryColor),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            CustomTextField(
-                                hintText: "",
-                                controller: TextEditingController()),
-                            const Text(
-                              "Account Type",
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: AppColor.textPrimaryColor),
-                            ),
-                            Row(
-                              children: [
-                                Radio<int>(
-                                  value: 1,
-                                  activeColor: AppColor.appAlternateColor,
-                                  groupValue:
-                                  ref
-                                      .watch(accountProvider)
-                                      .selectedOption,
-                                  onChanged: (value) {
-                                    ref.watch(accountProvider).onChnaged(
-                                        value!);
-                                  },
-                                ),
-                                Text(
-                                  "Checking",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.normal,
-                                      color: AppColor.textPrimaryColor),
-                                ),
-                                Radio<int>(
-                                  value: 2,
-                                  activeColor: AppColor.appAlternateColor,
-                                  groupValue:
-                                  ref
-                                      .watch(accountProvider)
-                                      .selectedOption,
-                                  onChanged: (value) {
-                                    ref.watch(accountProvider).onChnaged(
-                                        value!);
-                                  },
-                                ),
-                                Text("Saving",
-                                    style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.normal,
-                                        color: AppColor.textPrimaryColor)),
-                              ],
-                            ),
-                            Text("Account Number",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: AppColor.textPrimaryColor,
-                                )),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            CustomTextField(
-                                hintText: "",
-                                controller: TextEditingController()),
-                            const Text(
-                              "Routing Number",
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: AppColor.textPrimaryColor),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            CustomTextField(
-                                hintText: "",
-                                controller: TextEditingController()),
-                            Row(
-                              children: [
-                                Checkbox(
-                                  checkColor: Colors.white,
-                                  activeColor: AppColor.appAlternateColor,
-                                  value: ref
-                                      .watch(accountProvider)
-                                      .isSelected,
-                                  onChanged: (value) {
-                                    ref
-                                        .watch(accountProvider)
-                                        .onChnagedCheckBox(value!);
-                                  },
-                                ),
-                                Expanded(
-                                  child: const Text(
-                                    " I understand and accept the payment terms and I authorize the application to deposit funds into my account.",
-                                    style: TextStyle(
-                                        fontSize: 14, color: Colors.black),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
                           ],
-                        )),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                      ],
+                    )),
                   ),
                 ),
               ),
             ),
             Padding(
                 padding:
-                const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
                 child: CustomButton(
                   color: Colors.white.withOpacity(0.3),
                   title: "Save Account",

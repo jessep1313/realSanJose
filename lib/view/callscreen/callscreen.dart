@@ -12,7 +12,7 @@ class CallScreen extends ConsumerWidget {
     return Scaffold(
       body: Stack(
         children: [
-          Container(
+          SizedBox(
             height: double.infinity,
             width: double.infinity,
             child: Image.asset("assets/images/specialist.jpg",

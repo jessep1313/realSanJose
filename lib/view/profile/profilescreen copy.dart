@@ -16,6 +16,8 @@ import 'package:url_launcher/url_launcher.dart';
 class Profilescreen extends ConsumerWidget {
   static var routeName = "/profilescreen";
 
+  const Profilescreen({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(

@@ -10,6 +10,8 @@ import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
 class ScheduleScreen extends ConsumerStatefulWidget {
   static String routeName = "/schedulescreen";
 
+  const ScheduleScreen({super.key});
+
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => ScheduleScreenState();
 }

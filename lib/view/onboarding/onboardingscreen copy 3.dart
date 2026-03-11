@@ -11,6 +11,8 @@ final languageProvider = StateProvider<String>((ref) => 'es');
 class OnboardingScreen extends ConsumerStatefulWidget {
   static var routeName = "/onboardingscreen";
 
+  const OnboardingScreen({super.key});
+
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
       OnBoardingScreenState();
@@ -50,7 +52,8 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
       'viewLocations': 'Ver ubicaciones',
       'terms': 'Términos y condiciones',
       'termsTitle': 'Términos y Condiciones',
-      'termsText': 'Este es un texto de ejemplo para los términos y condiciones.',
+      'termsText':
+          'Este es un texto de ejemplo para los términos y condiciones.',
       'info': 'Información del hospital',
       'nosotros': 'Nosotros',
       'servicios': 'Servicios médicos',
@@ -67,7 +70,8 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
       'viewLocations': 'View locations',
       'terms': 'Terms and Conditions',
       'termsTitle': 'Terms and Conditions',
-      'termsText': 'This is a sample text for the terms and conditions section.',
+      'termsText':
+          'This is a sample text for the terms and conditions section.',
       'info': 'Hospital Information',
       'nosotros': 'About Us',
       'servicios': 'Medical Services',
@@ -135,22 +139,24 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-
               ListTile(
-                leading: const Icon(Icons.local_hospital, color: Color(0xFF009639)),
+                leading:
+                    const Icon(Icons.local_hospital, color: Color(0xFF009639)),
                 title: Text(texts[lang]!['hospital1']!),
                 onTap: () {
                   Navigator.pop(context);
-                  openMap("https://maps.google.com/?q=Av.+Lázaro+Cárdenas+4149,+Zapopan,+Jalisco");
+                  openMap(
+                      "https://maps.google.com/?q=Av.+Lázaro+Cárdenas+4149,+Zapopan,+Jalisco");
                 },
               ),
-
               ListTile(
-                leading: const Icon(Icons.local_hospital, color: Color(0xFF003DA5)),
+                leading:
+                    const Icon(Icons.local_hospital, color: Color(0xFF003DA5)),
                 title: Text(texts[lang]!['hospital2']!),
                 onTap: () {
                   Navigator.pop(context);
-                  openMap("https://maps.google.com/?q=Av.+Central+911,+Zapopan,+Jalisco");
+                  openMap(
+                      "https://maps.google.com/?q=Av.+Central+911,+Zapopan,+Jalisco");
                 },
               ),
             ],
@@ -282,9 +288,7 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
                         style: const TextStyle(color: Colors.white),
                       ),
                     ),
-
                     const SizedBox(height: 12),
-
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF009639),
@@ -299,13 +303,12 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
                         style: const TextStyle(color: Colors.white),
                       ),
                     ),
-
                     const SizedBox(height: 12),
-
                     OutlinedButton(
                       style: OutlinedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 50),
-                        side: const BorderSide(color: Color(0xFF003DA5), width: 2),
+                        side: const BorderSide(
+                            color: Color(0xFF003DA5), width: 2),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -336,7 +339,6 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
                       ),
                     ),
                     const SizedBox(height: 15),
-
                     GridView.count(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -344,11 +346,16 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
                       crossAxisSpacing: 12,
                       mainAxisSpacing: 12,
                       children: [
-                        _infoCard(Icons.info_outline, texts[lang]!['nosotros']!, () {}),
-                        _infoCard(Icons.local_hospital_outlined, texts[lang]!['servicios']!, () {}),
-                        _infoCard(Icons.medical_services_outlined, texts[lang]!['especialidades']!, () {}),
-                        _infoCard(Icons.child_friendly, texts[lang]!['maternidad']!, () {}),
-                        _infoCard(Icons.people_alt_outlined, texts[lang]!['directorio']!, () {}),
+                        _infoCard(Icons.info_outline, texts[lang]!['nosotros']!,
+                            () {}),
+                        _infoCard(Icons.local_hospital_outlined,
+                            texts[lang]!['servicios']!, () {}),
+                        _infoCard(Icons.medical_services_outlined,
+                            texts[lang]!['especialidades']!, () {}),
+                        _infoCard(Icons.child_friendly,
+                            texts[lang]!['maternidad']!, () {}),
+                        _infoCard(Icons.people_alt_outlined,
+                            texts[lang]!['directorio']!, () {}),
                       ],
                     ),
                   ],

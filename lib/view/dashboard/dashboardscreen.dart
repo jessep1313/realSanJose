@@ -8,13 +8,13 @@ import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
 import 'package:real_san_jose/view/schedule/schedule.dart';
 import 'package:real_san_jose/view/chat/chatscreen.dart';
 import 'package:real_san_jose/view/profile/profilescreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Nuevas pantallas
 import 'package:real_san_jose/view/agendar/agendar_screen.dart';
 import 'package:real_san_jose/view/lab/lab_results_screen.dart';
 import 'package:real_san_jose/view/rayosx/rayosx_screen.dart';
 import 'package:real_san_jose/view/notas/notas_screen.dart';
-import 'package:real_san_jose/view/personas/personas_screen.dart';
 import 'package:real_san_jose/view/expediente/expediente_screen.dart';
 import 'package:real_san_jose/view/ayuda/ayuda_screen.dart';
 
@@ -30,12 +30,26 @@ class DashboardScreen extends ConsumerStatefulWidget {
 class DashboardScreenState extends ConsumerState<DashboardScreen> {
   late PersistentTabController controller;
 
+  String fullname = "";
+  String curp = "";
+
   @override
   void initState() {
     super.initState();
     controller = PersistentTabController(initialIndex: 0);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(configProvider).setController(controller);
+      loadUserData();
+    });
+  }
+
+  Future<void> loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      fullname = prefs.getString("fullname") ?? "";
+      curp = prefs.getString("curp") ?? "";
     });
   }
 
@@ -64,11 +78,11 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
       context,
       controller: controller,
       screens: [
-        HomeTab(),
+        HomeTab(fullname: fullname, curp: curp),
         ScheduleScreen(),
         ChatScreen(),
         Profilescreen(),
-        Container(), // Tab vacío para logout
+        Container(),
       ],
       items: [
         PersistentBottomNavBarItem(
@@ -104,7 +118,7 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
           inactiveColorPrimary: CupertinoColors.white,
           onPressed: (navContext) {
             showDialog(
-              context: this.context,
+              context: context,
               builder: (_) => AlertDialog(
                 title: Text(textos[lang]!['logout']!),
                 content: Text(lang == 'es'
@@ -112,14 +126,17 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
                     : "Do you want to log out?"),
                 actions: [
                   TextButton(
-                    onPressed: () => Navigator.pop(this.context),
+                    onPressed: () => Navigator.pop(context),
                     child: Text(lang == 'es' ? "No" : "No"),
                   ),
                   TextButton(
-                    onPressed: () {
-                      Navigator.pop(this.context);
+                    onPressed: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.clear();
+
+                      Navigator.pop(context);
                       Navigator.pushAndRemoveUntil(
-                        this.context,
+                        context,
                         MaterialPageRoute(builder: (_) => OnboardingScreen()),
                         (route) => false,
                       );
@@ -147,9 +164,14 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
 
 /// HOME TAB
 class HomeTab extends ConsumerWidget {
-  HomeTab({super.key});
+  final String fullname;
+  final String curp;
 
-  final PageController _pageController = PageController();
+  const HomeTab({
+    super.key,
+    required this.fullname,
+    required this.curp,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -178,127 +200,131 @@ class HomeTab extends ConsumerWidget {
       }
     };
 
-    final nombreCliente = "Juan Pérez";
-    final rfcCurpCliente = "CURP: XXXX000000HDFRRR01";
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight, // ← ELIMINA ESPACIO BLANCO
-                ),
-                child: Column(
-                  children: [
-                    // Header
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.notifications_none,
-                                color: Color(0xFF003DA5)),
-                            onPressed: () {},
-                          ),
-                          Image.asset('assets/icons/logo.jpg', height: 90),
-                          DropdownButton<String>(
-                            value: lang,
-                            underline: const SizedBox(),
-                            items: const [
-                              DropdownMenuItem(value: 'es', child: Text('ES 🇲🇽')),
-                              DropdownMenuItem(value: 'en', child: Text('EN 🇺🇸')),
-                            ],
-                            onChanged: (value) {
-                              if (value != null) {
-                                ref.read(languageProvider.notifier).state = value;
-                              }
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Hola + RFC/CURP
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Column(
-                        children: [
-                          Text(
-                            "${textos[lang]!['hola']} $nombreCliente",
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            rfcCurpCliente,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[700],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // GRID
-                    GridView.count(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      crossAxisCount: 3,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                      children: [
-                        _serviceCard(textos[lang]!['agendar']!, Icons.add_circle_outline, () {
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => const AgendarScreen()));
-                        }),
-                        _serviceCard(textos[lang]!['misCitas']!, Icons.event_note, () {
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => ScheduleScreen()));
-                        }),
-                        _serviceCard(textos[lang]!['notas']!, Icons.description_outlined, () {
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => const NotasScreen()));
-                        }),
-                        _serviceCard(textos[lang]!['lab']!, Icons.biotech, () {
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => const LabResultsScreen()));
-                        }),
-                        _serviceCard(textos[lang]!['rayosx']!, Icons.image_search, () {
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => const RayosXScreen()));
-                        }),
-                        _serviceCard(textos[lang]!['historial']!, Icons.folder_shared, () {
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => const ExpedienteScreen()));
-                        }),
-                        _serviceCard(textos[lang]!['ayuda']!, Icons.help_outline, () {
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => const AyudaScreen()));
-                        }),
-                      ],
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // Banner (sin espacio blanco debajo)
-                    SizedBox(
-                      height: 250,
-                      child: PageView(
-                        controller: _pageController,
-                        padEnds: false,
-                        children: const [
-                          _SliderImage(assetPath: 'assets/images/imagen_banner_2.png'),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+        child: Column(
+          children: [
+            // ⭐ HEADER EXACTO COMO PROFILESCREEN
+            AppBar(
+              elevation: 0,
+              backgroundColor: Colors.white,
+              leading: IconButton(
+                icon: const Icon(Icons.notifications_none,
+                    color: Color(0xFF003DA5), size: 28),
+                onPressed: () {},
               ),
-            );
-          },
+              title: Center(
+                child: Image.asset('assets/icons/logo.jpg', height: 90),
+              ),
+              actions: [
+                DropdownButton<String>(
+                  value: lang,
+                  underline: const SizedBox(),
+                  items: const [
+                    DropdownMenuItem(value: 'es', child: Text('ES 🇲🇽')),
+                    DropdownMenuItem(value: 'en', child: Text('EN 🇺🇸')),
+                  ],
+                  onChanged: (value) {
+                    if (value != null) {
+                      ref.read(languageProvider.notifier).state = value;
+                    }
+                  },
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 25), // ⭐ MÁS ESPACIO DESPUÉS DEL HEADER
+
+            // ⭐ SALUDO CENTRADO + NOMBRE DEBAJO
+            Column(
+              children: [
+                Text(
+                  textos[lang]!['hola']!,
+                  style: const TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF003DA5),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  fullname,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "CURP: $curp",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[700],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 25), // ⭐ MÁS ESPACIO ANTES DEL GRID
+
+            // ⭐ GRID DE SERVICIOS
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 3,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                children: [
+                  _serviceCard(
+                      textos[lang]!['agendar']!, Icons.add_circle_outline, () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const AgendarScreen()));
+                  }),
+                  _serviceCard(textos[lang]!['misCitas']!, Icons.event_note,
+                      () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => ScheduleScreen()));
+                  }),
+                  _serviceCard(
+                      textos[lang]!['notas']!, Icons.description_outlined, () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => const NotasScreen()));
+                  }),
+                  _serviceCard(textos[lang]!['lab']!, Icons.biotech, () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const LabResultsScreen()));
+                  }),
+                  _serviceCard(textos[lang]!['rayosx']!, Icons.image_search,
+                      () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const RayosXScreen()));
+                  }),
+                  _serviceCard(textos[lang]!['historial']!, Icons.folder_shared,
+                      () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const ExpedienteScreen()));
+                  }),
+                  _serviceCard(textos[lang]!['ayuda']!, Icons.help_outline, () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => const AyudaScreen()));
+                  }),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -335,22 +361,6 @@ class HomeTab extends ConsumerWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _SliderImage extends StatelessWidget {
-  final String assetPath;
-  const _SliderImage({required this.assetPath});
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: Image.asset(
-        assetPath,
-        fit: BoxFit.cover,
       ),
     );
   }

@@ -15,6 +15,8 @@ import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
 class Profilescreen extends ConsumerWidget {
   static var routeName = "/profilescreen";
 
+  const Profilescreen({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final lang = ref.watch(languageProvider);
@@ -155,8 +157,7 @@ class Profilescreen extends ConsumerWidget {
                                   child: Card(
                                     color: const Color(0xFF003DA5),
                                     shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(5)),
+                                        borderRadius: BorderRadius.circular(5)),
                                     child: Padding(
                                       padding: const EdgeInsets.all(6),
                                       child: Row(

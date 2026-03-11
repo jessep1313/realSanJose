@@ -11,6 +11,8 @@ import 'package:real_san_jose/view/callscreen/callscreen.dart';
 import 'package:real_san_jose/view/chatdetails/chatdetailscreen.dart';
 
 class ConsultSection extends ConsumerWidget {
+  const ConsultSection({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(

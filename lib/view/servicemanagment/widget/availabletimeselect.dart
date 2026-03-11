@@ -37,9 +37,8 @@ class AvailabletimeselectScreenState
 
   @override
   Widget build(BuildContext context) {
-   final status= ref
-        .watch(serviceMangementProvider)
-        .weekslistStatus[widget.index];
+    final status =
+        ref.watch(serviceMangementProvider).weekslistStatus[widget.index];
     return Container(
       decoration: bgDecoration(),
       child: Scaffold(
@@ -85,9 +84,7 @@ class AvailabletimeselectScreenState
                         Row(
                           children: [
                             Text(
-                              status
-                                  ? "Active"
-                                  : "InActive",
+                              status ? "Active" : "InActive",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
@@ -95,7 +92,7 @@ class AvailabletimeselectScreenState
                             ),
                             Spacer(),
                             Switch(
-                              activeColor: AppColor.appAlternateColor,
+                              activeThumbColor: AppColor.appAlternateColor,
                               value: status,
                               onChanged: (value) {
                                 ref

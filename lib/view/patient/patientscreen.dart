@@ -17,6 +17,8 @@ import '../../model/schedule.dart';
 class PatientScreen extends ConsumerStatefulWidget {
   static var routeName = "/patientscreen";
 
+  const PatientScreen({super.key});
+
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => PatientScreenState();
 }

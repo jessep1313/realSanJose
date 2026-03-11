@@ -14,6 +14,8 @@ import 'package:real_san_jose/view/chat/widget/story.dart';
 import 'package:real_san_jose/view/notification/notificationscreen.dart';
 
 class ChatScreen extends ConsumerWidget {
+  const ChatScreen({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final scheduleList = ref.read(scheduleProvider).scheduleList;

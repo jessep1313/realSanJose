@@ -10,6 +10,8 @@ import 'package:real_san_jose/utils/appcolor.dart';
 import 'package:real_san_jose/view/details/detailscreen.dart';
 
 class AppointmentSection extends ConsumerStatefulWidget {
+  const AppointmentSection({super.key});
+
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
       AppointmentSectionState();

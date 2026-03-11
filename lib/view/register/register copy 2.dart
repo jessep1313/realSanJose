@@ -14,6 +14,8 @@ import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
 class RegisterScreen extends ConsumerStatefulWidget {
   static var routeName = "/registerscreen";
 
+  const RegisterScreen({super.key});
+
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _RegisterScreenState();
 }
@@ -71,35 +73,47 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   Future<void> _procesarIne(File imagen) async {
-  // OCR deshabilitado temporalmente (ML Kit removido)
+    // OCR deshabilitado temporalmente (ML Kit removido)
 
-  // Si quieres, puedes dejar un mensaje o simplemente no hacer nada
-  debugPrint('OCR deshabilitado temporalmente');
+    // Si quieres, puedes dejar un mensaje o simplemente no hacer nada
+    debugPrint('OCR deshabilitado temporalmente');
 
-  // Ejemplo opcional: limpiar campos para que el usuario los llene manualmente
-  // nombreCtrl.clear();
-  // apellidosCtrl.clear();
-  // fechaCtrl.clear();
-  // domicilioCtrl.clear();
-  // municipioCtrl.clear();
-  // cpCtrl.clear();
-  // estadoCtrl.clear();
-  // rfcCtrl.clear();
-  // curpCtrl.clear();
-}
-
+    // Ejemplo opcional: limpiar campos para que el usuario los llene manualmente
+    // nombreCtrl.clear();
+    // apellidosCtrl.clear();
+    // fechaCtrl.clear();
+    // domicilioCtrl.clear();
+    // municipioCtrl.clear();
+    // cpCtrl.clear();
+    // estadoCtrl.clear();
+    // rfcCtrl.clear();
+    // curpCtrl.clear();
+  }
 
   bool _validarCampos() {
     String error = '';
-    if (nombreCtrl.text.trim().isEmpty) error = 'Nombre es obligatorio';
-    else if (apellidosCtrl.text.trim().isEmpty) error = 'Apellidos son obligatorios';
-    else if (fechaCtrl.text.trim().isEmpty) error = 'Fecha de nacimiento es obligatoria';
-    else if (domicilioCtrl.text.trim().isEmpty) error = 'Domicilio es obligatorio';
-    else if (municipioCtrl.text.trim().isEmpty) error = 'Municipio es obligatorio';
-    else if (cpCtrl.text.trim().isEmpty || !RegExp(r'^\d{5}$').hasMatch(cpCtrl.text)) error = 'Código Postal inválido';
-    else if (estadoCtrl.text.trim().isEmpty) error = 'Estado es obligatorio';
-    else if (rfcCtrl.text.trim().isEmpty || !RegExp(r'^[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}$').hasMatch(rfcCtrl.text.toUpperCase())) error = 'RFC inválido';
-    else if (curpCtrl.text.trim().isEmpty || !RegExp(r'^[A-Z]{4}\d{6}[HM][A-Z]{5}\d{2}$').hasMatch(curpCtrl.text.toUpperCase())) error = 'CURP inválida';
+    if (nombreCtrl.text.trim().isEmpty) {
+      error = 'Nombre es obligatorio';
+    } else if (apellidosCtrl.text.trim().isEmpty)
+      error = 'Apellidos son obligatorios';
+    else if (fechaCtrl.text.trim().isEmpty)
+      error = 'Fecha de nacimiento es obligatoria';
+    else if (domicilioCtrl.text.trim().isEmpty)
+      error = 'Domicilio es obligatorio';
+    else if (municipioCtrl.text.trim().isEmpty)
+      error = 'Municipio es obligatorio';
+    else if (cpCtrl.text.trim().isEmpty ||
+        !RegExp(r'^\d{5}$').hasMatch(cpCtrl.text))
+      error = 'Código Postal inválido';
+    else if (estadoCtrl.text.trim().isEmpty)
+      error = 'Estado es obligatorio';
+    else if (rfcCtrl.text.trim().isEmpty ||
+        !RegExp(r'^[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}$')
+            .hasMatch(rfcCtrl.text.toUpperCase()))
+      error = 'RFC inválido';
+    else if (curpCtrl.text.trim().isEmpty ||
+        !RegExp(r'^[A-Z]{4}\d{6}[HM][A-Z]{5}\d{2}$')
+            .hasMatch(curpCtrl.text.toUpperCase())) error = 'CURP inválida';
 
     if (error.isNotEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -232,17 +246,20 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             ChoiceChip(
                               label: const Text('INE'),
                               selected: tipoDocumento == 'INE',
-                              onSelected: (_) => setState(() => tipoDocumento = 'INE'),
+                              onSelected: (_) =>
+                                  setState(() => tipoDocumento = 'INE'),
                             ),
                             ChoiceChip(
                               label: const Text('Pasaporte'),
                               selected: tipoDocumento == 'Pasaporte',
-                              onSelected: (_) => setState(() => tipoDocumento = 'Pasaporte'),
+                              onSelected: (_) =>
+                                  setState(() => tipoDocumento = 'Pasaporte'),
                             ),
                             ChoiceChip(
                               label: const Text('CURP'),
                               selected: tipoDocumento == 'CURP',
-                              onSelected: (_) => setState(() => tipoDocumento = 'CURP'),
+                              onSelected: (_) =>
+                                  setState(() => tipoDocumento = 'CURP'),
                             ),
                           ],
                         ),
@@ -257,7 +274,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             ),
                             Text(
                               textos[lang]!['docHint']!,
-                              style: const TextStyle(fontSize: 13, color: Colors.black54),
+                              style: const TextStyle(
+                                  fontSize: 13, color: Colors.black54),
                             ),
                           ],
                         ),
@@ -270,7 +288,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                 label: Text(textos[lang]!['camera']!),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.white,
-                                  side: const BorderSide(color: Color(0xFF003DA5), width: 2),
+                                  side: const BorderSide(
+                                      color: Color(0xFF003DA5), width: 2),
                                 ),
                                 onPressed: _pickFromCamera,
                               ),
@@ -282,7 +301,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                 label: Text(textos[lang]!['gallery']!),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.white,
-                                  side: const BorderSide(color: Color(0xFF003DA5), width: 2),
+                                  side: const BorderSide(
+                                      color: Color(0xFF003DA5), width: 2),
                                 ),
                                 onPressed: _pickFromGallery,
                               ),
@@ -374,7 +394,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -406,4 +427,3 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     );
   }
 }
-

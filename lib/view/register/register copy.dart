@@ -15,6 +15,8 @@ import 'package:real_san_jose/view/login/widget/socialbutton.dart';
 class RegisterScreen extends ConsumerWidget {
   static var routeName = "/registerscreen";
 
+  const RegisterScreen({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(

@@ -95,7 +95,7 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
           inactiveColorPrimary: CupertinoColors.white,
         ),
 
-        // 🔥 NUEVO: Cerrar sesión
+        // 🔥 CERRAR SESIÓN
         PersistentBottomNavBarItem(
           icon: const Icon(Icons.logout, size: 20),
           title: "",
@@ -103,7 +103,7 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
           inactiveColorPrimary: CupertinoColors.white,
           onPressed: (navContext) {
             showDialog(
-              context: context,
+              context: this.context,
               builder: (_) => AlertDialog(
                 title: Text(textos[lang]!['logout']!),
                 content: Text(lang == 'es'
@@ -111,14 +111,14 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
                     : "Do you want to log out?"),
                 actions: [
                   TextButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => Navigator.pop(this.context),
                     child: Text(lang == 'es' ? "No" : "No"),
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.pop(context);
+                      Navigator.pop(this.context);
                       Navigator.pushAndRemoveUntil(
-                        context,
+                        this.context,
                         MaterialPageRoute(builder: (_) => OnboardingScreen()),
                         (route) => false,
                       );
@@ -183,134 +183,156 @@ class HomeTab extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // Header
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.notifications_none,
-                          color: Color(0xFF003DA5)),
-                      onPressed: () {},
-                    ),
-                    Image.asset('assets/icons/logo.jpg', height: 90),
-                    DropdownButton<String>(
-                      value: lang,
-                      underline: const SizedBox(),
-                      items: const [
-                        DropdownMenuItem(value: 'es', child: Text('ES 🇲🇽')),
-                        DropdownMenuItem(value: 'en', child: Text('EN 🇺🇸')),
-                      ],
-                      onChanged: (value) {
-                        if (value != null) {
-                          ref.read(languageProvider.notifier).state = value;
-                        }
-                      },
-                    ),
-                  ],
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight, // ← ELIMINA ESPACIO BLANCO
                 ),
-              ),
-
-              // Hola + RFC/CURP
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   children: [
-                    Text(
-                      "${textos[lang]!['hola']} $nombreCliente",
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                    // Header
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.notifications_none,
+                                color: Color(0xFF003DA5)),
+                            onPressed: () {},
+                          ),
+                          Image.asset('assets/icons/logo.jpg', height: 90),
+                          DropdownButton<String>(
+                            value: lang,
+                            underline: const SizedBox(),
+                            items: const [
+                              DropdownMenuItem(
+                                  value: 'es', child: Text('ES 🇲🇽')),
+                              DropdownMenuItem(
+                                  value: 'en', child: Text('EN 🇺🇸')),
+                            ],
+                            onChanged: (value) {
+                              if (value != null) {
+                                ref.read(languageProvider.notifier).state =
+                                    value;
+                              }
+                            },
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      rfcCurpCliente,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[700],
+
+                    // Hola + RFC/CURP
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        children: [
+                          Text(
+                            "${textos[lang]!['hola']} $nombreCliente",
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            rfcCurpCliente,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // GRID
+                    GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: 3,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      children: [
+                        _serviceCard(
+                            textos[lang]!['agendar']!, Icons.add_circle_outline,
+                            () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const AgendarScreen()));
+                        }),
+                        _serviceCard(
+                            textos[lang]!['misCitas']!, Icons.event_note, () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => ScheduleScreen()));
+                        }),
+                        _serviceCard(
+                            textos[lang]!['notas']!, Icons.description_outlined,
+                            () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const NotasScreen()));
+                        }),
+                        _serviceCard(textos[lang]!['lab']!, Icons.biotech, () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const LabResultsScreen()));
+                        }),
+                        _serviceCard(
+                            textos[lang]!['rayosx']!, Icons.image_search, () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const RayosXScreen()));
+                        }),
+                        _serviceCard(
+                            textos[lang]!['historial']!, Icons.folder_shared,
+                            () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const ExpedienteScreen()));
+                        }),
+                        _serviceCard(
+                            textos[lang]!['ayuda']!, Icons.help_outline, () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const AyudaScreen()));
+                        }),
+                      ],
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Banner (sin espacio blanco debajo)
+                    SizedBox(
+                      height: 250,
+                      child: PageView(
+                        controller: _pageController,
+                        padEnds: false,
+                        children: const [
+                          _SliderImage(
+                              assetPath: 'assets/images/imagen_banner_2.png'),
+                        ],
                       ),
                     ),
                   ],
                 ),
               ),
-
-              const SizedBox(height: 16),
-
-              // GRID
-              GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 3,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                children: [
-                  _serviceCard(
-                      textos[lang]!['agendar']!, Icons.add_circle_outline, () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const AgendarScreen()));
-                  }),
-                  _serviceCard(textos[lang]!['misCitas']!, Icons.event_note,
-                      () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => ScheduleScreen()));
-                  }),
-                  _serviceCard(
-                      textos[lang]!['notas']!, Icons.description_outlined, () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => const NotasScreen()));
-                  }),
-                  _serviceCard(textos[lang]!['lab']!, Icons.biotech, () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const LabResultsScreen()));
-                  }),
-                  _serviceCard(textos[lang]!['rayosx']!, Icons.image_search,
-                      () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const RayosXScreen()));
-                  }),
-                  _serviceCard(textos[lang]!['historial']!, Icons.folder_shared,
-                      () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const ExpedienteScreen()));
-                  }),
-                  _serviceCard(textos[lang]!['ayuda']!, Icons.help_outline, () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => const AyudaScreen()));
-                  }),
-                ],
-              ),
-
-              const SizedBox(height: 16),
-
-              // Banner
-              SizedBox(
-                height: 250,
-                child: PageView(
-                  controller: _pageController,
-                  padEnds: false, // ← evita espacios laterales
-                  children: const [
-                    _SliderImage(
-                        assetPath: 'assets/images/imagen_banner_2.png'),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
@@ -334,6 +356,7 @@ class HomeTab extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(icon, color: const Color(0xFF009639), size: 28),
+              const SizedBox(height: 6),
               Text(
                 title,
                 style: const TextStyle(

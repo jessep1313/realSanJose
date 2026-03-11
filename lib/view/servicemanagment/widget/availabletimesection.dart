@@ -9,6 +9,8 @@ import '../../../common/widget/customtextfield.dart';
 import '../../../utils/appcolor.dart';
 
 class AvailableTimeSection extends ConsumerWidget {
+  const AvailableTimeSection({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final weeksList = ref.watch(serviceMangementProvider).weekslist;
@@ -52,7 +54,8 @@ class AvailableTimeSection extends ConsumerWidget {
                   final weekStatus = weeksStatusList[index];
                   return GestureDetector(
                     onTap: () {
-                      context.push(AvailabletimeselectScreen.routeName,extra: index);
+                      context.push(AvailabletimeselectScreen.routeName,
+                          extra: index);
                     },
                     child: Container(
                       margin: EdgeInsets.all(5),
@@ -68,7 +71,7 @@ class AvailableTimeSection extends ConsumerWidget {
                           child: Text(
                         week,
                         style: TextStyle(
-                            color:weekStatus ? Colors.white : Colors.black),
+                            color: weekStatus ? Colors.white : Colors.black),
                       )),
                     ),
                   );

@@ -17,7 +17,7 @@ import 'package:real_san_jose/view/patientdetail/widget/vistingsection.dart';
 class PatientDetailsScreen extends ConsumerStatefulWidget {
   static var routeName = "/patientdetailscreen";
 
-  PatientDetailsScreen({
+  const PatientDetailsScreen({
     super.key,
   });
 

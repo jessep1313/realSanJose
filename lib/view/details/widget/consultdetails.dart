@@ -6,6 +6,8 @@ import 'package:real_san_jose/common/widget/customtextfield.dart';
 import 'package:real_san_jose/utils/appcolor.dart';
 
 class ConsultDetails extends ConsumerWidget {
+  const ConsultDetails({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(

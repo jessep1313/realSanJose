@@ -14,9 +14,7 @@ class ChatDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final chatList = ref
-        .watch(chatProvider)
-        .messages;
+    final chatList = ref.watch(chatProvider).messages;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -142,15 +140,15 @@ class ChatDetailScreen extends ConsumerWidget {
                           decoration: BoxDecoration(
                             borderRadius: messages.messageType == "receiver"
                                 ? const BorderRadius.only(
-                                topLeft: Radius.circular(15),
-                                topRight: Radius.circular(15),
-                                bottomLeft: Radius.circular(0),
-                                bottomRight: Radius.circular(15))
+                                    topLeft: Radius.circular(15),
+                                    topRight: Radius.circular(15),
+                                    bottomLeft: Radius.circular(0),
+                                    bottomRight: Radius.circular(15))
                                 : const BorderRadius.only(
-                                topLeft: Radius.circular(15),
-                                topRight: Radius.circular(15),
-                                bottomLeft: Radius.circular(15),
-                                bottomRight: Radius.circular(0)),
+                                    topLeft: Radius.circular(15),
+                                    topRight: Radius.circular(15),
+                                    bottomLeft: Radius.circular(15),
+                                    bottomRight: Radius.circular(0)),
                             color: (messages.messageType == "receiver"
                                 ? Colors.grey.withOpacity(0.2)
                                 : AppColor.appThemeColor),
@@ -202,7 +200,7 @@ class ChatDetailScreen extends ConsumerWidget {
                         child: TextField(
                           onTapOutside: (value) {
                             FocusScopeNode currentFocus =
-                            FocusScope.of(context);
+                                FocusScope.of(context);
                             if (!currentFocus.hasPrimaryFocus &&
                                 currentFocus.focusedChild != null) {
                               currentFocus.focusedChild?.unfocus();
@@ -231,13 +229,13 @@ class ChatDetailScreen extends ConsumerWidget {
                       ),
                       FloatingActionButton(
                         onPressed: () {},
+                        backgroundColor: Colors.transparent,
+                        elevation: 0,
                         child: const Icon(
                           Icons.send,
                           color: AppColor.textPrimaryColor,
                           size: 30,
                         ),
-                        backgroundColor: Colors.transparent,
-                        elevation: 0,
                       ),
                     ],
                   ),

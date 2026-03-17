@@ -29,6 +29,9 @@ class AuthService {
     }
   }
 
+  /// Obtiene el catálogo de aseguradoras.
+  /// Devuelve una lista de mapas donde cada elemento contiene al menos:
+  /// { "id": <id>, "Servicio": "<nombre visible>" }
   Future<List<Map<String, dynamic>>> fetchAseguradoras() async {
     final url = Uri.parse("$baseUrl/catalogos/aseguradoras");
     final response = await http.get(
@@ -41,23 +44,32 @@ class AuthService {
 
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
-      List<dynamic> rawList = [];
-      if (body is List)
-        rawList = body;
-      else if (body is Map && body['data'] is List)
-        rawList = body['data'];
-      else if (body is Map && body['items'] is List)
-        rawList = body['items'];
-      else
-        rawList = [];
 
+      // Ajustes según estructura de la API:
+      // - Si la API devuelve una lista directa: body is List
+      // - Si devuelve { data: [...] } entonces usamos body['data']
+      List<dynamic> rawList = [];
+      if (body is List) {
+        rawList = body;
+      } else if (body is Map && body['data'] is List) {
+        rawList = body['data'];
+      } else if (body is Map && body['items'] is List) {
+        rawList = body['items'];
+      } else {
+        // Si la estructura es distinta, intentar convertir a lista vacía
+        rawList = [];
+      }
+
+      // Normalizar cada item a Map<String, dynamic>
       final List<Map<String, dynamic>> lista = rawList
           .map((e) =>
               e is Map ? Map<String, dynamic>.from(e) : <String, dynamic>{})
           .toList();
 
+      // Filtrar y asegurar que cada item tenga 'id' y 'Servicio' (si no, intentar mapear)
       return lista.map((m) {
         final Map<String, dynamic> normalized = Map<String, dynamic>.from(m);
+        // Intentos de mapeo si claves vienen con otros nombres
         if (!normalized.containsKey('id')) {
           if (normalized.containsKey('ID'))
             normalized['id'] = normalized['ID'];
@@ -81,52 +93,5 @@ class AuthService {
     } else {
       throw Exception("Error fetching aseguradoras: ${response.statusCode}");
     }
-  }
-
-  Future<Map<String, dynamic>> register(Map<String, dynamic> payload) async {
-    final url = Uri.parse("$baseUrl/auth/singup");
-    final response = await http.post(
-      url,
-      headers: {
-        "Authorization": "Bearer $masterToken",
-        "Content-Type": "application/json",
-      },
-      body: jsonEncode(payload),
-    );
-
-    if (response.statusCode == 200 ||
-        response.statusCode == 201 ||
-        response.statusCode == 204) {
-      if (response.body.trim().isEmpty) {
-        return {'success': true, 'message': 'Registro exitoso', 'data': null};
-      }
-      try {
-        final body = jsonDecode(response.body);
-        return {
-          'success': true,
-          'message': body is Map && body['message'] != null
-              ? body['message']
-              : 'Registro exitoso',
-          'data': body
-        };
-      } catch (_) {
-        return {'success': true, 'message': 'Registro exitoso', 'data': null};
-      }
-    }
-
-    final serverMsg = response.body.trim();
-    if (response.statusCode == 400 || response.statusCode == 409) {
-      return {
-        'success': false,
-        'message': serverMsg.isNotEmpty ? serverMsg : 'Error en registro',
-        'data': null
-      };
-    }
-
-    return {
-      'success': false,
-      'message': 'Error del servidor: ${response.statusCode}',
-      'data': null
-    };
   }
 }

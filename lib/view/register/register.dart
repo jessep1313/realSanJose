@@ -1,5 +1,6 @@
 // lib/view/register/register.dart
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -28,31 +29,44 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final picker = ImagePicker();
 
   // Imágenes específicas
-  XFile? documentoImagen; // para pasaporte u otros documentos genéricos
+  XFile? documentoImagen;
   XFile? ineFrente;
   XFile? ineReverso;
 
-  // Controladores
+  // Controladores (todos los campos solicitados)
+  final paternoCtrl = TextEditingController();
+  final maternoCtrl = TextEditingController();
   final nombreCtrl = TextEditingController();
-  final apellidosCtrl = TextEditingController();
-  final fechaCtrl = TextEditingController(); // formato sugerido: DD/MM/AAAA
-  final domicilioCtrl = TextEditingController();
-  final municipioCtrl = TextEditingController();
-  final cpCtrl = TextEditingController();
-  final estadoCtrl = TextEditingController();
-  final rfcCtrl = TextEditingController();
+  final fechaCtrl = TextEditingController(); // stores yyyy-MM-dd when selected
+  String sexo = 'MASCULINO'; // default to Masculino
+  final correoCtrl = TextEditingController();
+  final telefonoCtrl = TextEditingController();
   final curpCtrl = TextEditingController();
+  final rfcCtrl = TextEditingController();
+  final pasaporteCtrl = TextEditingController();
+  final calleCtrl = TextEditingController();
+  final noExteriorCtrl = TextEditingController();
+  final noInteriorCtrl = TextEditingController();
+  final coloniaCtrl = TextEditingController();
+  final ciudadCtrl = TextEditingController();
+  final estadoCtrl = TextEditingController();
+  final paisCtrl = TextEditingController(); // start empty
+  final cpCtrl = TextEditingController();
+  final nacionalidadCtrl = TextEditingController(); // start empty
+  final passwordCtrl = TextEditingController();
 
-  // Seguro
+  // Seguro (moved to end of form)
   bool tieneSeguro = false;
   List<Map<String, dynamic>> aseguradoras = [];
   String? aseguradoraSeleccionadaId;
   final polizaCtrl = TextEditingController();
   bool cargandoAseguradoras = false;
 
-  // Nacionalidad y tipo de documento
-  String nacionalidad = 'Mexicano'; // Mexicano | Extranjero
-  String tipoDocumento = 'INE'; // INE | Pasaporte
+  // Nacionalidad y tipo de documento (no defaults)
+  String nacionalidad = ''; // '' | 'Mexicano' | 'Extranjero'
+  String tipoDocumento = ''; // '' | 'INE' | 'Pasaporte'
+
+  bool isSubmitting = false;
 
   @override
   void initState() {
@@ -62,15 +76,25 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   void dispose() {
+    paternoCtrl.dispose();
+    maternoCtrl.dispose();
     nombreCtrl.dispose();
-    apellidosCtrl.dispose();
     fechaCtrl.dispose();
-    domicilioCtrl.dispose();
-    municipioCtrl.dispose();
-    cpCtrl.dispose();
-    estadoCtrl.dispose();
-    rfcCtrl.dispose();
+    correoCtrl.dispose();
+    telefonoCtrl.dispose();
     curpCtrl.dispose();
+    rfcCtrl.dispose();
+    pasaporteCtrl.dispose();
+    calleCtrl.dispose();
+    noExteriorCtrl.dispose();
+    noInteriorCtrl.dispose();
+    coloniaCtrl.dispose();
+    ciudadCtrl.dispose();
+    estadoCtrl.dispose();
+    paisCtrl.dispose();
+    cpCtrl.dispose();
+    nacionalidadCtrl.dispose();
+    passwordCtrl.dispose();
     polizaCtrl.dispose();
     super.dispose();
   }
@@ -90,33 +114,26 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     }
   }
 
-  // Funciones reutilizables para cámara/galería (para pasaporte u otros)
-  Future<void> _pickFromCamera() async {
-    final archivo = await picker.pickImage(
-      source: ImageSource.camera,
-      preferredCameraDevice: CameraDevice.rear,
-      maxWidth: 1080,
-      maxHeight: 1920,
-    );
+  // Funciones para cámara/galería (kept)
+  Future<void> _pickIneFront() async {
+    final archivo = await picker.pickImage(source: ImageSource.camera);
     if (archivo != null) {
-      setState(() => documentoImagen = archivo);
-      if (tipoDocumento == 'INE') {
-        await _procesarIne(File(archivo.path));
-      }
+      setState(() => ineFrente = archivo);
+      await _procesarIne(File(archivo.path));
     }
   }
 
-  Future<void> _pickFromGallery() async {
-    final archivo = await picker.pickImage(source: ImageSource.gallery);
-    if (archivo != null) {
-      setState(() => documentoImagen = archivo);
-      if (tipoDocumento == 'INE') {
-        await _procesarIne(File(archivo.path));
-      }
-    }
+  Future<void> _pickIneBack() async {
+    final archivo = await picker.pickImage(source: ImageSource.camera);
+    if (archivo != null) setState(() => ineReverso = archivo);
   }
 
-  /// OCR con ML Kit (idéntico a tu implementación previa)
+  Future<void> _pickPassportPhoto() async {
+    final archivo = await picker.pickImage(source: ImageSource.camera);
+    if (archivo != null) setState(() => documentoImagen = archivo);
+  }
+
+  // OCR (adapted)
   Future<void> _procesarIne(File imagen) async {
     showDialog(
       context: context,
@@ -136,9 +153,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
       final curpMatch =
           RegExp(r'[A-Z]{4}\d{6}[HM][A-Z]{5}\d{2}').firstMatch(text);
-      if (curpMatch != null) {
-        curpCtrl.text = curpMatch.group(0)!;
-      }
+      if (curpMatch != null) curpCtrl.text = curpMatch.group(0)!;
 
       final dateMatch =
           RegExp(r'(\d{2})[\/\-](\d{2})[\/\-](\d{2,4})').firstMatch(text);
@@ -147,12 +162,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         final mm = dateMatch.group(2);
         final yyRaw = dateMatch.group(3)!;
         final yyyy = yyRaw.length == 2 ? '19$yyRaw' : yyRaw;
-        fechaCtrl.text = '$dd/$mm/$yyyy';
+        // store as yyyy-MM-dd
+        fechaCtrl.text = '$yyyy-${mm!.padLeft(2, '0')}-${dd!.padLeft(2, '0')}';
       }
-
-      // heurísticas nombre/apellidos/domicilio/municipio/estado (igual que antes)
-      String? nombreExtra;
-      String? apellidosExtra;
 
       final nombreLabelMatch =
           RegExp(r'NOMBRE[S]?:\s*([A-ZÁÉÍÓÚÑ\s]+)').firstMatch(text);
@@ -160,41 +172,26 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         final full = nombreLabelMatch.group(1)!.trim();
         final parts = full.split(RegExp(r'\s+'));
         if (parts.length >= 2) {
-          nombreExtra = parts.last;
-          apellidosExtra = parts.sublist(0, parts.length - 1).join(' ');
-        } else {
-          nombreExtra = full;
-        }
-      } else {
-        final fallback =
-            RegExp(r'([A-ZÁÉÍÓÚÑ]{2,}\s+[A-ZÁÉÍÓÚÑ]{2,}\s+[A-ZÁÉÍÓÚÑ]{2,})')
-                .firstMatch(text);
-        if (fallback != null) {
-          final parts = fallback.group(1)!.split(RegExp(r'\s+'));
-          if (parts.length >= 3) {
-            nombreExtra = parts.sublist(parts.length - 1).join(' ');
-            apellidosExtra = parts.sublist(0, parts.length - 1).join(' ');
+          nombreCtrl.text = parts.last;
+          paternoCtrl.text = parts.first;
+          if (parts.length > 2) {
+            maternoCtrl.text = parts.sublist(1, parts.length - 1).join(' ');
           }
+        } else {
+          nombreCtrl.text = full;
         }
-      }
-
-      if (nombreExtra != null && nombreCtrl.text.trim().isEmpty) {
-        nombreCtrl.text = nombreExtra;
-      }
-      if (apellidosExtra != null && apellidosCtrl.text.trim().isEmpty) {
-        apellidosCtrl.text = apellidosExtra;
       }
 
       final domMatch =
           RegExp(r'DOMICILIO[:\s]*([A-Z0-9ÁÉÍÓÚÑ\.,#\-\s]+)').firstMatch(text);
-      if (domMatch != null && domicilioCtrl.text.trim().isEmpty) {
-        domicilioCtrl.text = domMatch.group(1)!.trim();
+      if (domMatch != null && calleCtrl.text.trim().isEmpty) {
+        calleCtrl.text = domMatch.group(1)!.trim();
       }
 
       final municipioMatch =
           RegExp(r'MUNICIPIO[:\s]*([A-ZÁÉÍÓÚÑ\s]+)').firstMatch(text);
-      if (municipioMatch != null && municipioCtrl.text.trim().isEmpty) {
-        municipioCtrl.text = municipioMatch.group(1)!.trim();
+      if (municipioMatch != null && ciudadCtrl.text.trim().isEmpty) {
+        ciudadCtrl.text = municipioMatch.group(1)!.trim();
       }
 
       final estadoMatch =
@@ -202,38 +199,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       if (estadoMatch != null && estadoCtrl.text.trim().isEmpty) {
         if (estadoMatch.groupCount >= 2 && estadoMatch.group(2) != null) {
           estadoCtrl.text = estadoMatch.group(2)!.trim();
-        } else {
-          estadoCtrl.text = estadoMatch
-              .group(0)!
-              .replaceAll(RegExp(r'(ENTIDAD|ESTADO)[:\s]*'), '')
-              .trim();
-        }
-      }
-
-      if ((nombreCtrl.text.trim().isEmpty ||
-              apellidosCtrl.text.trim().isEmpty) &&
-          recognizedText.blocks.isNotEmpty) {
-        for (final block in recognizedText.blocks) {
-          for (final line in block.lines) {
-            final lineText = line.text.trim().toUpperCase();
-            final words = lineText.split(RegExp(r'\s+'));
-            if (words.length >= 2 &&
-                words.length <= 4 &&
-                words.every((w) => w.length >= 2)) {
-              if (curpMatch != null && lineText.contains(curpMatch.group(0)!))
-                continue;
-              if (nombreCtrl.text.trim().isEmpty) {
-                nombreCtrl.text = words.last;
-              }
-              if (apellidosCtrl.text.trim().isEmpty) {
-                apellidosCtrl.text =
-                    words.sublist(0, words.length - 1).join(' ');
-              }
-              break;
-            }
-          }
-          if (nombreCtrl.text.trim().isNotEmpty &&
-              apellidosCtrl.text.trim().isNotEmpty) break;
         }
       }
 
@@ -260,17 +225,18 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     if (curp.length < 10) return false;
 
     final nombre = nombreCtrl.text.trim().toUpperCase();
-    final apellidos = apellidosCtrl.text.trim().toUpperCase();
+    final apellidos =
+        (paternoCtrl.text + ' ' + maternoCtrl.text).trim().toUpperCase();
 
     if (nombre.isEmpty || apellidos.isEmpty) return false;
     if (fechaCtrl.text.trim().isEmpty) return false;
 
-    final partes = fechaCtrl.text.split('/');
+    final partes = fechaCtrl.text.split('-');
     if (partes.length != 3) return false;
 
-    final dd = partes[0].padLeft(2, '0');
-    final mm = partes[1].padLeft(2, '0');
-    final yyyy = partes[2];
+    final yyyy = partes[0];
+    final mm = partes[1];
+    final dd = partes[2];
     if (yyyy.length != 4) return false;
 
     final aa = yyyy.substring(2, 4);
@@ -287,29 +253,47 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     String error = '';
     if (nombreCtrl.text.trim().isEmpty) {
       error = 'Nombre es obligatorio';
-    } else if (apellidosCtrl.text.trim().isEmpty) {
-      error = 'Apellidos son obligatorios';
+    } else if (paternoCtrl.text.trim().isEmpty) {
+      error = 'Apellido paterno es obligatorio';
     } else if (fechaCtrl.text.trim().isEmpty) {
       error = 'Fecha de nacimiento es obligatoria';
-    } else if (domicilioCtrl.text.trim().isEmpty) {
-      error = 'Domicilio es obligatorio';
-    } else if (municipioCtrl.text.trim().isEmpty) {
-      error = 'Municipio es obligatorio';
-    } else if (cpCtrl.text.trim().isEmpty ||
-        !RegExp(r'^\d{5}$').hasMatch(cpCtrl.text)) {
-      error = 'Código Postal inválido';
-    } else if (estadoCtrl.text.trim().isEmpty) {
-      error = 'Estado es obligatorio';
-    } else if (rfcCtrl.text.trim().isEmpty ||
-        !RegExp(r'^[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}$')
-            .hasMatch(rfcCtrl.text.toUpperCase())) {
-      error = 'RFC inválido';
+    } else if (sexo.trim().isEmpty) {
+      error = 'Sexo es obligatorio';
+    } else if (correoCtrl.text.trim().isEmpty ||
+        !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(correoCtrl.text.trim())) {
+      error = 'Correo inválido';
+    } else if (telefonoCtrl.text.trim().isEmpty) {
+      error = 'Teléfono es obligatorio';
     } else if (curpCtrl.text.trim().isEmpty ||
         !RegExp(r'^[A-Z]{4}\d{6}[HM][A-Z]{5}\d{2}$')
             .hasMatch(curpCtrl.text.toUpperCase())) {
       error = 'CURP inválida';
-    } else if (!validarCurpConDatos()) {
-      error = 'CURP no coincide con los datos personales';
+    } else if (nacionalidad == 'Mexicano' &&
+        (rfcCtrl.text.trim().isEmpty ||
+            !RegExp(r'^[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}$')
+                .hasMatch(rfcCtrl.text.toUpperCase()))) {
+      error = 'RFC inválido';
+    } else if (tipoDocumento == 'Pasaporte' &&
+        pasaporteCtrl.text.trim().isEmpty) {
+      error = 'Número de pasaporte es obligatorio';
+    } else if (calleCtrl.text.trim().isEmpty) {
+      error = 'Calle es obligatoria';
+    } else if (noExteriorCtrl.text.trim().isEmpty) {
+      error = 'Número exterior es obligatorio';
+    } else if (coloniaCtrl.text.trim().isEmpty) {
+      error = 'Colonia es obligatoria';
+    } else if (ciudadCtrl.text.trim().isEmpty) {
+      error = 'Ciudad es obligatoria';
+    } else if (estadoCtrl.text.trim().isEmpty) {
+      error = 'Estado es obligatorio';
+    } else if (paisCtrl.text.trim().isEmpty) {
+      error = 'País es obligatorio';
+    } else if (cpCtrl.text.trim().isEmpty ||
+        !RegExp(r'^\d{5}$').hasMatch(cpCtrl.text.trim())) {
+      error = 'Código Postal inválido';
+    } else if (passwordCtrl.text.trim().isEmpty ||
+        passwordCtrl.text.trim().length < 6) {
+      error = 'Password es obligatorio (mínimo 6 caracteres)';
     }
 
     if (error.isEmpty && tieneSeguro) {
@@ -322,34 +306,58 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     }
 
     if (error.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error)),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(error)));
       return false;
     }
     return true;
   }
 
   Map<String, dynamic> buildRegisterPayload() {
-    final Map<String, dynamic> payload = <String, dynamic>{
-      'Nombre': nombreCtrl.text.trim(),
-      'Apellidos': apellidosCtrl.text.trim(),
-      'FechaNacimiento': fechaCtrl.text.trim(),
-      'Domicilio': domicilioCtrl.text.trim(),
-      'Municipio': municipioCtrl.text.trim(),
-      'CodigoPostal': cpCtrl.text.trim(),
-      'Estado': estadoCtrl.text.trim(),
-      'Rfc': rfcCtrl.text.trim(),
-      'Curp': curpCtrl.text.trim(),
-    };
-
-    if (tieneSeguro) {
-      payload['TieneSeguro'] = true;
-      payload['AseguradoraId'] = aseguradoraSeleccionadaId;
-      payload['NumeroPoliza'] = polizaCtrl.text.trim();
+    // FechaCtrl is stored as yyyy-MM-dd when selected via date picker.
+    String fechaEnvio = fechaCtrl.text.trim();
+    // If it's already yyyy-MM-dd, append T00:00:00
+    if (RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(fechaEnvio)) {
+      fechaEnvio = '${fechaEnvio}T00:00:00';
     } else {
-      payload['TieneSeguro'] = false;
+      // fallback: try to parse dd/mm/yyyy
+      final parts = fechaEnvio.split('/');
+      if (parts.length == 3) {
+        final dd = parts[0].padLeft(2, '0');
+        final mm = parts[1].padLeft(2, '0');
+        final yyyy = parts[2].length == 2 ? '19${parts[2]}' : parts[2];
+        fechaEnvio = '$yyyy-$mm-${dd}T00:00:00';
+      } else {
+        // leave as-is
+      }
     }
+
+    final Map<String, dynamic> payload = <String, dynamic>{
+      'Paterno': paternoCtrl.text.trim(),
+      'Materno': maternoCtrl.text.trim(),
+      'Nombre': nombreCtrl.text.trim(),
+      'FechaNacimiento': fechaEnvio,
+      'Sexo': sexo,
+      'Correo': correoCtrl.text.trim(),
+      'Telefono': telefonoCtrl.text.trim(),
+      'Curp': curpCtrl.text.trim(),
+      'Rfc': rfcCtrl.text.trim(),
+      'Pasaporte': pasaporteCtrl.text.trim(),
+      'Calle': calleCtrl.text.trim(),
+      'NoExterior': noExteriorCtrl.text.trim(),
+      'NoInterior': noInteriorCtrl.text.trim(),
+      'Colonia': coloniaCtrl.text.trim(),
+      'Ciudad': ciudadCtrl.text.trim(),
+      'Estado': estadoCtrl.text.trim(),
+      'Pais': paisCtrl.text.trim(),
+      'CodigoPostal': cpCtrl.text.trim(),
+      'Nacionalidad': nacionalidadCtrl.text.trim(),
+      'Password': passwordCtrl.text.trim(),
+      // Seguro fields are included but the UI places the block at the end
+      'TieneSeguro': tieneSeguro,
+      'AseguradoraId': aseguradoraSeleccionadaId,
+      'NumeroPoliza': polizaCtrl.text.trim(),
+    };
 
     return payload;
   }
@@ -357,14 +365,76 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Future<void> _submitRegistro() async {
     if (!_validarCampos()) return;
 
+    setState(() => isSubmitting = true);
     final payload = buildRegisterPayload();
-    debugPrint('Payload registro: $payload');
+    debugPrint('Payload registro: ${jsonEncode(payload)}');
 
-    // Llamada real al servicio de registro si la implementas en AuthService
-    // final service = AuthService();
-    // await service.register(payload);
+    try {
+      final service = AuthService();
+      final resp = await service.register(payload);
 
-    context.go(DashboardScreen.routeName);
+      if (resp['success'] == true) {
+        final message = resp['message'] ?? 'Registro exitoso';
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(message)));
+        // No borrar formulario. Navegar opcionalmente.
+        Future.delayed(const Duration(milliseconds: 800), () {
+          context.go(DashboardScreen.routeName);
+        });
+      } else {
+        final serverMsg = resp['message'] ?? 'Error en registro';
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(serverMsg)));
+      }
+    } catch (e) {
+      debugPrint('Error en registro: $e');
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error al registrar: $e')));
+    } finally {
+      setState(() => isSubmitting = false);
+    }
+  }
+
+  // Date picker helper: shows calendar and stores yyyy-MM-dd in fechaCtrl
+  Future<void> _selectFechaNacimiento() async {
+    final now = DateTime.now();
+    final initial = DateTime(now.year - 25, now.month, now.day);
+    final first = DateTime(1900);
+    final last = DateTime(now.year, now.month, now.day);
+
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: initial,
+      firstDate: first,
+      lastDate: last,
+      initialEntryMode: DatePickerEntryMode.calendar,
+      helpText: 'Selecciona fecha de nacimiento',
+      builder: (BuildContext context, Widget? child) {
+        // Force a light dialog background and ensure the calendar is visible (avoids transparent dialog)
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+                  primary: const Color(0xFF003DA5),
+                  onPrimary: Colors.white,
+                  surface: Colors.white,
+                  onSurface: Colors.black,
+                ),
+            dialogBackgroundColor: Colors.white,
+          ),
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
+    );
+
+    if (picked != null) {
+      final yyyy = picked.year.toString().padLeft(4, '0');
+      final mm = picked.month.toString().padLeft(2, '0');
+      final dd = picked.day.toString().padLeft(2, '0');
+      // store as yyyy-MM-dd (display and later converted to ISO with T00:00:00)
+      setState(() {
+        fechaCtrl.text = '$yyyy-$mm-$dd';
+      });
+    }
   }
 
   @override
@@ -382,15 +452,26 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         'docHint': '(INE con OCR / Pasaporte / CURP)',
         'camera': 'Tomar foto',
         'gallery': 'Elegir de galería',
-        'nombre': 'Nombre',
-        'apellidos': 'Apellidos',
-        'fecha': 'Fecha de nacimiento (DD/MM/AAAA)',
-        'domicilio': 'Domicilio',
-        'municipio': 'Municipio',
-        'cp': 'Código Postal',
-        'estado': 'Estado',
-        'rfc': 'RFC',
+        'paterno': 'Apellido paterno',
+        'materno': 'Apellido materno',
+        'nombre': 'Nombre(s)',
+        'fecha': 'Fecha de nacimiento (YYYY-MM-DD)',
+        'sexo': 'Sexo',
+        'correo': 'Correo',
+        'telefono': 'Teléfono',
         'curp': 'CURP',
+        'rfc': 'RFC',
+        'pasaporte': 'Número de pasaporte',
+        'calle': 'Calle',
+        'noExterior': 'No. Exterior',
+        'noInterior': 'No. Interior',
+        'colonia': 'Colonia',
+        'ciudad': 'Ciudad',
+        'estado': 'Estado',
+        'pais': 'País',
+        'cp': 'Código Postal',
+        'nacionalidadField': 'Nacionalidad',
+        'password': 'Password',
         'signup': 'Registrarse',
         'login': '¿Ya tienes cuenta?',
         'backLogin': 'Login',
@@ -416,15 +497,26 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         'docHint': '(INE with OCR / Passport / CURP)',
         'camera': 'Take photo',
         'gallery': 'Choose from gallery',
-        'nombre': 'First Name',
-        'apellidos': 'Last Name',
-        'fecha': 'Date of Birth (DD/MM/YYYY)',
-        'domicilio': 'Address',
-        'municipio': 'Municipality',
-        'cp': 'Postal Code',
-        'estado': 'State',
-        'rfc': 'RFC',
+        'paterno': 'Last name (paternal)',
+        'materno': 'Last name (maternal)',
+        'nombre': 'First name(s)',
+        'fecha': 'Date of Birth (YYYY-MM-DD)',
+        'sexo': 'Sex',
+        'correo': 'Email',
+        'telefono': 'Phone',
         'curp': 'CURP',
+        'rfc': 'RFC',
+        'pasaporte': 'Passport number',
+        'calle': 'Street',
+        'noExterior': 'Exterior No.',
+        'noInterior': 'Interior No.',
+        'colonia': 'Neighborhood',
+        'ciudad': 'City',
+        'estado': 'State',
+        'pais': 'Country',
+        'cp': 'Postal Code',
+        'nacionalidadField': 'Nationality',
+        'password': 'Password',
         'signup': 'Sign Up',
         'login': 'Already have an account?',
         'backLogin': 'Login',
@@ -479,36 +571,26 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   borderRadius: borderRadius(),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20.0, vertical: 12),
                   child: SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 10),
                         Center(
-                          child: Image.asset(
-                            'assets/icons/logo.jpg',
-                            height: 90,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
+                            child: Image.asset('assets/icons/logo.jpg',
+                                height: 90)),
+                        const SizedBox(height: 12),
                         Center(
-                          child: Text(
-                            textos[lang]!['titulo']!,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
+                            child: Text(textos[lang]!['titulo']!,
+                                style: const TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold))),
+                        const SizedBox(height: 18),
 
-                        // Nacionalidad
-                        Text(
-                          textos[lang]!['nacionalidad']!,
-                          style: const TextStyle(fontSize: 15),
-                        ),
+                        // Nacionalidad selector (no default)
+                        Text(textos[lang]!['nacionalidad']!,
+                            style: const TextStyle(fontSize: 15)),
                         const SizedBox(height: 8),
                         Wrap(
                           spacing: 10,
@@ -519,6 +601,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               onSelected: (_) {
                                 setState(() {
                                   nacionalidad = 'Mexicano';
+                                  nacionalidadCtrl.text = 'MEXICANA';
                                   tipoDocumento = 'INE';
                                   documentoImagen = null;
                                   ineFrente = null;
@@ -532,6 +615,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               onSelected: (_) {
                                 setState(() {
                                   nacionalidad = 'Extranjero';
+                                  nacionalidadCtrl.text = '';
                                   tipoDocumento = 'Pasaporte';
                                   documentoImagen = null;
                                   ineFrente = null;
@@ -543,11 +627,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Tipo de documento
-                        Text(
-                          textos[lang]!['tipo']!,
-                          style: const TextStyle(fontSize: 15),
-                        ),
+                        // Tipo de documento (visibilidad dependiente)
+                        Text(textos[lang]!['tipo']!,
+                            style: const TextStyle(fontSize: 15)),
                         const SizedBox(height: 8),
                         Wrap(
                           spacing: 10,
@@ -578,13 +660,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
                         const SizedBox(height: 20),
 
-                        // INE FRENTE / REVERSO o PASAPORTE
+                        // INE / Pasaporte photo block (kept)
                         if (tipoDocumento == 'INE') ...[
-                          Text(
-                            textos[lang]!['fotografiasINE']!,
-                            style: const TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.bold),
-                          ),
+                          Text(textos[lang]!['fotografiasINE']!,
+                              style: const TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold)),
                           const SizedBox(height: 10),
                           Row(
                             children: [
@@ -593,18 +673,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                   icon: const Icon(Icons.camera_alt),
                                   label: Text(textos[lang]!['frente']!),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white,
-                                    side: const BorderSide(
-                                        color: Color(0xFF003DA5), width: 2),
-                                  ),
-                                  onPressed: () async {
-                                    final archivo = await picker.pickImage(
-                                        source: ImageSource.camera);
-                                    if (archivo != null) {
-                                      setState(() => ineFrente = archivo);
-                                      await _procesarIne(File(archivo.path));
-                                    }
-                                  },
+                                      backgroundColor: Colors.white,
+                                      side: const BorderSide(
+                                          color: Color(0xFF003DA5), width: 2)),
+                                  onPressed: _pickIneFront,
                                 ),
                               ),
                               const SizedBox(width: 12),
@@ -613,17 +685,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                   icon: const Icon(Icons.camera_alt_outlined),
                                   label: Text(textos[lang]!['reverso']!),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white,
-                                    side: const BorderSide(
-                                        color: Color(0xFF003DA5), width: 2),
-                                  ),
-                                  onPressed: () async {
-                                    final archivo = await picker.pickImage(
-                                        source: ImageSource.camera);
-                                    if (archivo != null) {
-                                      setState(() => ineReverso = archivo);
-                                    }
-                                  },
+                                      backgroundColor: Colors.white,
+                                      side: const BorderSide(
+                                          color: Color(0xFF003DA5), width: 2)),
+                                  onPressed: _pickIneBack,
                                 ),
                               ),
                             ],
@@ -638,13 +703,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                         fontWeight: FontWeight.bold)),
                                 const SizedBox(height: 5),
                                 ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.file(
-                                    File(ineFrente!.path),
-                                    height: 180,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.file(File(ineFrente!.path),
+                                        height: 180, fit: BoxFit.cover)),
                               ],
                             ),
                           const SizedBox(height: 15),
@@ -657,150 +718,227 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                         fontWeight: FontWeight.bold)),
                                 const SizedBox(height: 5),
                                 ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.file(
-                                    File(ineReverso!.path),
-                                    height: 180,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.file(File(ineReverso!.path),
+                                        height: 180, fit: BoxFit.cover)),
                               ],
                             ),
                           const SizedBox(height: 20),
-                        ] else ...[
-                          Text(
-                            textos[lang]!['fotografiaPasaporte']!,
-                            style: const TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.bold),
-                          ),
+                        ] else if (tipoDocumento == 'Pasaporte') ...[
+                          Text(textos[lang]!['fotografiaPasaporte']!,
+                              style: const TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold)),
                           const SizedBox(height: 10),
                           ElevatedButton.icon(
                             icon: const Icon(Icons.camera_alt),
                             label: Text(textos[lang]!['camera']!),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              side: const BorderSide(
-                                  color: Color(0xFF003DA5), width: 2),
-                            ),
-                            onPressed: () async {
-                              final archivo = await picker.pickImage(
-                                  source: ImageSource.camera);
-                              if (archivo != null) {
-                                setState(() => documentoImagen = archivo);
-                              }
-                            },
+                                backgroundColor: Colors.white,
+                                side: const BorderSide(
+                                    color: Color(0xFF003DA5), width: 2)),
+                            onPressed: _pickPassportPhoto,
                           ),
                           if (documentoImagen != null)
                             Container(
-                              margin: const EdgeInsets.only(top: 15),
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.grey.shade400),
-                              ),
-                              child: Image.file(
-                                File(documentoImagen!.path),
-                                height: 200,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
+                                margin: const EdgeInsets.only(top: 15),
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                        color: Colors.grey.shade400)),
+                                child: Image.file(File(documentoImagen!.path),
+                                    height: 200, fit: BoxFit.cover)),
                           const SizedBox(height: 20),
                         ],
 
-                        // DATOS PERSONALES (se autocompletan si OCR está integrado)
+                        // DATOS PERSONALES (orden)
                         CustomTextField(
-                          hintText: textos[lang]!['nombre']!,
-                          controller: nombreCtrl,
-                          leadingIconData: const Icon(Icons.person),
-                          color: Colors.grey.withOpacity(0.2),
-                        ),
+                            hintText: textos[lang]!['paterno']!,
+                            controller: paternoCtrl,
+                            leadingIconData: const Icon(Icons.person),
+                            color: Colors.grey.withOpacity(0.2)),
                         CustomTextField(
-                          hintText: textos[lang]!['apellidos']!,
-                          controller: apellidosCtrl,
-                          leadingIconData: const Icon(Icons.person_outline),
-                          color: Colors.grey.withOpacity(0.2),
-                        ),
+                            hintText: textos[lang]!['materno']!,
+                            controller: maternoCtrl,
+                            leadingIconData: const Icon(Icons.person),
+                            color: Colors.grey.withOpacity(0.2)),
                         CustomTextField(
-                          hintText: textos[lang]!['fecha']!,
-                          controller: fechaCtrl,
-                          leadingIconData: const Icon(Icons.cake),
-                          color: Colors.grey.withOpacity(0.2),
-                        ),
-                        CustomTextField(
-                          hintText: textos[lang]!['domicilio']!,
-                          controller: domicilioCtrl,
-                          leadingIconData: const Icon(Icons.home),
-                          color: Colors.grey.withOpacity(0.2),
-                        ),
-                        CustomTextField(
-                          hintText: textos[lang]!['municipio']!,
-                          controller: municipioCtrl,
-                          leadingIconData: const Icon(Icons.location_city),
-                          color: Colors.grey.withOpacity(0.2),
-                        ),
-                        CustomTextField(
-                          hintText: textos[lang]!['cp']!,
-                          controller: cpCtrl,
-                          leadingIconData: const Icon(Icons.markunread_mailbox),
-                          color: Colors.grey.withOpacity(0.2),
-                        ),
-                        CustomTextField(
-                          hintText: textos[lang]!['estado']!,
-                          controller: estadoCtrl,
-                          leadingIconData: const Icon(Icons.map),
-                          color: Colors.grey.withOpacity(0.2),
-                        ),
-                        CustomTextField(
-                          hintText: textos[lang]!['rfc']!,
-                          controller: rfcCtrl,
-                          leadingIconData: const Icon(Icons.credit_card),
-                          color: Colors.grey.withOpacity(0.2),
-                        ),
-                        CustomTextField(
-                          hintText: textos[lang]!['curp']!,
-                          controller: curpCtrl,
-                          leadingIconData: const Icon(Icons.assignment_ind),
-                          color: Colors.grey.withOpacity(0.2),
+                            hintText: textos[lang]!['nombre']!,
+                            controller: nombreCtrl,
+                            leadingIconData: const Icon(Icons.person_outline),
+                            color: Colors.grey.withOpacity(0.2)),
+
+                        // Fecha: readOnly, opens date picker, stores yyyy-MM-dd
+                        const SizedBox(height: 8),
+                        GestureDetector(
+                          onTap: _selectFechaNacimiento,
+                          child: AbsorbPointer(
+                            child: CustomTextField(
+                              hintText: textos[lang]!['fecha']!,
+                              controller: fechaCtrl,
+                              leadingIconData: const Icon(Icons.cake),
+                              color: Colors.grey.withOpacity(0.2),
+                            ),
+                          ),
                         ),
 
-                        // BLOQUE: Seguro (moved after CURP)
-                        const SizedBox(height: 12),
-                        Text(
-                          textos[lang]!['tieneSeguro']!,
-                          style: const TextStyle(fontSize: 15),
+                        const SizedBox(height: 8),
+                        // Sexo selector: only Masculino / Femenino
+                        InputDecorator(
+                          decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.grey.withOpacity(0.2),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide.none),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 4)),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              value: sexo,
+                              isExpanded: true,
+                              items: ['MASCULINO', 'FEMENINO']
+                                  .map((s) => DropdownMenuItem(
+                                      value: s, child: Text(s)))
+                                  .toList(),
+                              onChanged: (v) {
+                                if (v != null) setState(() => sexo = v);
+                              },
+                            ),
+                          ),
                         ),
+                        const SizedBox(height: 8),
+
+                        CustomTextField(
+                            hintText: textos[lang]!['correo']!,
+                            controller: correoCtrl,
+                            leadingIconData: const Icon(Icons.email),
+                            color: Colors.grey.withOpacity(0.2)),
+                        CustomTextField(
+                            hintText: textos[lang]!['telefono']!,
+                            controller: telefonoCtrl,
+                            leadingIconData: const Icon(Icons.phone),
+                            color: Colors.grey.withOpacity(0.2)),
+
+                        // CURP
+                        CustomTextField(
+                            hintText: textos[lang]!['curp']!,
+                            controller: curpCtrl,
+                            leadingIconData: const Icon(Icons.assignment_ind),
+                            color: Colors.grey.withOpacity(0.2)),
+
+                        const SizedBox(height: 12),
+
+                        // RFC only if Mexican
+                        if (nacionalidad == 'Mexicano') ...[
+                          CustomTextField(
+                              hintText: textos[lang]!['rfc']!,
+                              controller: rfcCtrl,
+                              leadingIconData: const Icon(Icons.credit_card),
+                              color: Colors.grey.withOpacity(0.2)),
+                        ],
+
+                        // Pasaporte only if Pasaporte selected
+                        if (tipoDocumento == 'Pasaporte') ...[
+                          CustomTextField(
+                              hintText: textos[lang]!['pasaporte']!,
+                              controller: pasaporteCtrl,
+                              leadingIconData: const Icon(Icons.badge),
+                              color: Colors.grey.withOpacity(0.2)),
+                        ],
+
+                        // Domicilio
+                        CustomTextField(
+                            hintText: textos[lang]!['calle']!,
+                            controller: calleCtrl,
+                            leadingIconData: const Icon(Icons.home),
+                            color: Colors.grey.withOpacity(0.2)),
+                        CustomTextField(
+                            hintText: textos[lang]!['noExterior']!,
+                            controller: noExteriorCtrl,
+                            leadingIconData:
+                                const Icon(Icons.format_list_numbered),
+                            color: Colors.grey.withOpacity(0.2)),
+                        CustomTextField(
+                            hintText: textos[lang]!['noInterior']!,
+                            controller: noInteriorCtrl,
+                            leadingIconData:
+                                const Icon(Icons.format_list_numbered_rtl),
+                            color: Colors.grey.withOpacity(0.2)),
+                        CustomTextField(
+                            hintText: textos[lang]!['colonia']!,
+                            controller: coloniaCtrl,
+                            leadingIconData: const Icon(Icons.location_on),
+                            color: Colors.grey.withOpacity(0.2)),
+                        CustomTextField(
+                            hintText: textos[lang]!['ciudad']!,
+                            controller: ciudadCtrl,
+                            leadingIconData: const Icon(Icons.location_city),
+                            color: Colors.grey.withOpacity(0.2)),
+                        CustomTextField(
+                            hintText: textos[lang]!['estado']!,
+                            controller: estadoCtrl,
+                            leadingIconData: const Icon(Icons.map),
+                            color: Colors.grey.withOpacity(0.2)),
+                        CustomTextField(
+                            hintText: textos[lang]!['pais']!,
+                            controller: paisCtrl,
+                            leadingIconData: const Icon(Icons.public),
+                            color: Colors.grey.withOpacity(0.2)),
+                        CustomTextField(
+                            hintText: textos[lang]!['cp']!,
+                            controller: cpCtrl,
+                            leadingIconData:
+                                const Icon(Icons.markunread_mailbox),
+                            color: Colors.grey.withOpacity(0.2)),
+
+                        // Nacionalidad / Password
+                        CustomTextField(
+                            hintText: textos[lang]!['nacionalidadField']!,
+                            controller: nacionalidadCtrl,
+                            leadingIconData: const Icon(Icons.flag),
+                            color: Colors.grey.withOpacity(0.2)),
+                        CustomTextField(
+                            hintText: textos[lang]!['password']!,
+                            controller: passwordCtrl,
+                            leadingIconData: const Icon(Icons.lock),
+                            isPassword: true,
+                            color: Colors.grey.withOpacity(0.2)),
+
+                        const SizedBox(height: 16),
+
+                        // BLOQUE: Seguro (moved to end, after password)
+                        Text(textos[lang]!['tieneSeguro']!,
+                            style: const TextStyle(fontSize: 15)),
                         const SizedBox(height: 8),
                         Row(
                           children: [
                             Expanded(
-                              child: RadioListTile<bool>(
-                                title: Text(textos[lang]!['si']!),
-                                value: true,
-                                groupValue: tieneSeguro,
-                                onChanged: (v) {
-                                  setState(() {
-                                    tieneSeguro = true;
-                                    if (aseguradoras.isEmpty) {
-                                      _cargarAseguradorasSiCorresponde();
-                                    }
-                                  });
-                                },
-                              ),
-                            ),
+                                child: RadioListTile<bool>(
+                              title: Text(textos[lang]!['si']!),
+                              value: true,
+                              groupValue: tieneSeguro,
+                              onChanged: (v) {
+                                setState(() {
+                                  tieneSeguro = true;
+                                  if (aseguradoras.isEmpty)
+                                    _cargarAseguradorasSiCorresponde();
+                                });
+                              },
+                            )),
                             Expanded(
-                              child: RadioListTile<bool>(
-                                title: Text(textos[lang]!['no']!),
-                                value: false,
-                                groupValue: tieneSeguro,
-                                onChanged: (v) {
-                                  setState(() {
-                                    tieneSeguro = false;
-                                    aseguradoraSeleccionadaId = null;
-                                    polizaCtrl.clear();
-                                  });
-                                },
-                              ),
-                            ),
+                                child: RadioListTile<bool>(
+                              title: Text(textos[lang]!['no']!),
+                              value: false,
+                              groupValue: tieneSeguro,
+                              onChanged: (v) {
+                                setState(() {
+                                  tieneSeguro = false;
+                                  aseguradoraSeleccionadaId = null;
+                                  polizaCtrl.clear();
+                                });
+                              },
+                            )),
                           ],
                         ),
 
@@ -810,7 +948,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               ? const Center(child: CircularProgressIndicator())
                               : SizedBox(
                                   width: double.infinity,
-                                  // isExpanded true avoids RenderFlex overflow inside InputDecorator
                                   child: DropdownButtonFormField<String>(
                                     isExpanded: true,
                                     value: aseguradoraSeleccionadaId,
@@ -822,10 +959,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                           a['Nombre']?.toString() ??
                                           '';
                                       return DropdownMenuItem<String>(
-                                        value: id,
-                                        child: Text(label,
-                                            overflow: TextOverflow.ellipsis),
-                                      );
+                                          value: id,
+                                          child: Text(label,
+                                              overflow: TextOverflow.ellipsis));
                                     }).toList(),
                                     onChanged: (v) {
                                       setState(() {
@@ -833,44 +969,42 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                       });
                                     },
                                     decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: Colors.grey.withOpacity(0.2),
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              horizontal: 12, vertical: 14),
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          borderSide: BorderSide.none),
-                                      hintText:
-                                          textos[lang]!['eligeAseguradora'] ??
-                                              '',
-                                    ),
+                                        filled: true,
+                                        fillColor: Colors.grey.withOpacity(0.2),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 12, vertical: 14),
+                                        border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            borderSide: BorderSide.none),
+                                        hintText:
+                                            textos[lang]!['eligeAseguradora'] ??
+                                                ''),
                                   ),
                                 ),
                           const SizedBox(height: 12),
                           CustomTextField(
-                            hintText: textos[lang]!['numeroPoliza'] ?? '',
-                            controller: polizaCtrl,
-                            leadingIconData:
-                                const Icon(Icons.confirmation_number),
-                            color: Colors.grey.withOpacity(0.2),
-                          ),
+                              hintText: textos[lang]!['numeroPoliza'] ?? '',
+                              controller: polizaCtrl,
+                              leadingIconData:
+                                  const Icon(Icons.confirmation_number),
+                              color: Colors.grey.withOpacity(0.2)),
                         ],
 
                         const SizedBox(height: 20),
 
                         // BOTÓN FINAL DE REGISTRO
                         CustomButton(
-                          title: textos[lang]!['signup']!,
-                          ontap: () {
-                            if (_validarCampos()) {
-                              _submitRegistro();
-                            }
-                          },
+                          title: isSubmitting
+                              ? (lang == 'es' ? 'Enviando...' : 'Sending...')
+                              : textos[lang]!['signup']!,
+                          ontap: isSubmitting ? null : () => _submitRegistro(),
                           color: const Color(0xFF003DA5),
                           textColor: Colors.white,
                         ),
+
+                        const SizedBox(height: 20),
                       ],
                     ),
                   ),
@@ -879,29 +1013,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             ),
             Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15),
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    textos[lang]!['login']!,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
+                  Text(textos[lang]!['login']!,
+                      style: const TextStyle(color: Colors.white)),
                   GestureDetector(
-                    onTap: () => context.push(LoginScreen.routeName),
-                    child: Text(
-                      ' ${textos[lang]!['backLogin']!}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 13,
-                        fontWeight: FontWeight.normal,
-                      ),
-                    ),
-                  ),
+                      onTap: () => context.push(LoginScreen.routeName),
+                      child: Text(' ${textos[lang]!['backLogin']!}',
+                          style: const TextStyle(color: Colors.white))),
                 ],
               ),
             ),

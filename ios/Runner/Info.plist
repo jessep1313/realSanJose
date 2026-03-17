@@ -30,6 +30,10 @@
 	<string>Necesitamos acceso a la cámara para capturar tu documento oficial.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Necesitamos acceso a tu galería para adjuntar documentos oficiales.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Se necesita acceso a la galería para seleccionar imágenes del documento.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Se necesita acceso al micrófono si usas grabación de video (opcional).</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

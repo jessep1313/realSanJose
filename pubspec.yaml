@@ -11,6 +11,11 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # OCR ML Kit
+  google_mlkit_text_recognition: ^0.15.1
+  image_picker: ^0.8.7+5
+
+
   # Íconos y utilidades
   cupertino_icons: ^1.0.8
   flutter_riverpod: ^2.6.1
@@ -33,8 +38,7 @@ dependencies:
   # 📊 Gráficas
   fl_chart: ^0.69.0
 
-  # 📸 Multimedia
-  image_picker: ^1.1.2
+
 
   # 💾 Almacenamiento local
   shared_preferences: ^2.2.2

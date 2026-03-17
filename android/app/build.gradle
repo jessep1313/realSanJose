@@ -7,17 +7,20 @@ plugins {
 
 android {
     namespace = "com.cninfotech.real_san_jose"
+
+    // compileSdk debe ser >= 33 para ML Kit; 36 está perfecto
     compileSdk = 36
+
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        // Ahora apuntamos a Java 17
+        // Apuntamos a Java 17 (ya lo tenías)
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        // Kotlin también debe apuntar a JVM 17
+        // Kotlin apuntando a JVM 17
         jvmTarget = "17"
     }
 
@@ -25,24 +28,37 @@ android {
         // Identificador único de la aplicación
         applicationId = "com.cninfotech.real_san_jose"
 
-        // Configuración mínima y objetivo de SDK
+        // minSdk debe ser >= 21; tienes 24 (OK)
         minSdk = 24
+
+        // targetSdk
         targetSdk = 36
 
         // Versión de la app (se toma de Flutter)
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // Si en algún momento necesitas multidex (no obligatorio ahora), descomenta:
+        // multiDexEnabled true
     }
 
     buildTypes {
         release {
-            // Firma con la clave de debug por ahora
+            // Firma con la clave de debug por ahora (ajusta para producción)
             signingConfig signingConfigs.debug
 
-            // Activamos minificación y reglas de ProGuard
+            // Activamos minificación y reglas de ProGuard si lo deseas
             minifyEnabled false
             shrinkResources false
             //proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    // Opcional: packagingOptions para evitar conflictos con dependencias nativas
+    // (no siempre necesario, pero útil si aparecen errores de empaquetado)
+    packagingOptions {
+        resources {
+            excludes += ['/META-INF/DEPENDENCIES', '/META-INF/LICENSE', '/META-INF/LICENSE.txt', '/META-INF/NOTICE', '/META-INF/NOTICE.txt']
         }
     }
 }
@@ -50,5 +66,3 @@ android {
 flutter {
     source = "../.."
 }
-
-

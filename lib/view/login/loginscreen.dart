@@ -43,6 +43,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final user = userController.text.trim();
     final pass = passController.text.trim();
 
+    // 🔥 MODO DEMO: si el usuario escribe "demo" o "11111" o lo que tú quieras
+    if (user.toLowerCase() == "demo" || user == "11111") {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString("token_usuario", "TOKEN_DEMO_123456");
+      await prefs.setString("fullname", "Usuario Demo");
+      await prefs.setString("curp", "DEMO000000HDFXXX00");
+
+      context.push(DashboardScreen.routeName);
+      return;
+    }
+
     if (user.isEmpty || pass.isEmpty) {
       showAlert("Usuario y contraseña son obligatorios");
       return;

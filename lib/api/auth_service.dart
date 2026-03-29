@@ -83,6 +83,110 @@ class AuthService {
     }
   }
 
+  Future<List<Map<String, dynamic>>> fetchRx() async {
+    final url = Uri.parse("$baseUrl/catalogos/servicios/rx");
+
+    final response = await http.get(
+      url,
+      headers: {
+        "Authorization": "Bearer $masterToken",
+        "Accept": "application/json",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
+
+      List<dynamic> rawList = [];
+      if (body is List)
+        rawList = body;
+      else if (body is Map && body['data'] is List)
+        rawList = body['data'];
+      else if (body is Map && body['items'] is List)
+        rawList = body['items'];
+      else
+        rawList = [];
+
+      return rawList.map((e) {
+        final m = Map<String, dynamic>.from(e);
+
+        // Normalizar ID
+        if (!m.containsKey('id')) {
+          if (m.containsKey('ID'))
+            m['id'] = m['ID'];
+          else if (m.containsKey('Id'))
+            m['id'] = m['Id'];
+          else if (m.containsKey('codigo')) m['id'] = m['codigo'];
+        }
+
+        // Normalizar descripción
+        if (!m.containsKey('descripcion')) {
+          if (m.containsKey('Descripcion'))
+            m['descripcion'] = m['Descripcion'];
+          else if (m.containsKey('Servicio'))
+            m['descripcion'] = m['Servicio'];
+          else if (m.containsKey('Nombre')) m['descripcion'] = m['Nombre'];
+        }
+
+        return m;
+      }).toList();
+    }
+
+    throw Exception("Error fetching RX: ${response.statusCode}");
+  }
+
+  Future<List<Map<String, dynamic>>> fetchLab() async {
+    final url = Uri.parse("$baseUrl/catalogos/servicios/lab");
+
+    final response = await http.get(
+      url,
+      headers: {
+        "Authorization": "Bearer $masterToken",
+        "Accept": "application/json",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
+
+      List<dynamic> rawList = [];
+      if (body is List)
+        rawList = body;
+      else if (body is Map && body['data'] is List)
+        rawList = body['data'];
+      else if (body is Map && body['items'] is List)
+        rawList = body['items'];
+      else
+        rawList = [];
+
+      return rawList.map((e) {
+        final m = Map<String, dynamic>.from(e);
+
+        // Normalizar ID
+        if (!m.containsKey('id')) {
+          if (m.containsKey('ID'))
+            m['id'] = m['ID'];
+          else if (m.containsKey('Id'))
+            m['id'] = m['Id'];
+          else if (m.containsKey('codigo')) m['id'] = m['codigo'];
+        }
+
+        // Normalizar descripción
+        if (!m.containsKey('descripcion')) {
+          if (m.containsKey('Descripcion'))
+            m['descripcion'] = m['Descripcion'];
+          else if (m.containsKey('Servicio'))
+            m['descripcion'] = m['Servicio'];
+          else if (m.containsKey('Nombre')) m['descripcion'] = m['Nombre'];
+        }
+
+        return m;
+      }).toList();
+    }
+
+    throw Exception("Error fetching LAB: ${response.statusCode}");
+  }
+
   Future<Map<String, dynamic>> register(Map<String, dynamic> payload) async {
     final url = Uri.parse("$baseUrl/auth/singup");
     final response = await http.post(

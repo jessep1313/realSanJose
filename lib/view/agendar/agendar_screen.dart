@@ -1,7 +1,11 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
 import 'package:real_san_jose/common/widget/custom_header.dart';
 import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:real_san_jose/api/auth_service.dart';
 
 class AgendarScreen extends ConsumerStatefulWidget {
   const AgendarScreen({super.key});
@@ -11,9 +15,55 @@ class AgendarScreen extends ConsumerStatefulWidget {
 }
 
 class _AgendarScreenState extends ConsumerState<AgendarScreen> {
-  String? tipoCita;
+  int? tipoCita; // 0 = consulta, 1 = RX, 2 = LAB
+  int? hospitalSeleccionado;
+  int? estudioSeleccionado;
+
   DateTime? selectedDay;
   String? horarioSeleccionado;
+
+  List<Map<String, dynamic>> catalogoEstudios = [];
+  bool cargandoCatalogo = false;
+
+  String? lastLang;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final lang = ref.watch(languageProvider);
+
+    if (lastLang != lang) {
+      lastLang = lang;
+
+      tipoCita = null;
+      hospitalSeleccionado = null;
+      estudioSeleccionado = null;
+      catalogoEstudios = [];
+    }
+  }
+
+  Future<void> cargarCatalogo(int tipo) async {
+    setState(() {
+      cargandoCatalogo = true;
+      catalogoEstudios = [];
+      estudioSeleccionado = null;
+    });
+
+    final service = AuthService();
+    List<Map<String, dynamic>> lista = [];
+
+    if (tipo == 1) {
+      lista = await service.fetchRx();
+    } else if (tipo == 2) {
+      lista = await service.fetchLab();
+    }
+
+    setState(() {
+      catalogoEstudios = lista;
+      cargandoCatalogo = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,27 +72,44 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
     final textos = {
       'es': {
         'title': 'Agendar cita',
-        'desc': 'Selecciona tipo de cita, fecha y horario',
+        'desc': 'Selecciona tipo de cita, hospital, estudio, fecha y horario',
         'tipo': 'Tipo de cita',
+        'hospital': 'Selecciona hospital',
+        'estudio': 'Selecciona estudio',
         'horarios': 'Horarios disponibles',
-        'agendar': 'Agendar'
+        'agendar': 'Agendar',
+        'consulta': 'Consulta Médica',
+        'rx': 'Rayos X',
+        'lab': 'Laboratorio',
+        'loading': 'Cargando catálogo...'
       },
       'en': {
         'title': 'Book appointment',
-        'desc': 'Select type, date and time',
+        'desc': 'Select type, hospital, study, date and time',
         'tipo': 'Appointment type',
+        'hospital': 'Select hospital',
+        'estudio': 'Select study',
         'horarios': 'Available times',
-        'agendar': 'Book'
+        'agendar': 'Book',
+        'consulta': 'Medical Consultation',
+        'rx': 'X-Rays',
+        'lab': 'Laboratory',
+        'loading': 'Loading catalog...'
       }
     };
 
-    // ⭐ OPCIONES ACTUALIZADAS
-    final tipos = {
-      'es': ['Consulta Médica', 'Rayos X', 'Laboratorio'],
-      'en': ['Medical Consultation', 'X-Rays', 'Laboratory']
-    };
+    final hospitales = [
+      {"id": 0, "nombre": "Hospital Lázaro Cárdenas"},
+      {"id": 1, "nombre": "Hospital Valle Real"},
+    ];
 
-    final horarios = ["08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM", "12:00 PM"];
+    final horarios = [
+      "08:00 AM",
+      "09:00 AM",
+      "10:00 AM",
+      "11:00 AM",
+      "12:00 PM"
+    ];
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -50,7 +117,6 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
         child: Column(
           children: [
             const CustomHeader(title: "Agendar"),
-
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
@@ -70,55 +136,121 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
 
                     Text(
                       textos[lang]!['desc']!,
-                      style: const TextStyle(fontSize: 16, color: Colors.black87),
+                      style:
+                          const TextStyle(fontSize: 16, color: Colors.black87),
                     ),
 
                     const SizedBox(height: 20),
 
-                    // ⭐ DROPDOWN PREMIUM ANCHO COMPLETO
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: const Color(0xFF003DA5),
-                          width: 2,
-                        ),
+                    // ⭐ TIPO DE CITA
+                    _buildDropdown(
+                      label: textos[lang]!['tipo']!,
+                      value: tipoCita,
+                      items: [
+                        DropdownMenuItem(
+                            value: 0, child: Text(textos[lang]!['consulta']!)),
+                        DropdownMenuItem(
+                            value: 1, child: Text(textos[lang]!['rx']!)),
+                        DropdownMenuItem(
+                            value: 2, child: Text(textos[lang]!['lab']!)),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          tipoCita = value;
+                          hospitalSeleccionado = null;
+                          estudioSeleccionado = null;
+                          catalogoEstudios = [];
+                        });
+
+                        if (value == 1 || value == 2) {
+                          cargarCatalogo(value);
+                        }
+                      },
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // ⭐ HOSPITAL
+                    if (tipoCita != null)
+                      _buildDropdown(
+                        label: textos[lang]!['hospital']!,
+                        value: hospitalSeleccionado,
+                        items: hospitales
+                            .map((h) => DropdownMenuItem(
+                                  value: h["id"],
+                                  child: Text(h["nombre"].toString()),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() => hospitalSeleccionado = value);
+                        },
                       ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          isExpanded: true,
-                          value: tipoCita,
-                          hint: Text(
-                            textos[lang]!['tipo']!,
+
+                    const SizedBox(height: 20),
+
+                    // ⭐ ESTUDIOS (RX / LAB)
+                    if (tipoCita == 1 || tipoCita == 2)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            textos[lang]!['estudio']!,
                             style: const TextStyle(
                               fontSize: 16,
-                              color: Colors.black54,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          items: tipos[lang]!
-                              .map(
-                                (e) => DropdownMenuItem(
-                                  value: e,
-                                  child: Text(
-                                    e,
-                                    style: const TextStyle(fontSize: 16),
+                          const SizedBox(height: 8),
+
+                          // 🔥 Loader mientras carga
+                          if (cargandoCatalogo)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 14, horizontal: 16),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Color(0xFF003DA5), width: 2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                children: [
+                                  const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Color(0xFF003DA5),
+                                    ),
                                   ),
-                                ),
-                              )
-                              .toList(),
-                          onChanged: (value) {
-                            setState(() => tipoCita = value);
-                          },
-                        ),
+                                  const SizedBox(width: 12),
+                                  Text(textos[lang]!['loading']!),
+                                ],
+                              ),
+                            )
+
+                          // 🔥 Dropdown cuando ya cargó
+                          else if (catalogoEstudios.isNotEmpty)
+                            _buildDropdown(
+                              label: "",
+                              value: estudioSeleccionado,
+                              items: catalogoEstudios
+                                  .map(
+                                    (e) => DropdownMenuItem(
+                                      value: e["id"],
+                                      child: Text(e["descripcion"].toString()),
+                                    ),
+                                  )
+                                  .toList(),
+                              onChanged: (value) {
+                                setState(() => estudioSeleccionado = value);
+                              },
+                            ),
+                        ],
                       ),
-                    ),
 
                     const SizedBox(height: 20),
 
-                    // Calendario
+                    // ⭐ CALENDARIO
                     CalendarDatePicker(
                       initialDate: DateTime.now(),
                       firstDate: DateTime(2020),
@@ -128,8 +260,9 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
                       },
                     ),
 
+                    const SizedBox(height: 20),
 
-                    // Horarios disponibles
+                    // ⭐ HORARIOS
                     Text(
                       textos[lang]!['horarios']!,
                       style: const TextStyle(
@@ -166,7 +299,7 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
         ),
       ),
 
-      // Footer con botón
+      // ⭐ BOTÓN FINAL
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton.icon(
@@ -184,6 +317,8 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
           ),
           onPressed: () {
             if (tipoCita != null &&
+                hospitalSeleccionado != null &&
+                estudioSeleccionado != null &&
                 selectedDay != null &&
                 horarioSeleccionado != null) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -211,7 +346,38 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
       ),
     );
   }
+
+  // ⭐ WIDGET REUTILIZABLE PARA DROPDOWNS
+  Widget _buildDropdown({
+    required String label,
+    required dynamic value,
+    required List<DropdownMenuItem> items,
+    required Function(dynamic) onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (label.isNotEmpty)
+          Text(label,
+              style:
+                  const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        if (label.isNotEmpty) const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            border: Border.all(color: Color(0xFF003DA5), width: 2),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton(
+              isExpanded: true,
+              value: value,
+              items: items,
+              onChanged: onChanged,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }
-
-
-

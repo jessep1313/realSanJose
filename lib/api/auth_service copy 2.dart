@@ -1,15 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   final String baseUrl = "https://webservicesvr.hrsj.com.mx/aptest/api";
   final String masterToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3ByaW1hcnlzaWQiOiIwIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiJTeXN0ZW0iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJTeXN0ZW0iLCJleHAiOjIwODU2Nzk2MjYsImlzcyI6Imh0dHBzOi8vd3d3Lmhyc2ouY29tLyIsImF1ZCI6Imh0dHBzOi8vd3d3Lmhyc2ouY29tLyJ9.LDBJArf2oJe_QWhqZ514ger6_iXWXlGMeoRsyCp7qgc";
 
-  // ---------------------------------------------------------
-  // LOGIN
-  // ---------------------------------------------------------
   Future<Map<String, dynamic>> login(
       String identificator, String password) async {
     final url = Uri.parse("$baseUrl/auth/login");
@@ -33,9 +29,6 @@ class AuthService {
     }
   }
 
-  // ---------------------------------------------------------
-  // ASEGURADORAS
-  // ---------------------------------------------------------
   Future<List<Map<String, dynamic>>> fetchAseguradoras() async {
     final url = Uri.parse("$baseUrl/catalogos/aseguradoras");
     final response = await http.get(
@@ -48,13 +41,15 @@ class AuthService {
 
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
-
       List<dynamic> rawList = [];
       if (body is List)
         rawList = body;
       else if (body is Map && body['data'] is List)
         rawList = body['data'];
-      else if (body is Map && body['items'] is List) rawList = body['items'];
+      else if (body is Map && body['items'] is List)
+        rawList = body['items'];
+      else
+        rawList = [];
 
       final List<Map<String, dynamic>> lista = rawList
           .map((e) =>
@@ -63,7 +58,6 @@ class AuthService {
 
       return lista.map((m) {
         final Map<String, dynamic> normalized = Map<String, dynamic>.from(m);
-
         if (!normalized.containsKey('id')) {
           if (normalized.containsKey('ID'))
             normalized['id'] = normalized['ID'];
@@ -72,7 +66,6 @@ class AuthService {
           else if (normalized.containsKey('codigo'))
             normalized['id'] = normalized['codigo'];
         }
-
         if (!normalized.containsKey('Servicio')) {
           if (normalized.containsKey('servicio'))
             normalized['Servicio'] = normalized['servicio'];
@@ -83,7 +76,6 @@ class AuthService {
           else if (normalized.containsKey('descripcion'))
             normalized['Servicio'] = normalized['descripcion'];
         }
-
         return normalized;
       }).toList();
     } else {
@@ -91,9 +83,6 @@ class AuthService {
     }
   }
 
-  // ---------------------------------------------------------
-  // CATÁLOGO RX
-  // ---------------------------------------------------------
   Future<List<Map<String, dynamic>>> fetchRx() async {
     final url = Uri.parse("$baseUrl/catalogos/servicios/rx");
 
@@ -113,11 +102,15 @@ class AuthService {
         rawList = body;
       else if (body is Map && body['data'] is List)
         rawList = body['data'];
-      else if (body is Map && body['items'] is List) rawList = body['items'];
+      else if (body is Map && body['items'] is List)
+        rawList = body['items'];
+      else
+        rawList = [];
 
       return rawList.map((e) {
         final m = Map<String, dynamic>.from(e);
 
+        // Normalizar ID
         if (!m.containsKey('id')) {
           if (m.containsKey('ID'))
             m['id'] = m['ID'];
@@ -126,6 +119,7 @@ class AuthService {
           else if (m.containsKey('codigo')) m['id'] = m['codigo'];
         }
 
+        // Normalizar descripción
         if (!m.containsKey('descripcion')) {
           if (m.containsKey('Descripcion'))
             m['descripcion'] = m['Descripcion'];
@@ -141,9 +135,6 @@ class AuthService {
     throw Exception("Error fetching RX: ${response.statusCode}");
   }
 
-  // ---------------------------------------------------------
-  // CATÁLOGO LAB
-  // ---------------------------------------------------------
   Future<List<Map<String, dynamic>>> fetchLab() async {
     final url = Uri.parse("$baseUrl/catalogos/servicios/lab");
 
@@ -163,11 +154,15 @@ class AuthService {
         rawList = body;
       else if (body is Map && body['data'] is List)
         rawList = body['data'];
-      else if (body is Map && body['items'] is List) rawList = body['items'];
+      else if (body is Map && body['items'] is List)
+        rawList = body['items'];
+      else
+        rawList = [];
 
       return rawList.map((e) {
         final m = Map<String, dynamic>.from(e);
 
+        // Normalizar ID
         if (!m.containsKey('id')) {
           if (m.containsKey('ID'))
             m['id'] = m['ID'];
@@ -176,6 +171,7 @@ class AuthService {
           else if (m.containsKey('codigo')) m['id'] = m['codigo'];
         }
 
+        // Normalizar descripción
         if (!m.containsKey('descripcion')) {
           if (m.containsKey('Descripcion'))
             m['descripcion'] = m['Descripcion'];
@@ -191,9 +187,6 @@ class AuthService {
     throw Exception("Error fetching LAB: ${response.statusCode}");
   }
 
-  // ---------------------------------------------------------
-  // REGISTRO
-  // ---------------------------------------------------------
   Future<Map<String, dynamic>> register(Map<String, dynamic> payload) async {
     final url = Uri.parse("$baseUrl/auth/singup");
     final response = await http.post(
@@ -239,52 +232,5 @@ class AuthService {
       'message': 'Error del servidor: ${response.statusCode}',
       'data': null
     };
-  }
-
-  // ---------------------------------------------------------
-  // ⭐ AGENDA DISPONIBLE RX/LAB
-  // ---------------------------------------------------------
-  Future<List<String>> fetchAgendaDisponible(
-      int estudioId, int sucursal) async {
-    final url = Uri.parse(
-        "$baseUrl/paciente/agenda/rxlab/disponible/$estudioId/$sucursal");
-
-    print("==============================================");
-    print("📌 LLAMANDO A AGENDA DISPONIBLE");
-    print("➡ URL: $url");
-    print("➡ Usando masterToken");
-    print("➡ EstudioId: $estudioId");
-    print("➡ Sucursal (Hospital): $sucursal");
-    print("==============================================");
-
-    final response = await http.get(
-      url,
-      headers: {
-        "Authorization": "Bearer $masterToken",
-        "Accept": "application/json",
-      },
-    );
-
-    print("📌 STATUS CODE: ${response.statusCode}");
-    print("📌 RAW RESPONSE BODY:");
-    print(response.body);
-    print("==============================================");
-
-    if (response.statusCode == 200) {
-      try {
-        final data = jsonDecode(response.body);
-        print("📌 JSON DECODEADO:");
-        print(data);
-
-        return List<String>.from(data);
-      } catch (e) {
-        print("❌ ERROR PARSEANDO JSON: $e");
-        throw Exception("Error parseando respuesta de agenda disponible");
-      }
-    } else {
-      print("❌ ERROR EN SERVIDOR: ${response.statusCode}");
-      print("❌ BODY: ${response.body}");
-      throw Exception("Error al obtener agenda disponible");
-    }
   }
 }

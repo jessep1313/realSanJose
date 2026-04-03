@@ -25,6 +25,9 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
   List<Map<String, dynamic>> catalogoEstudios = [];
   bool cargandoCatalogo = false;
 
+  List<String> horariosDisponibles = [];
+  bool cargandoHorarios = false;
+
   String? lastLang;
 
   @override
@@ -40,9 +43,11 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
       hospitalSeleccionado = null;
       estudioSeleccionado = null;
       catalogoEstudios = [];
+      horariosDisponibles = [];
     }
   }
 
+  // ⭐ Cargar catálogo RX/LAB
   Future<void> cargarCatalogo(int tipo) async {
     setState(() {
       cargandoCatalogo = true;
@@ -65,6 +70,35 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
     });
   }
 
+  // ⭐ Cargar horarios disponibles desde API
+  Future<void> cargarHorarios() async {
+    if (estudioSeleccionado == null || hospitalSeleccionado == null) return;
+
+    setState(() {
+      cargandoHorarios = true;
+      horariosDisponibles = [];
+    });
+
+    final service = AuthService();
+
+    try {
+      final lista = await service.fetchAgendaDisponible(
+        estudioSeleccionado!,
+        hospitalSeleccionado!,
+      );
+
+      setState(() {
+        horariosDisponibles = lista;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error cargando horarios: $e")),
+      );
+    } finally {
+      setState(() => cargandoHorarios = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final lang = ref.watch(languageProvider);
@@ -81,7 +115,7 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
         'consulta': 'Consulta Médica',
         'rx': 'Rayos X',
         'lab': 'Laboratorio',
-        'loading': 'Cargando catálogo...'
+        'loading': 'Cargando catálogo...',
       },
       'en': {
         'title': 'Book appointment',
@@ -94,21 +128,13 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
         'consulta': 'Medical Consultation',
         'rx': 'X-Rays',
         'lab': 'Laboratory',
-        'loading': 'Loading catalog...'
+        'loading': 'Loading catalog...',
       }
     };
 
     final hospitales = [
       {"id": 0, "nombre": "Hospital Lázaro Cárdenas"},
       {"id": 1, "nombre": "Hospital Valle Real"},
-    ];
-
-    final horarios = [
-      "08:00 AM",
-      "09:00 AM",
-      "10:00 AM",
-      "11:00 AM",
-      "12:00 PM"
     ];
 
     return Scaffold(
@@ -160,6 +186,7 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
                           hospitalSeleccionado = null;
                           estudioSeleccionado = null;
                           catalogoEstudios = [];
+                          horariosDisponibles = [];
                         });
 
                         if (value == 1 || value == 2) {
@@ -182,7 +209,14 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
                                 ))
                             .toList(),
                         onChanged: (value) {
-                          setState(() => hospitalSeleccionado = value);
+                          setState(() {
+                            hospitalSeleccionado = value;
+                            horariosDisponibles = [];
+                          });
+
+                          if (estudioSeleccionado != null) {
+                            cargarHorarios();
+                          }
                         },
                       ),
 
@@ -201,34 +235,21 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
                             ),
                           ),
                           const SizedBox(height: 8),
-
-                          // 🔥 Loader mientras carga
                           if (cargandoCatalogo)
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 14, horizontal: 16),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Color(0xFF003DA5), width: 2),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Row(
-                                children: [
-                                  const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Color(0xFF003DA5),
-                                    ),
+                            Row(
+                              children: [
+                                const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Color(0xFF003DA5),
                                   ),
-                                  const SizedBox(width: 12),
-                                  Text(textos[lang]!['loading']!),
-                                ],
-                              ),
+                                ),
+                                const SizedBox(width: 12),
+                                Text(textos[lang]!['loading']!),
+                              ],
                             )
-
-                          // 🔥 Dropdown cuando ya cargó
                           else if (catalogoEstudios.isNotEmpty)
                             _buildDropdown(
                               label: "",
@@ -242,7 +263,11 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
                                   )
                                   .toList(),
                               onChanged: (value) {
-                                setState(() => estudioSeleccionado = value);
+                                setState(() {
+                                  estudioSeleccionado = value;
+                                  horariosDisponibles = [];
+                                });
+                                cargarHorarios();
                               },
                             ),
                         ],
@@ -262,7 +287,7 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
 
                     const SizedBox(height: 20),
 
-                    // ⭐ HORARIOS
+                    // ⭐ HORARIOS DISPONIBLES
                     Text(
                       textos[lang]!['horarios']!,
                       style: const TextStyle(
@@ -272,23 +297,42 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
                       ),
                     ),
 
-                    Wrap(
-                      spacing: 10,
-                      children: horarios.map((h) {
-                        final selected = horarioSeleccionado == h;
-                        return ChoiceChip(
-                          label: Text(h),
-                          selected: selected,
-                          selectedColor: const Color(0xFF003DA5),
-                          labelStyle: TextStyle(
-                            color: selected ? Colors.white : Colors.black,
+                    const SizedBox(height: 10),
+
+                    if (cargandoHorarios)
+                      const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
+                          child: CircularProgressIndicator(
+                            color: Color(0xFF003DA5),
                           ),
-                          onSelected: (_) {
-                            setState(() => horarioSeleccionado = h);
-                          },
-                        );
-                      }).toList(),
-                    ),
+                        ),
+                      )
+                    else if (horariosDisponibles.isEmpty)
+                      Text(
+                        lang == 'es'
+                            ? "No hay horarios disponibles"
+                            : "No available times",
+                        style: const TextStyle(color: Colors.red),
+                      )
+                    else
+                      Wrap(
+                        spacing: 10,
+                        children: horariosDisponibles.map((h) {
+                          final selected = horarioSeleccionado == h;
+                          return ChoiceChip(
+                            label: Text(h),
+                            selected: selected,
+                            selectedColor: const Color(0xFF003DA5),
+                            labelStyle: TextStyle(
+                              color: selected ? Colors.white : Colors.black,
+                            ),
+                            onSelected: (_) {
+                              setState(() => horarioSeleccionado = h);
+                            },
+                          );
+                        }).toList(),
+                      ),
 
                     const SizedBox(height: 80),
                   ],

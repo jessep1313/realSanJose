@@ -66,8 +66,67 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
       'hospital1': 'Hospital Lázaro Cárdenas',
       'hospital2': 'Hospital Valle Real',
       'termsTitle': 'Términos y Condiciones',
-      'termsText':
-          'Este es un texto de ejemplo para los términos y condiciones.',
+      'termsText': '''
+        El presente documento establece los términos y las condiciones mediante las cuales se regirá el uso de la aplicación móvil, operada por Hospital Real San José S.C.
+
+        El usuario se compromete a leer los términos y condiciones aquí establecidas, previamente a su registro en la aplicación. En caso de instalarla, se entiende que acepta la totalidad de lo estipulado.
+
+        El Usuario reconoce que la información personal que brinda a la aplicación es legal, real y verídica.
+
+        USO Y ALCANCES
+
+        El usuario entiende y acepta que, aunque la app es operada por Hospital Real San José S.C., la información contenida podrá ser referida por un tercero, limitándose a la relación médico‑paciente.
+
+        La app permitirá visualizar información del usuario y realizar transacciones habilitadas según su perfil. El administrador podrá modificar funcionalidades sin previo aviso.
+
+        Los tiempos de respuesta y solicitudes serán procesados conforme a las especificaciones de cada movimiento.
+
+        El usuario acepta que los registros electrónicos constituyen prueba plena.
+
+        REQUISITOS DE USO
+
+        El usuario declara ser mayor de edad y contar con un dispositivo móvil seguro. Hospital Real San José S.C. no es responsable por la seguridad del dispositivo ni garantiza funcionamiento en todos los sistemas operativos.
+
+        OBLIGACIONES DEL USUARIO
+
+        El usuario se compromete a NO:
+        a) Usar la app con fines ilícitos.
+        b) Reproducir o distribuir contenidos sin autorización.
+        c) Realizar acciones que dañen la app.
+        d) Manipular derechos de autor.
+        e) Usar información para fines comerciales o envío masivo.
+        f) Permitir acceso a terceros con su clave.
+        g) Realizar acciones que afecten derechos de terceros o el funcionamiento de la app.
+
+        PROPIEDAD INTELECTUAL
+
+        Todos los contenidos están protegidos por derechos de autor. Queda prohibida su reproducción sin autorización.
+
+        USO DE INFORMACIÓN Y PRIVACIDAD
+
+        El usuario autoriza el tratamiento de sus datos como paciente, conforme a la legislación vigente.
+
+        LÍMITE DE RESPONSABILIDAD
+
+        Hospital Real San José S.C. no será responsable por:
+        a) Pérdida o robo del dispositivo.
+        b) Pérdida de información por fuerza mayor.
+        c) Errores del usuario.
+        d) Fallas del operador móvil.
+        e) Fallas de la app por fuerza mayor.
+
+        SUSPENSIÓN
+
+        Hospital Real San José S.C. podrá suspender el acceso por incumplimiento.
+
+        ACEPTACIÓN
+
+        El usuario acepta haber leído y entendido estos términos. Su uso continuo implica aceptación de modificaciones.
+
+        JURISDICCIÓN
+
+        Se rige por las leyes de los Estados Unidos Mexicanos.
+        ''',
     },
     'en': {
       'loginHeader': 'Sign in',
@@ -83,8 +142,65 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
       'hospital1': 'Lázaro Cárdenas Hospital',
       'hospital2': 'Valle Real Hospital',
       'termsTitle': 'Terms and Conditions',
-      'termsText':
-          'This is a sample text for the terms and conditions section.',
+      'termsText': '''
+          This document establishes the terms and conditions governing the use of the mobile application operated by Hospital Real San José S.C.
+
+          By installing the app, the user acknowledges having read and accepted all terms and conditions.
+
+          The user confirms that all personal and clinical information provided is truthful and accurate.
+
+          USE AND SCOPE
+
+          Although the app is operated by Hospital Real San José S.C., certain information may be managed by third parties, limited to the doctor‑patient relationship.
+
+          The app allows users to view their information and perform transactions enabled according to their profile. Functionalities may be modified without prior notice.
+
+          Electronic records constitute full legal evidence.
+
+          REQUIREMENTS
+
+          Users must be of legal age and use a secure mobile device. Hospital Real San José S.C. is not responsible for device security nor guarantees compatibility with all operating systems.
+
+          USER OBLIGATIONS
+
+          Users must NOT:
+          a) Use the app for unlawful purposes.
+          b) Reproduce or distribute content without authorization.
+          c) Damage or overload the app.
+          d) Manipulate copyright.
+          e) Use information for commercial or mass‑messaging purposes.
+          f) Allow third‑party access with their credentials.
+          g) Perform actions that affect third parties or the app’s operation.
+
+          INTELLECTUAL PROPERTY
+
+          All content is protected by copyright. Reproduction is prohibited without authorization.
+
+          PRIVACY AND DATA USE
+
+          Users authorize the processing of their data as patients, in accordance with applicable law.
+
+          LIMITATION OF LIABILITY
+
+          Hospital Real San José S.C. is not responsible for:
+          a) Loss or theft of the device.
+          b) Loss of information due to force majeure.
+          c) User errors.
+          d) Mobile operator failures.
+          e) App failures due to force majeure.
+
+          SUSPENSION
+
+          Access may be suspended for violations of these terms.
+
+          ACCEPTANCE
+
+          Continued use of the app constitutes acceptance of any modifications.
+
+          JURISDICTION
+
+          Governed by the laws of the United Mexican States.
+          ''',
     }
   };
 
@@ -92,33 +208,57 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
   void showTermsModal(String lang) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (_) {
-        return Padding(
-          padding: const EdgeInsets.all(20),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Text(
-                  texts[lang]!['termsTitle']!,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF003DA5),
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.75,
+          minChildSize: 0.50,
+          maxChildSize: 0.95,
+          builder: (_, controller) {
+            return Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 5,
+                    margin: const EdgeInsets.only(bottom: 15),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade400,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 15),
-                Text(
-                  texts[lang]!['termsText']!,
-                  style: const TextStyle(fontSize: 15, color: Colors.black87),
-                ),
-                const SizedBox(height: 20),
-              ],
-            ),
-          ),
+                  Text(
+                    texts[lang]!['termsTitle']!,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF003DA5),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      controller: controller,
+                      child: Text(
+                        texts[lang]!['termsText']!,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          height: 1.4,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         );
       },
     );
@@ -128,47 +268,69 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
   void showLocationModal(String lang) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      isScrollControlled: true, // ⭐ permite controlar altura total
+      backgroundColor: Colors.transparent, // ⭐ para que se vea flotante
       builder: (_) {
-        return Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                texts[lang]!['locationModal']!,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF003DA5),
-                ),
+        return DraggableScrollableSheet(
+          initialChildSize: 0.35, // ⭐ SUBE MÁS EL MODAL
+          minChildSize: 0.30,
+          maxChildSize: 0.60,
+          expand: false,
+          builder: (_, controller) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
               ),
-              const SizedBox(height: 20),
-              ListTile(
-                leading:
-                    const Icon(Icons.local_hospital, color: Color(0xFF009639)),
-                title: Text(texts[lang]!['hospital1']!),
-                onTap: () {
-                  Navigator.pop(context);
-                  openMap(
-                      "https://maps.google.com/?q=Av.+Lázaro+Cárdenas+4149,+Zapopan,+Jalisco");
-                },
+              padding: const EdgeInsets.all(20),
+              child: ListView(
+                controller: controller,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      margin: const EdgeInsets.only(bottom: 15),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade400,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                  Text(
+                    texts[lang]!['locationModal']!,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF003DA5),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ListTile(
+                    leading: const Icon(Icons.local_hospital,
+                        color: Color(0xFF009639)),
+                    title: Text(texts[lang]!['hospital1']!),
+                    onTap: () {
+                      Navigator.pop(context);
+                      openMap(
+                          "https://maps.google.com/?q=Av.+Lázaro+Cárdenas+4149,+Zapopan,+Jalisco");
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.local_hospital,
+                        color: Color(0xFF003DA5)),
+                    title: Text(texts[lang]!['hospital2']!),
+                    onTap: () {
+                      Navigator.pop(context);
+                      openMap(
+                          "https://maps.google.com/?q=Av.+Central+911,+Zapopan,+Jalisco");
+                    },
+                  ),
+                ],
               ),
-              ListTile(
-                leading:
-                    const Icon(Icons.local_hospital, color: Color(0xFF003DA5)),
-                title: Text(texts[lang]!['hospital2']!),
-                onTap: () {
-                  Navigator.pop(context);
-                  openMap(
-                      "https://maps.google.com/?q=Av.+Central+911,+Zapopan,+Jalisco");
-                },
-              ),
-            ],
-          ),
+            );
+          },
         );
       },
     );

@@ -100,6 +100,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     super.dispose();
   }
 
+  Future<void> _pickIneFromGallery() async {
+    final archivo = await picker.pickImage(source: ImageSource.gallery);
+
+    if (archivo != null) {
+      setState(() => ineFrente = archivo);
+      await _procesarIne(File(archivo.path));
+    }
+  }
+
   Future<void> _cargarAseguradorasSiCorresponde() async {
     try {
       setState(() => cargandoAseguradoras = true);
@@ -150,57 +159,102 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       final RecognizedText recognizedText =
           await textRecognizer.processImage(inputImage);
 
-      final raw = recognizedText.text;
-      final lines = raw
+      // ============================================================
+      // 1) NORMALIZACIÓN PROFUNDA
+      // ============================================================
+      String normalizar(String s) {
+        return s
+            .toUpperCase()
+            .replaceAll('0', 'O')
+            .replaceAll('1', 'I')
+            .replaceAll('5', 'S')
+            .replaceAll('8O', '80')
+            .replaceAll('-', '')
+            .replaceAll(RegExp(r'[^A-Z0-9\/\s]'), '')
+            .replaceAll('NACIMETO', 'NACIMIENTO')
+            .replaceAll('NACIMIENIO', 'NACIMIENTO')
+            .replaceAll('SEOCION', 'SECCION')
+            .replaceAll('DOCANJA', 'DOMICILIO')
+            .replaceAll('CLAVE DE BLECTOR', 'CLAVE DE ELECTOR')
+            .trim();
+      }
+
+      final lines = recognizedText.text
           .split('\n')
-          .map((e) => e.trim().toUpperCase())
+          .map((e) => normalizar(e))
           .where((e) => e.isNotEmpty)
           .toList();
 
-      print("=== OCR LÍNEAS DETECTADAS ===");
-      for (var l in lines) print(l);
+      debugPrint("====================================");
+      debugPrint("=== OCR LÍNEAS DETECTADAS (INE) ===");
+      debugPrint("====================================");
+      for (var l in lines) debugPrint(l);
+      debugPrint("====================================");
 
-      // ---------------------------------------------------------
-      // ⭐ 1. DETECTAR BLOQUE DE NOMBRE
-      // ---------------------------------------------------------
-      int idxNombre = lines.indexWhere((l) => l.contains("NOMBRE"));
-      if (idxNombre != -1) {
-        // Las siguientes líneas contienen:
-        // PATERNO / MATERNO / NOMBRE(S)
-        if (idxNombre + 1 < lines.length)
-          paternoCtrl.text = lines[idxNombre + 1];
-        if (idxNombre + 2 < lines.length)
-          maternoCtrl.text = lines[idxNombre + 2];
-        if (idxNombre + 3 < lines.length)
-          nombreCtrl.text = lines[idxNombre + 3];
-      }
-
-      // ---------------------------------------------------------
-      // ⭐ 2. DETECTAR CURP
-      // ---------------------------------------------------------
-      int idxCurp = lines.indexWhere((l) => l.contains("CURP"));
-      if (idxCurp != -1 && idxCurp + 1 < lines.length) {
-        final posibleCurp = lines[idxCurp + 1];
+      // ============================================================
+      // 2) DETECTAR FECHA (CUALQUIER LÍNEA CON dd/mm/yyyy)
+      // ============================================================
+      String? fechaDetectada;
+      for (var l in lines) {
         final match =
-            RegExp(r'[A-Z]{4}\d{6}[HM][A-Z]{5}\d{2}').firstMatch(posibleCurp);
-        if (match != null) curpCtrl.text = match.group(0)!;
-      }
-
-      // ---------------------------------------------------------
-      // ⭐ 3. DETECTAR FECHA DE NACIMIENTO
-      // ---------------------------------------------------------
-      int idxFecha = lines.indexWhere((l) => l.contains("FECHA"));
-      if (idxFecha != -1 && idxFecha + 1 < lines.length) {
-        final fechaRaw = lines[idxFecha + 1];
-        final match =
-            RegExp(r'(\d{2})[\/\-](\d{2})[\/\-](\d{4})').firstMatch(fechaRaw);
-
+            RegExp(r'(\d{2})[\/\-](\d{2})[\/\-](\d{4})').firstMatch(l);
         if (match != null) {
           final dd = match.group(1)!;
           final mm = match.group(2)!;
           final yyyy = match.group(3)!;
+          fechaDetectada = "$yyyy-$mm-$dd";
+          break;
+        }
+      }
 
-          fechaCtrl.text = "$yyyy-$mm-$dd"; // ⭐ FORMATO CORRECTO
+      if (fechaDetectada != null) fechaCtrl.text = fechaDetectada;
+
+      // ============================================================
+      // 3) DETECTAR CURP (BUSCAR EN TODAS LAS LÍNEAS)
+      // ============================================================
+      String? curpDetectada;
+      for (var l in lines) {
+        final match = RegExp(r'[A-Z]{4}\d{6}[HM][A-Z]{5}[A-Z0-9]\d')
+            .firstMatch(l.replaceAll('-', ''));
+        if (match != null) {
+          curpDetectada = match.group(0)!;
+          break;
+        }
+      }
+
+      if (curpDetectada != null) curpCtrl.text = curpDetectada;
+
+      // ============================================================
+      // 4) DETECTAR BLOQUE DE NOMBRE (HEURÍSTICA AVANZADA)
+      // ============================================================
+      List<String> candidatosNombre = [];
+
+      for (var l in lines) {
+        if (RegExp(r'^[A-Z\s]+$').hasMatch(l) && l.length > 3) {
+          candidatosNombre.add(l);
+        }
+      }
+
+      // Ordenar por longitud (nombre completo suele ser el más largo)
+      candidatosNombre.sort((a, b) => b.length.compareTo(a.length));
+
+      if (candidatosNombre.length >= 3) {
+        final nombre = candidatosNombre[0];
+        final paterno = candidatosNombre[1];
+        final materno = candidatosNombre[2];
+
+        nombreCtrl.text = nombre;
+        paternoCtrl.text = paterno;
+        maternoCtrl.text = materno;
+      }
+
+      // ============================================================
+      // 5) DETECTAR SEXO
+      // ============================================================
+      for (var l in lines) {
+        if (l.contains("SEXO")) {
+          if (l.contains("H")) sexo = "MASCULINO";
+          if (l.contains("M")) sexo = "FEMENINO";
         }
       }
 
@@ -210,8 +264,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content:
-                  Text('No se pudieron extraer datos. Intenta otra foto.')),
+            content: Text('No se pudieron extraer datos. Intenta otra foto.'),
+          ),
         );
       }
     } finally {
@@ -1211,7 +1265,20 @@ data in certain situations.
                                         height: 180, fit: BoxFit.cover)),
                               ],
                             ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 5),
+
+                          // ⭐ SOLO APARECE SI ES INE O PASAPORTE
+                          ElevatedButton.icon(
+                            icon: const Icon(Icons.photo_library),
+                            label: const Text("Seleccionar desde galería"),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              side: const BorderSide(
+                                  color: Color(0xFF003DA5), width: 2),
+                            ),
+                            onPressed: _pickIneFromGallery,
+                          ),
+                          const SizedBox(height: 10),
                         ] else if (tipoDocumento == 'Pasaporte') ...[
                           Text(textos[lang]!['fotografiaPasaporte']!,
                               style: const TextStyle(

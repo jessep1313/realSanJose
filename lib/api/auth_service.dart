@@ -26,6 +26,10 @@ class AuthService {
       }),
     );
 
+    // Imprimir todo el JSON que regresa el backend
+    print("📌 STATUS CODE: ${response.statusCode}");
+    print("📌 RAW BODY: ${response.body}");
+
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
@@ -245,22 +249,24 @@ class AuthService {
   // ⭐ AGENDA DISPONIBLE RX/LAB
   // ---------------------------------------------------------
   Future<List<String>> fetchAgendaDisponible(
-      int estudioId, int sucursal) async {
-    final url = Uri.parse(
-        "$baseUrl/paciente/agenda/rxlab/disponible/$estudioId/$sucursal");
+      int estudioId, int sucursal, DateTime fechaSeleccionada) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userToken = prefs.getString("token_usuario") ?? "";
 
-    print("==============================================");
+    final fecha =
+        "${fechaSeleccionada.year}-${fechaSeleccionada.month.toString().padLeft(2, '0')}-${fechaSeleccionada.day.toString().padLeft(2, '0')}";
+
+    final url = Uri.parse(
+        "$baseUrl/paciente/agenda/rxlab/disponible?servicioId=$estudioId&sucursalId=$sucursal&fecha=$fecha");
+
     print("📌 LLAMANDO A AGENDA DISPONIBLE");
     print("➡ URL: $url");
-    print("➡ Usando masterToken");
-    print("➡ EstudioId: $estudioId");
-    print("➡ Sucursal (Hospital): $sucursal");
-    print("==============================================");
+    print("➡ Usando userToken: $userToken");
 
     final response = await http.get(
       url,
       headers: {
-        "Authorization": "Bearer $masterToken",
+        "Authorization": "Bearer $userToken",
         "Accept": "application/json",
       },
     );
@@ -268,23 +274,72 @@ class AuthService {
     print("📌 STATUS CODE: ${response.statusCode}");
     print("📌 RAW RESPONSE BODY:");
     print(response.body);
-    print("==============================================");
 
     if (response.statusCode == 200) {
-      try {
-        final data = jsonDecode(response.body);
-        print("📌 JSON DECODEADO:");
-        print(data);
-
-        return List<String>.from(data);
-      } catch (e) {
-        print("❌ ERROR PARSEANDO JSON: $e");
-        throw Exception("Error parseando respuesta de agenda disponible");
-      }
+      final data = jsonDecode(response.body);
+      return List<String>.from(data);
     } else {
-      print("❌ ERROR EN SERVIDOR: ${response.statusCode}");
-      print("❌ BODY: ${response.body}");
-      throw Exception("Error al obtener agenda disponible");
+      throw Exception(
+          "Error al obtener agenda disponible: ${response.statusCode}");
+    }
+  }
+
+  // ---------------------------------------------------------
+  // ⭐ CREAR CITA RX/LAB
+  // ---------------------------------------------------------
+  Future<Map<String, dynamic>> crearCita({
+    required int estudioId,
+    required int sucursal,
+    required String fechaHora,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userToken = prefs.getString("token_usuario") ?? "";
+
+    final url = Uri.parse("$baseUrl/paciente/agenda/rxlab");
+
+    final response = await http.post(
+      url,
+      headers: {
+        "Authorization": "Bearer $userToken",
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode({
+        "EstudioId": estudioId,
+        "Sucursal": sucursal,
+        "FechaHora": fechaHora,
+      }),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception(
+          "Error al crear cita: ${response.statusCode} ${response.body}");
+    }
+  }
+
+  // ---------------------------------------------------------
+  // ⭐  VER  CITA RX/LAB
+  // ---------------------------------------------------------
+  Future<List<Map<String, dynamic>>> fetchCitas() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userToken = prefs.getString("token_usuario") ?? "";
+
+    final url = Uri.parse("$baseUrl/paciente/expediente/estudios");
+
+    final response = await http.get(
+      url,
+      headers: {
+        "Authorization": "Bearer $userToken",
+        "Accept": "application/json",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return List<Map<String, dynamic>>.from(data);
+    } else {
+      throw Exception("Error al obtener citas: ${response.statusCode}");
     }
   }
 }

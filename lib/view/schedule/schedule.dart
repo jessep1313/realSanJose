@@ -6,6 +6,7 @@ import 'package:real_san_jose/common/widget/borderradius.dart';
 import 'package:real_san_jose/provider/scheduleprovider.dart';
 import 'package:real_san_jose/utils/decoration.dart';
 import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
+import 'package:real_san_jose/api/auth_service.dart';
 
 class ScheduleScreen extends ConsumerStatefulWidget {
   static String routeName = "/schedulescreen";
@@ -20,10 +21,14 @@ class ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   ScrollController controller = ScrollController();
   DateTime selectedDate = DateTime.now();
 
+  List<Map<String, dynamic>> citas = [];
+  bool cargandoCitas = false;
+
   @override
   void initState() {
     controller.addListener(scrollListener);
     super.initState();
+    cargarCitas(); // carga inicial con fecha actual
   }
 
   void scrollListener() {
@@ -39,6 +44,27 @@ class ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     }
   }
 
+  Future<void> cargarCitas() async {
+    setState(() => cargandoCitas = true);
+    try {
+      final service = AuthService();
+      final todas = await service.fetchCitas();
+
+      final fechaStr = DateFormat("yyyy-MM-dd").format(selectedDate);
+      citas = todas.where((c) {
+        final fechaApi = DateTime.parse(c["Fecha"]);
+        final fechaApiStr = DateFormat("yyyy-MM-dd").format(fechaApi);
+        return fechaApiStr == fechaStr;
+      }).toList();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error cargando citas: $e")),
+      );
+    } finally {
+      setState(() => cargandoCitas = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final lang = ref.watch(languageProvider);
@@ -46,21 +72,6 @@ class ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     final dayNames = {
       'es': ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
       'en': ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-    };
-
-    final textos = {
-      'es': {
-        'consulta': 'Consulta médica',
-        'estudios': 'Estudios clínicos',
-        'confirmada': 'Confirmada',
-        'pendiente': 'Pendiente',
-      },
-      'en': {
-        'consulta': 'Medical consultation',
-        'estudios': 'Clinical studies',
-        'confirmada': 'Confirmed',
-        'pendiente': 'Pending',
-      }
     };
 
     // Semana actual desde el día seleccionado
@@ -75,7 +86,7 @@ class ScheduleScreenState extends ConsumerState<ScheduleScreen> {
           width: double.infinity,
           margin: const EdgeInsets.only(bottom: 10),
           decoration: BoxDecoration(
-            color: Colors.white, // ✅ Fondo blanco
+            color: Colors.white,
             borderRadius: borderRadius(),
           ),
           child: Padding(
@@ -83,7 +94,7 @@ class ScheduleScreenState extends ConsumerState<ScheduleScreen> {
             child: SafeArea(
               child: Column(
                 children: [
-                  // Header con campanita, logo y selector de idioma
+                  // Header
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -127,10 +138,12 @@ class ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                         icon: const Icon(Icons.arrow_back_ios,
                             color: Color(0xFF003DA5)),
                         onPressed: () {
-                          final prevWeek =
-                              selectedDate.subtract(const Duration(days: 7));
-                          if (!prevWeek.isBefore(DateTime.now())) {
-                            setState(() => selectedDate = prevWeek);
+                          final prevDay =
+                              selectedDate.subtract(const Duration(days: 1));
+                          // Solo permitir regresar hasta el día actual
+                          if (!prevDay.isBefore(DateTime.now())) {
+                            setState(() => selectedDate = prevDay);
+                            cargarCitas();
                           }
                         },
                       ),
@@ -142,9 +155,6 @@ class ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                             itemCount: weekDays.length,
                             itemBuilder: (context, index) {
                               final date = weekDays[index];
-                              final isToday = date.day == DateTime.now().day &&
-                                  date.month == DateTime.now().month &&
-                                  date.year == DateTime.now().year;
                               final isSelected = date.day == selectedDate.day &&
                                   date.month == selectedDate.month &&
                                   date.year == selectedDate.year;
@@ -152,6 +162,7 @@ class ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                               return GestureDetector(
                                 onTap: () {
                                   setState(() => selectedDate = date);
+                                  cargarCitas();
                                 },
                                 child: Container(
                                   margin:
@@ -201,32 +212,57 @@ class ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                           final nextWeek =
                               selectedDate.add(const Duration(days: 7));
                           setState(() => selectedDate = nextWeek);
+                          cargarCitas();
                         },
                       ),
                     ],
                   ),
                   const SizedBox(height: 15),
 
-                  // Listado de citas (solo 2 ejemplos)
+                  // Listado de citas
                   Expanded(
-                    child: ListView(
-                      controller: controller,
-                      children: [
-                        _appointmentCard(
-                          icon: Icons.medical_services_outlined,
-                          title: textos[lang]!['consulta']!,
-                          subtitle: "08:00 AM - 08:30 AM",
-                          status: textos[lang]!['confirmada']!,
-                        ),
-                        const SizedBox(height: 12),
-                        _appointmentCard(
-                          icon: Icons.biotech,
-                          title: textos[lang]!['estudios']!,
-                          subtitle: "10:00 AM - 10:45 AM",
-                          status: textos[lang]!['pendiente']!,
-                        ),
-                      ],
-                    ),
+                    child: cargandoCitas
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                                color: Color(0xFF003DA5)))
+                        : citas.isEmpty
+                            ? Center(
+                                child: Text(
+                                  lang == 'es'
+                                      ? "No hay citas para este día"
+                                      : "No appointments for this day",
+                                  style: const TextStyle(color: Colors.red),
+                                ),
+                              )
+                            : ListView.builder(
+                                controller: controller,
+                                itemCount: citas.length,
+                                itemBuilder: (context, index) {
+                                  final cita = citas[index];
+                                  final fechaHora =
+                                      DateTime.parse(cita["Fecha"]);
+                                  final fechaStr = DateFormat("yyyy-MM-dd")
+                                      .format(fechaHora);
+                                  final horaStr =
+                                      DateFormat("HH:mm").format(fechaHora);
+
+                                  final icono = cita["DescripcionEstudio"]
+                                          .toString()
+                                          .toUpperCase()
+                                          .contains("RX")
+                                      ? Icons.image_search
+                                      : Icons.biotech;
+
+                                  return _appointmentCard(
+                                    icon: icono,
+                                    title: cita["DescripcionEstudio"] ??
+                                        "Consulta",
+                                    subtitle:
+                                        "Folio: ${cita["FolioAgenda"]} | $fechaStr a las $horaStr",
+                                    status: cita["Status"] ?? "",
+                                  );
+                                },
+                              ),
                   ),
                 ],
               ),

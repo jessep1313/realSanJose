@@ -85,6 +85,7 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
       final lista = await service.fetchAgendaDisponible(
         estudioSeleccionado!,
         hospitalSeleccionado!,
+        selectedDay!,
       );
 
       setState(() {
@@ -282,6 +283,10 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
                       lastDate: DateTime(2030),
                       onDateChanged: (date) {
                         setState(() => selectedDay = date);
+                        if (estudioSeleccionado != null &&
+                            hospitalSeleccionado != null) {
+                          cargarHorarios();
+                        }
                       },
                     ),
 
@@ -318,22 +323,30 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
                     else
                       Wrap(
                         spacing: 10,
+                        runSpacing: 10,
                         children: horariosDisponibles.map((h) {
+                          // Parsear el string completo a DateTime
+                          final hora = DateTime.parse(h);
+                          // Formatear solo HH:mm
+                          final horaStr =
+                              "${hora.hour.toString().padLeft(2, '0')}:${hora.minute.toString().padLeft(2, '0')}";
+
                           final selected = horarioSeleccionado == h;
+
                           return ChoiceChip(
-                            label: Text(h),
+                            label: Text(horaStr), // se muestra solo la hora
                             selected: selected,
                             selectedColor: const Color(0xFF003DA5),
                             labelStyle: TextStyle(
                               color: selected ? Colors.white : Colors.black,
                             ),
                             onSelected: (_) {
+                              // se guarda el string completo con fecha y zona horaria
                               setState(() => horarioSeleccionado = h);
                             },
                           );
                         }).toList(),
                       ),
-
                     const SizedBox(height: 80),
                   ],
                 ),
@@ -359,30 +372,66 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
             textos[lang]!['agendar']!,
             style: const TextStyle(color: Colors.white),
           ),
-          onPressed: () {
+          onPressed: () async {
             if (tipoCita != null &&
                 hospitalSeleccionado != null &&
                 estudioSeleccionado != null &&
                 selectedDay != null &&
                 horarioSeleccionado != null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    lang == 'es'
-                        ? "Cita agendada correctamente"
-                        : "Appointment booked successfully",
+              try {
+                final service = AuthService();
+                final result = await service.crearCita(
+                  estudioId: estudioSeleccionado!,
+                  sucursal: hospitalSeleccionado!,
+                  fechaHora:
+                      horarioSeleccionado!, // string completo con fecha y hora
+                );
+
+                // Parsear fecha/hora para mostrar bonito
+                final fechaHora = DateTime.parse(result["FechaHora"]);
+                final fechaStr =
+                    "${fechaHora.year}-${fechaHora.month.toString().padLeft(2, '0')}-${fechaHora.day.toString().padLeft(2, '0')}";
+                final horaStr =
+                    "${fechaHora.hour.toString().padLeft(2, '0')}:${fechaHora.minute.toString().padLeft(2, '0')}";
+
+                // Mostrar modal con folio y fecha/hora
+                showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text("Cita agendada"),
+                    content: Text(
+                        "Folio de la cita: ${result["FolioAgenda"]}\nFecha: $fechaStr a las $horaStr"),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(ctx).pop(); // cerrar modal
+                          // Opción 1: limpiar valores
+                          setState(() {
+                            tipoCita = null;
+                            hospitalSeleccionado = null;
+                            estudioSeleccionado = null;
+                            selectedDay = null;
+                            horarioSeleccionado = null;
+                            catalogoEstudios = [];
+                            horariosDisponibles = [];
+                          });
+                          // Opción 2: redirigir a DashboardScreen
+                          Navigator.pushReplacementNamed(
+                              context, "/dashboardscreen");
+                        },
+                        child: const Text("OK"),
+                      ),
+                    ],
                   ),
-                ),
-              );
+                );
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Error al agendar cita: $e")),
+                );
+              }
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    lang == 'es'
-                        ? "Completa todos los campos"
-                        : "Please complete all fields",
-                  ),
-                ),
+                SnackBar(content: Text("Completa todos los campos")),
               );
             }
           },

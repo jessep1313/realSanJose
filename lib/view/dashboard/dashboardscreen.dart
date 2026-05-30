@@ -281,46 +281,84 @@ class HomeTab extends ConsumerWidget {
                 mainAxisSpacing: 12,
                 children: [
                   _serviceCard(
-                      textos[lang]!['agendar']!, Icons.add_circle_outline, () {
-                    Navigator.push(
+                    lang == 'es' ? 'Agendar cita' : 'Book appointment',
+                    Icons.add_circle_outline,
+                    () {
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (_) => const AgendarScreen()));
-                  }),
-                  _serviceCard(textos[lang]!['misCitas']!, Icons.event_note,
-                      () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => ScheduleScreen()));
-                  }),
+                            builder: (_) => const AgendarScreen()),
+                      );
+                    },
+                  ),
                   _serviceCard(
-                      textos[lang]!['notas']!, Icons.description_outlined, () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => const NotasScreen()));
-                  }),
-                  _serviceCard(textos[lang]!['lab']!, Icons.biotech, () {
-                    Navigator.push(
+                    lang == 'es' ? 'Mis citas' : 'My appointments',
+                    Icons.event_note,
+                    () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => ScheduleScreen()),
+                      );
+                    },
+                  ),
+                  _serviceCard(
+                    lang == 'es' ? 'Programar cirugía' : 'Schedule surgery',
+                    Icons.local_hospital,
+                    () {
+                      // Pantalla de Programar Cirugía
+                    },
+                  ),
+                  _serviceCard(
+                    lang == 'es'
+                        ? 'Cirugías programadas'
+                        : 'Scheduled surgeries',
+                    Icons.medical_services,
+                    () {
+                      // Pantalla de Cirugías programadas
+                    },
+                  ),
+                  _serviceCard(
+                    lang == 'es' ? 'Resultados de laboratorio' : 'Lab results',
+                    Icons.biotech,
+                    () {
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (_) => const LabResultsScreen()));
-                  }),
-                  _serviceCard(textos[lang]!['rayosx']!, Icons.image_search,
-                      () {
-                    Navigator.push(
+                            builder: (_) => const LabResultsScreen()),
+                      );
+                    },
+                  ),
+                  _serviceCard(
+                    lang == 'es' ? 'Rayos X' : 'X-Rays',
+                    Icons.image_search,
+                    () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const RayosXScreen()),
+                      );
+                    },
+                  ),
+                  _serviceCard(
+                    lang == 'es' ? 'Histórico' : 'History',
+                    Icons.folder_shared,
+                    () {
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (_) => const RayosXScreen()));
-                  }),
-                  _serviceCard(textos[lang]!['historial']!, Icons.folder_shared,
-                      () {
-                    Navigator.push(
+                            builder: (_) => const ExpedienteScreen()),
+                      );
+                    },
+                  ),
+                  _serviceCard(
+                    lang == 'es' ? 'Ayuda' : 'Help',
+                    Icons.help_outline,
+                    () {
+                      Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (_) => const ExpedienteScreen()));
-                  }),
-                  _serviceCard(textos[lang]!['ayuda']!, Icons.help_outline, () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => const AyudaScreen()));
-                  }),
+                        MaterialPageRoute(builder: (_) => const AyudaScreen()),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),

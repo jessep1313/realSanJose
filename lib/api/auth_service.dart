@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -340,6 +341,118 @@ class AuthService {
       return List<Map<String, dynamic>>.from(data);
     } else {
       throw Exception("Error al obtener citas: ${response.statusCode}");
+    }
+  }
+
+  // ---------------------------------------------------------
+  // PROCESAR INE
+  // ---------------------------------------------------------
+  Future<Map<String, dynamic>> procesarIne(File archivo) async {
+    final url = Uri.parse("$baseUrl/auth/idfile/ine");
+
+    final request = http.MultipartRequest("POST", url)
+      ..headers["Authorization"] = "Bearer $masterToken"
+      ..files.add(await http.MultipartFile.fromPath("archivo", archivo.path));
+
+    final response = await request.send();
+    final respStr = await response.stream.bytesToString();
+
+    if (response.statusCode == 200) {
+      return jsonDecode(respStr);
+    } else {
+      throw Exception("Error procesando INE: ${response.statusCode} $respStr");
+    }
+  }
+
+  // ---------------------------------------------------------
+  // PROCESAR PASAPORTE
+  // ---------------------------------------------------------
+  Future<Map<String, dynamic>> procesarPasaporte(File archivo) async {
+    final url = Uri.parse("$baseUrl/auth/idfile/pasaporte");
+
+    final request = http.MultipartRequest("POST", url)
+      ..headers["Authorization"] = "Bearer $masterToken"
+      ..files.add(await http.MultipartFile.fromPath("archivo", archivo.path));
+
+    final response = await request.send();
+    final respStr = await response.stream.bytesToString();
+
+    if (response.statusCode == 200) {
+      return jsonDecode(respStr);
+    } else {
+      throw Exception(
+          "Error procesando pasaporte: ${response.statusCode} $respStr");
+    }
+  }
+
+  Future<Map<String, dynamic>> sendActivationCode(String email) async {
+    final url = Uri.parse("$baseUrl/auth/user/sendcode");
+
+    final response = await http.post(
+      url,
+      headers: {
+        "Authorization": "Bearer $masterToken",
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode({"Email": email}),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception(
+          "Error enviando código: ${response.statusCode} ${response.body}");
+    }
+  }
+
+  Future<Map<String, dynamic>> activateUser(String email, String code) async {
+    final url = Uri.parse("$baseUrl/auth/user/activation");
+
+    final response = await http.post(
+      url,
+      headers: {
+        "Authorization": "Bearer $masterToken",
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode({
+        "Email": email,
+        "Code": code,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception(
+          "Error activando usuario: ${response.statusCode} ${response.body}");
+    }
+  }
+
+  // ---------------------------------------------------------
+  // ⭐ VER ESTUDIOS (RX/LAB)
+  // ---------------------------------------------------------
+  Future<List<Map<String, dynamic>>> fetchEstudios() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userToken = prefs.getString("token_usuario") ?? "";
+
+    final url = Uri.parse("$baseUrl/paciente/expediente/estudios");
+
+    final response = await http.get(
+      url,
+      headers: {
+        "Authorization": "Bearer $userToken",
+        "Accept": "application/json",
+      },
+    );
+
+    print("📌 STATUS CODE: ${response.statusCode}");
+    print("📌 RAW BODY: ${response.body}");
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return List<Map<String, dynamic>>.from(data);
+    } else {
+      throw Exception("Error al obtener estudios: ${response.statusCode}");
     }
   }
 }

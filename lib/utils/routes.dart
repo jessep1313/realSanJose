@@ -17,6 +17,7 @@ import 'package:real_san_jose/view/report/reportscreen.dart';
 import 'package:real_san_jose/view/servicemanagment/servicemanagementscreen.dart';
 import 'package:real_san_jose/view/servicemanagment/widget/availabletimeselect.dart';
 import 'package:real_san_jose/view/splash/splashscreen.dart';
+import 'package:real_san_jose/view/activation/activation_screen.dart';
 
 import '../view/register/register.dart';
 
@@ -36,6 +37,14 @@ final GoRouter router = GoRouter(routes: [
   GoRoute(
     path: RegisterScreen.routeName,
     builder: (context, state) => RegisterScreen(),
+  ),
+  GoRoute(
+    path: ActivationScreen.routeName,
+    builder: (context, state) {
+      // Aquí recibimos el correo que mandamos desde RegisterScreen
+      final email = state.extra as String;
+      return ActivationScreen(email: email);
+    },
   ),
   GoRoute(
     path: ForgotPasswordScreen.routeName,
@@ -87,7 +96,9 @@ final GoRouter router = GoRouter(routes: [
   ),
   GoRoute(
     path: AvailabletimeselectScreen.routeName,
-    builder: (context, state) => AvailabletimeselectScreen(state.extra as int,),
+    builder: (context, state) => AvailabletimeselectScreen(
+      state.extra as int,
+    ),
   ),
   GoRoute(
     path: DetailsScreen.routeName,

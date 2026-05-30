@@ -15,6 +15,7 @@ import 'package:real_san_jose/view/login/loginscreen.dart';
 import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:real_san_jose/api/auth_service.dart';
+import 'package:real_san_jose/view/activation/activation_screen.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   static var routeName = "/registerscreen";
@@ -125,11 +126,38 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   // Funciones para cámara/galería (kept)
-  Future<void> _pickIneFront() async {
+  Future<void> _pickIneFront__2() async {
     final archivo = await picker.pickImage(source: ImageSource.camera);
     if (archivo != null) {
       setState(() => ineFrente = archivo);
       await _procesarIne(File(archivo.path));
+    }
+  }
+
+  Future<void> _pickIneFront() async {
+    final archivo = await picker.pickImage(source: ImageSource.camera);
+    if (archivo != null) {
+      setState(() => ineFrente = archivo);
+
+      final service = AuthService();
+      try {
+        final result = await service.procesarIne(File(archivo.path));
+
+        // Llenar campos con la respuesta del backend
+        paternoCtrl.text = result['Paterno'] ?? '';
+        maternoCtrl.text = result['Materno'] ?? '';
+        nombreCtrl.text = result['Nombre'] ?? '';
+        fechaCtrl.text = result['FechaNacimiento'] ?? '';
+        sexo = result['Sexo'] ?? 'MASCULINO';
+        curpCtrl.text = result['Curp'] ?? '';
+        rfcCtrl.text = result['Rfc'] ?? '';
+
+        setState(() {});
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error procesando INE: $e")),
+        );
+      }
     }
   }
 
@@ -138,9 +166,35 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     if (archivo != null) setState(() => ineReverso = archivo);
   }
 
-  Future<void> _pickPassportPhoto() async {
+  Future<void> _pickPassportPhoto_2() async {
     final archivo = await picker.pickImage(source: ImageSource.camera);
     if (archivo != null) setState(() => documentoImagen = archivo);
+  }
+
+  Future<void> _pickPassportPhoto() async {
+    final archivo = await picker.pickImage(source: ImageSource.camera);
+    if (archivo != null) {
+      setState(() => documentoImagen = archivo);
+
+      final service = AuthService();
+      try {
+        final result = await service.procesarPasaporte(File(archivo.path));
+
+        // Llenar campos con la respuesta del backend
+        pasaporteCtrl.text = result['Pasaporte'] ?? '';
+        nombreCtrl.text = result['Nombre'] ?? '';
+        paternoCtrl.text = result['Paterno'] ?? '';
+        maternoCtrl.text = result['Materno'] ?? '';
+        fechaCtrl.text = result['FechaNacimiento'] ?? '';
+        sexo = result['Sexo'] ?? 'MASCULINO';
+
+        setState(() {});
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error procesando pasaporte: $e")),
+        );
+      }
+    }
   }
 
   // OCR (adapted)
@@ -352,12 +406,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       error = 'Password es obligatorio (mínimo 6 caracteres)';
     }
 
-    if (error.isEmpty && tieneSeguro) {
+    if (polizaCtrl.text.trim().isNotEmpty) {
       if (aseguradoraSeleccionadaId == null ||
           aseguradoraSeleccionadaId!.isEmpty) {
-        error = 'Selecciona una aseguradora';
-      } else if (polizaCtrl.text.trim().isEmpty) {
-        error = 'Número de póliza es obligatorio';
+        error = 'Selecciona una aseguradora si ingresas número de póliza';
       }
     }
 
@@ -409,10 +461,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       'CodigoPostal': cpCtrl.text.trim(),
       'Nacionalidad': nacionalidadCtrl.text.trim(),
       'Password': passwordCtrl.text.trim(),
-      // Seguro fields are included but the UI places the block at the end
-      'TieneSeguro': tieneSeguro,
-      'AseguradoraId': aseguradoraSeleccionadaId,
       'NumeroPoliza': polizaCtrl.text.trim(),
+      'AseguradoraId': aseguradoraSeleccionadaId,
     };
 
     return payload;
@@ -458,7 +508,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             .showSnackBar(SnackBar(content: Text(message)));
         // No borrar formulario. Navegar opcionalmente.
         Future.delayed(const Duration(milliseconds: 800), () {
-          context.go(DashboardScreen.routeName);
+          //context.go(DashboardScreen.routeName);
+          context.go(ActivationScreen.routeName, extra: correoCtrl.text.trim());
         });
       } else {
         final serverMsg = resp['message'] ?? 'Error en registro';
@@ -1462,90 +1513,56 @@ data in certain situations.
 
                         const SizedBox(height: 16),
 
-                        // BLOQUE: Seguro (moved to end, after password)
-                        Text(textos[lang]!['tieneSeguro']!,
-                            style: const TextStyle(fontSize: 15)),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Expanded(
-                                child: RadioListTile<bool>(
-                              title: Text(textos[lang]!['si']!),
-                              value: true,
-                              groupValue: tieneSeguro,
-                              onChanged: (v) {
-                                setState(() {
-                                  tieneSeguro = true;
-                                  if (aseguradoras.isEmpty)
-                                    _cargarAseguradorasSiCorresponde();
-                                });
-                              },
-                            )),
-                            Expanded(
-                                child: RadioListTile<bool>(
-                              title: Text(textos[lang]!['no']!),
-                              value: false,
-                              groupValue: tieneSeguro,
-                              onChanged: (v) {
-                                setState(() {
-                                  tieneSeguro = false;
-                                  aseguradoraSeleccionadaId = null;
-                                  polizaCtrl.clear();
-                                });
-                              },
-                            )),
-                          ],
+                        // Número de póliza
+                        CustomTextField(
+                          hintText: textos[lang]!['numeroPoliza'] ?? '',
+                          controller: polizaCtrl,
+                          leadingIconData:
+                              const Icon(Icons.confirmation_number),
+                          color: Colors.grey.withOpacity(0.2),
                         ),
 
-                        if (tieneSeguro) ...[
-                          const SizedBox(height: 8),
-                          cargandoAseguradoras
-                              ? const Center(child: CircularProgressIndicator())
-                              : SizedBox(
-                                  width: double.infinity,
-                                  child: DropdownButtonFormField<String>(
-                                    isExpanded: true,
-                                    value: aseguradoraSeleccionadaId,
-                                    items: aseguradoras.map((a) {
-                                      final id = a['id']?.toString() ?? '';
-                                      final label = a['Servicio']?.toString() ??
-                                          a['servicio']?.toString() ??
-                                          a['nombre']?.toString() ??
-                                          a['Nombre']?.toString() ??
-                                          '';
-                                      return DropdownMenuItem<String>(
-                                          value: id,
-                                          child: Text(label,
-                                              overflow: TextOverflow.ellipsis));
-                                    }).toList(),
-                                    onChanged: (v) {
-                                      setState(() {
-                                        aseguradoraSeleccionadaId = v;
-                                      });
-                                    },
-                                    decoration: InputDecoration(
-                                        filled: true,
-                                        fillColor: Colors.grey.withOpacity(0.2),
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                horizontal: 12, vertical: 14),
-                                        border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            borderSide: BorderSide.none),
-                                        hintText:
-                                            textos[lang]!['eligeAseguradora'] ??
-                                                ''),
+                        const SizedBox(height: 12),
+
+                        // Aseguradora (dropdown siempre visible)
+                        cargandoAseguradoras
+                            ? const Center(child: CircularProgressIndicator())
+                            : SizedBox(
+                                width: double.infinity,
+                                child: DropdownButtonFormField<String>(
+                                  isExpanded: true,
+                                  value: aseguradoraSeleccionadaId,
+                                  items: aseguradoras.map((a) {
+                                    final id = a['id']?.toString() ?? '';
+                                    final label = a['Servicio']?.toString() ??
+                                        a['servicio']?.toString() ??
+                                        a['nombre']?.toString() ??
+                                        a['Nombre']?.toString() ??
+                                        '';
+                                    return DropdownMenuItem<String>(
+                                      value: id,
+                                      child: Text(label,
+                                          overflow: TextOverflow.ellipsis),
+                                    );
+                                  }).toList(),
+                                  onChanged: (v) {
+                                    setState(
+                                        () => aseguradoraSeleccionadaId = v);
+                                  },
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: Colors.grey.withOpacity(0.2),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 14),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    hintText:
+                                        textos[lang]!['eligeAseguradora'] ?? '',
                                   ),
                                 ),
-                          const SizedBox(height: 12),
-                          CustomTextField(
-                              hintText: textos[lang]!['numeroPoliza'] ?? '',
-                              controller: polizaCtrl,
-                              leadingIconData:
-                                  const Icon(Icons.confirmation_number),
-                              color: Colors.grey.withOpacity(0.2)),
-                        ],
+                              ),
 
                         const SizedBox(height: 20),
 

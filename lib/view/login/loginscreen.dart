@@ -11,6 +11,7 @@ import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
 import 'package:real_san_jose/view/register/register.dart';
 import 'package:real_san_jose/provider/auth_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:real_san_jose/view/activation/activation_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   static var routeName = "/loginscreen";
@@ -70,7 +71,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       await prefs.setString("fullname", result["Fullname"]);
       await prefs.setString("curp", result["Curp"]);
 
-      context.push(DashboardScreen.routeName);
+      // ✅ Aquí validamos el Status
+      if (result["Status"] == 1) {
+        // Usuario activo → Dashboard
+        context.push(DashboardScreen.routeName);
+      } else if (result["Status"] == 0) {
+        // Usuario no activo → ActivationScreen
+        context.push(ActivationScreen.routeName, extra: user);
+      }
     } catch (e) {
       showAlert("Datos incorrectos");
     }
@@ -85,7 +93,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final texts = {
       'es': {
         'title': 'Inicia sesión para continuar',
-        'user': 'RFC / CURP / Correo',
+        'user': 'Correo',
         'password': 'Contraseña',
         'forgot': '¿Olvidaste tu contraseña?',
         'login': 'Login',
@@ -94,7 +102,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       },
       'en': {
         'title': 'Login to get started',
-        'user': 'RFC / CURP / Email',
+        'user': 'Email',
         'password': 'Password',
         'forgot': 'Forgot password?',
         'login': 'Login',

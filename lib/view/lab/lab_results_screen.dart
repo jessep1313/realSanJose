@@ -1,25 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:real_san_jose/common/widget/custom_header.dart';
+import 'package:real_san_jose/api/auth_service.dart';
+import 'lab_result_detail_screen.dart';
 import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
-import 'lab_result_detail_screen.dart'; // 👈 importamos la pantalla de detalle
 
-class LabResultsScreen extends ConsumerWidget {
+class LabResultsScreen extends ConsumerStatefulWidget {
   const LabResultsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _LabResultsScreenState();
+}
+
+class _LabResultsScreenState extends ConsumerState<LabResultsScreen> {
+  List<Map<String, dynamic>> estudios = [];
+  bool loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchEstudios();
+  }
+
+  Future<void> _fetchEstudios() async {
+    try {
+      final service = AuthService();
+      final data = await service.fetchEstudios();
+
+      setState(() {
+        estudios =
+            data.where((e) => e["TipoDeEstudio"] == "Laboratorio").toList();
+        loading = false;
+      });
+    } catch (e) {
+      setState(() => loading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error cargando estudios: $e")),
+      );
+    }
+  }
+
+  String _formatFecha(String fecha) {
+    // Recorta solo YYYY-MM-DD
+    return fecha.split("T").first;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final lang = ref.watch(languageProvider);
     final textos = {
-      'es': {'title': 'Resultados de laboratorio', 'desc': 'Consulta tus análisis clínicos'},
+      'es': {
+        'title': 'Resultados de laboratorio',
+        'desc': 'Consulta tus análisis clínicos'
+      },
       'en': {'title': 'Lab results', 'desc': 'Check your clinical tests'},
     };
-
-    final resultados = [
-      {"nombre": lang == 'es' ? "Biometría Hemática" : "Blood Count", "fecha": "12/01/2026"},
-      {"nombre": lang == 'es' ? "Química sanguínea" : "Blood Chemistry", "fecha": "05/01/2026"},
-      {"nombre": lang == 'es' ? "Perfil lipídico" : "Lipid Profile", "fecha": "20/12/2025"},
-    ];
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -47,39 +83,46 @@ class LabResultsScreen extends ConsumerWidget {
                 ],
               ),
             ),
-
-            // Listado con scroll independiente
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: resultados.length,
-                itemBuilder: (context, index) {
-                  final r = resultados[index];
-                  return Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      side: const BorderSide(color: Color(0xFF003DA5), width: 2),
-                    ),
-                    child: ListTile(
-                      leading: const Icon(Icons.biotech, color: Color(0xFF009639)),
-                      title: Text(r["nombre"]!),
-                      subtitle: Text(r["fecha"]!),
-                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => LabResultDetailScreen(
-                              nombre: r["nombre"]!,
-                              fecha: r["fecha"]!,
-                            ),
+              child: loading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: estudios.length,
+                      itemBuilder: (context, index) {
+                        final r = estudios[index];
+                        return Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: const BorderSide(
+                                color: Color(0xFF003DA5), width: 2),
+                          ),
+                          child: ListTile(
+                            leading: const Icon(Icons.biotech,
+                                color: Color(0xFF009639)),
+                            title: Text(r["DescripcionEstudio"] ?? ""),
+                            subtitle: Text(_formatFecha(r["Fecha"] ?? "")),
+                            trailing:
+                                const Icon(Icons.arrow_forward_ios, size: 16),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => LabResultDetailScreen(
+                                    folioOrden: r["FolioOrden"].toString(),
+                                    descripcion: r["DescripcionEstudio"] ?? "",
+                                    fecha: _formatFecha(r["Fecha"] ?? ""),
+                                    linkResultados: r["LinkDeResultados"],
+                                    sucursal: r["Sucursal"],
+                                    status: r["Status"],
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         );
                       },
                     ),
-                  );
-                },
-              ),
             ),
           ],
         ),

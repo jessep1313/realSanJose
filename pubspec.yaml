@@ -53,6 +53,12 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^5.0.0
   webview_flutter: ^4.7.0
+  pdfx: ^2.0.1
+  dio: ^5.4.0
+  path_provider: ^2.1.2
+
+
+
 
 flutter_icons:
   android: "launcher_icon"

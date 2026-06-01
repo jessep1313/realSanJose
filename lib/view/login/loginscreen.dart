@@ -58,6 +58,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     setState(() => isLoading = true);
 
+    print("➡ Enviando login con:");
+    print("identificator: $user");
+    print("password: $pass");
+
     try {
       final result = await ref.read(
         loginProvider({
@@ -69,7 +73,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString("token_usuario", result["token"]);
       await prefs.setString("fullname", result["Fullname"]);
-      await prefs.setString("curp", result["Curp"]);
+      await prefs.setString("Correo", result["Correo"]);
+      await prefs.setString("Telefono", result["Telefono"]);
+      await prefs.setString("Rfc", result["Rfc"]);
+      await prefs.setString("Curp", result["Curp"]);
+      await prefs.setString("Paterno", result["Paterno"]);
+      await prefs.setString("Materno", result["Materno"]);
+      await prefs.setString("Nombre", result["Nombre"]);
+      await prefs.setString("FechaNacimiento", result["FechaNacimiento"]);
+      await prefs.setString("Calle", result["Calle"]);
+      await prefs.setString("CodigoPostal", result["CodigoPostal"]);
+      await prefs.setString("NoExterior", result["NoExterior"]);
+      await prefs.setString("Colonia", result["Colonia"]);
+      await prefs.setString("Ciudad", result["Ciudad"]);
+      await prefs.setString("Estado", result["Estado"]);
+      await prefs.setString("Pais", result["Pais"]);
+      await prefs.setString("Nacionalidad", result["Nacionalidad"]);
 
       // ✅ Aquí validamos el Status
       if (result["Status"] == 1) {
@@ -80,6 +99,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         context.push(ActivationScreen.routeName, extra: user);
       }
     } catch (e) {
+      print("❌ ERROR LOGIN: $e");
+
       showAlert("Datos incorrectos");
     }
 

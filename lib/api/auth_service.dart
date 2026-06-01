@@ -428,6 +428,25 @@ class AuthService {
     }
   }
 
+  Future<List<dynamic>> getEstudios(String tokenUsuario) async {
+    final url = Uri.parse(
+        "https://webservicesvr.hrsj.com.mx/aptest/api/paciente/expediente/estudios");
+
+    final response = await http.get(
+      url,
+      headers: {
+        "Authorization": "Bearer $tokenUsuario",
+        "Accept": "application/json",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body) as List;
+    } else {
+      throw Exception("Error obteniendo estudios: ${response.statusCode}");
+    }
+  }
+
   // ---------------------------------------------------------
   // ⭐ VER ESTUDIOS (RX/LAB)
   // ---------------------------------------------------------
@@ -453,6 +472,72 @@ class AuthService {
       return List<Map<String, dynamic>>.from(data);
     } else {
       throw Exception("Error al obtener estudios: ${response.statusCode}");
+    }
+  }
+
+  Future<Map<String, dynamic>> actualizarPaciente(
+      Map<String, dynamic> payload) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userToken = prefs.getString("token_usuario") ?? "";
+
+    final url = Uri.parse("$baseUrl/paciente");
+
+    final response = await http.put(
+      url,
+      headers: {
+        "Authorization": "Bearer $userToken",
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode(payload),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception(
+          "Error al actualizar paciente: ${response.statusCode} ${response.body}");
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchVisitas() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userToken = prefs.getString("token_usuario") ?? "";
+
+    final url = Uri.parse("$baseUrl/paciente/expediente/visitas");
+
+    final response = await http.get(
+      url,
+      headers: {
+        "Authorization": "Bearer $userToken",
+        "Accept": "application/json",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return List<Map<String, dynamic>>.from(jsonDecode(response.body));
+    } else {
+      throw Exception("Error al obtener visitas: ${response.statusCode}");
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchCirugias() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userToken = prefs.getString("token_usuario") ?? "";
+
+    final url = Uri.parse("$baseUrl/paciente/agenda/cirugia");
+
+    final response = await http.get(
+      url,
+      headers: {
+        "Authorization": "Bearer $userToken",
+        "Accept": "application/json",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return List<Map<String, dynamic>>.from(jsonDecode(response.body));
+    } else {
+      throw Exception("Error al obtener cirugías: ${response.statusCode}");
     }
   }
 }

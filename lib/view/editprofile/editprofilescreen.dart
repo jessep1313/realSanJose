@@ -1,17 +1,8 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:real_san_jose/common/widget/borderradius.dart';
-import 'package:real_san_jose/common/widget/custombutton.dart';
-import 'package:real_san_jose/common/widget/customtextfield.dart';
-import 'package:real_san_jose/provider/accountprovider.dart';
-import 'package:real_san_jose/provider/editprofileprovider.dart';
-import 'package:real_san_jose/utils/appcolor.dart';
-import 'package:real_san_jose/utils/decoration.dart';
-
-// ⭐ Provider de idioma
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:real_san_jose/api/auth_service.dart';
+import 'package:real_san_jose/provider/configprovider.dart';
 import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
@@ -24,310 +15,189 @@ class EditProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
-  final picker = ImagePicker();
-  XFile? documentoImagen;
+  final _formKey = GlobalKey<FormState>();
 
   // Controladores
-  final nombreCtrl = TextEditingController();
-  final apellidosCtrl = TextEditingController();
-  final fechaCtrl = TextEditingController();
-  final domicilioCtrl = TextEditingController();
-  final municipioCtrl = TextEditingController();
-  final cpCtrl = TextEditingController();
-  final estadoCtrl = TextEditingController();
+  final correoCtrl = TextEditingController();
+  final telefonoCtrl = TextEditingController();
   final rfcCtrl = TextEditingController();
   final curpCtrl = TextEditingController();
+  final paternoCtrl = TextEditingController();
+  final maternoCtrl = TextEditingController();
+  final nombreCtrl = TextEditingController();
+  final fechaCtrl = TextEditingController();
+  final calleCtrl = TextEditingController();
+  final cpCtrl = TextEditingController();
+  final noExteriorCtrl = TextEditingController();
+  final noInteriorCtrl = TextEditingController();
+  final coloniaCtrl = TextEditingController();
+  final ciudadCtrl = TextEditingController();
+  final estadoCtrl = TextEditingController();
+  final paisCtrl = TextEditingController();
+  final nacionalidadCtrl = TextEditingController();
 
   @override
-  void dispose() {
-    nombreCtrl.dispose();
-    apellidosCtrl.dispose();
-    fechaCtrl.dispose();
-    domicilioCtrl.dispose();
-    municipioCtrl.dispose();
-    cpCtrl.dispose();
-    estadoCtrl.dispose();
-    rfcCtrl.dispose();
-    curpCtrl.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    _loadData();
   }
 
-  Future<void> _pickFromGallery() async {
-    final archivo = await picker.pickImage(source: ImageSource.gallery);
-    if (archivo != null) {
-      setState(() => documentoImagen = archivo);
+  Future<void> _loadData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      correoCtrl.text = prefs.getString("Correo") ?? "";
+      telefonoCtrl.text = prefs.getString("Telefono") ?? "";
+      rfcCtrl.text = prefs.getString("Rfc") ?? "";
+      curpCtrl.text = prefs.getString("Curp") ?? "";
+      paternoCtrl.text = prefs.getString("Paterno") ?? "";
+      maternoCtrl.text = prefs.getString("Materno") ?? "";
+      nombreCtrl.text = prefs.getString("Nombre") ?? "";
+      fechaCtrl.text = prefs.getString("FechaNacimiento") ?? "";
+      calleCtrl.text = prefs.getString("Calle") ?? "";
+      cpCtrl.text = prefs.getString("CodigoPostal") ?? "";
+      noExteriorCtrl.text = prefs.getString("NoExterior") ?? "";
+      noInteriorCtrl.text = prefs.getString("NoInterior") ?? "";
+      coloniaCtrl.text = prefs.getString("Colonia") ?? "";
+      ciudadCtrl.text = prefs.getString("Ciudad") ?? "";
+      estadoCtrl.text = prefs.getString("Estado") ?? "";
+      paisCtrl.text = prefs.getString("Pais") ?? "";
+      nacionalidadCtrl.text = prefs.getString("Nacionalidad") ?? "";
+    });
+  }
+
+  Future<void> _actualizar() async {
+    if (_formKey.currentState!.validate()) {
+      final payload = {
+        "Correo": correoCtrl.text,
+        "Telefono": telefonoCtrl.text,
+        "Rfc": rfcCtrl.text,
+        "Curp": curpCtrl.text,
+        "Paterno": paternoCtrl.text,
+        "Materno": maternoCtrl.text,
+        "Nombre": nombreCtrl.text,
+        "FechaNacimiento": fechaCtrl.text,
+        "Calle": calleCtrl.text,
+        "CodigoPostal": cpCtrl.text,
+        "NoExterior": noExteriorCtrl.text,
+        "NoInterior": noInteriorCtrl.text,
+        "Colonia": coloniaCtrl.text,
+        "Ciudad": ciudadCtrl.text,
+        "Estado": estadoCtrl.text,
+        "Pais": paisCtrl.text,
+        "Nacionalidad": nacionalidadCtrl.text,
+      };
+
+      try {
+        final service = AuthService();
+        await service.actualizarPaciente(payload);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Paciente actualizado correctamente")),
+        );
+        Navigator.pop(context);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error: $e")),
+        );
+      }
     }
+  }
+
+  Widget _buildField(String label, TextEditingController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label,
+            style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.black)),
+        const SizedBox(height: 6),
+        TextFormField(
+          controller: controller,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          ),
+        ),
+        const SizedBox(height: 16),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final lang = ref.watch(languageProvider);
-    final selectedImage = ref.watch(editProfileProvider).selectedImage;
 
-    final t = {
-      'es': {
-        'editar': 'Editar perfil',
-        'nombre': 'Nombre',
-        'apellidos': 'Apellidos',
-        'fecha': 'Fecha de nacimiento (DD/MM/AAAA)',
-        'domicilio': 'Domicilio',
-        'municipio': 'Municipio',
-        'cp': 'Código Postal',
-        'estado': 'Estado',
-        'rfc': 'RFC',
-        'curp': 'CURP',
-        'doc': 'Documento oficial',
-        'gallery': 'Elegir de galería',
-        'guardar': 'Actualizar',
-        'editarFoto': 'Editar',
-        'alertaTitulo': 'Datos actualizados',
-        'alertaMsg': 'Tu información ha sido actualizada correctamente.',
-        'ok': 'Aceptar',
-      },
-      'en': {
-        'editar': 'Edit Profile',
-        'nombre': 'First Name',
-        'apellidos': 'Last Name',
-        'fecha': 'Date of Birth (DD/MM/YYYY)',
-        'domicilio': 'Address',
-        'municipio': 'Municipality',
-        'cp': 'Postal Code',
-        'estado': 'State',
-        'rfc': 'RFC',
-        'curp': 'CURP',
-        'doc': 'Official Document',
-        'gallery': 'Choose from gallery',
-        'guardar': 'Update',
-        'editarFoto': 'Edit',
-        'alertaTitulo': 'Profile updated',
-        'alertaMsg': 'Your information has been successfully updated.',
-        'ok': 'OK',
-      }
-    };
-
-    return Container(
-      decoration: bgDecoration(),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-
-        // ⭐ HEAD UNIFICADO
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          automaticallyImplyLeading: false,
-          titleSpacing: 0,
-          toolbarHeight: 60,
-          title: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon:
+              const Icon(Icons.arrow_back, color: Color(0xFF003DA5), size: 28),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Center(
+          child: Image.asset('assets/icons/logo.jpg', height: 90),
+        ),
+        actions: [
+          DropdownButton<String>(
+            value: lang,
+            underline: const SizedBox(),
+            items: const [
+              DropdownMenuItem(value: 'es', child: Text('ES 🇲🇽')),
+              DropdownMenuItem(value: 'en', child: Text('EN 🇺🇸')),
+            ],
+            onChanged: (value) {
+              if (value != null) {
+                ref.read(languageProvider.notifier).state = value;
+              }
+            },
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
               children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Color(0xFF003DA5)),
-                  onPressed: () => Navigator.pop(context),
-                ),
-                Expanded(
-                  child: Center(
-                    child: Image.asset('assets/icons/logo.jpg', height: 90),
+                _buildField("Correo", correoCtrl),
+                _buildField("Teléfono", telefonoCtrl),
+                _buildField("RFC", rfcCtrl),
+                _buildField("CURP", curpCtrl),
+                _buildField("Apellido Paterno", paternoCtrl),
+                _buildField("Apellido Materno", maternoCtrl),
+                _buildField("Nombre", nombreCtrl),
+                _buildField("Fecha de Nacimiento", fechaCtrl),
+                _buildField("Calle", calleCtrl),
+                _buildField("Código Postal", cpCtrl),
+                _buildField("No Exterior", noExteriorCtrl),
+                _buildField("No Interior", noInteriorCtrl),
+                _buildField("Colonia", coloniaCtrl),
+                _buildField("Ciudad", ciudadCtrl),
+                _buildField("Estado", estadoCtrl),
+                _buildField("País", paisCtrl),
+                _buildField("Nacionalidad", nacionalidadCtrl),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _actualizar,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF003DA5),
+                    minimumSize: const Size.fromHeight(50),
                   ),
-                ),
-                DropdownButton<String>(
-                  value: lang,
-                  underline: const SizedBox(),
-                  items: const [
-                    DropdownMenuItem(value: 'es', child: Text('ES 🇲🇽')),
-                    DropdownMenuItem(value: 'en', child: Text('EN 🇺🇸')),
-                  ],
-                  onChanged: (value) {
-                    if (value != null) {
-                      ref.read(languageProvider.notifier).state = value;
-                    }
-                  },
+                  child: const Text("Actualizar",
+                      style: TextStyle(color: Colors.white)),
                 ),
               ],
             ),
           ),
-        ),
-
-        // ⭐ BODY
-        body: Column(
-          children: [
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: AppColor.appBackgroundColor,
-                  borderRadius: borderRadius(),
-                ),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                  child: SafeArea(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // ⭐ FOTO DE PERFIL
-                          GestureDetector(
-                            onTap: () {
-                              ref
-                                  .read(editProfileProvider)
-                                  .getImageFromGallery();
-                            },
-                            child: Center(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(15),
-                                child: Stack(
-                                  children: [
-                                    selectedImage.isEmpty
-                                        ? Image.asset(
-                                            "assets/images/specialist2.jpg",
-                                            width: 90,
-                                            height: 90,
-                                            fit: BoxFit.cover,
-                                          )
-                                        : Image.file(
-                                            File(selectedImage),
-                                            width: 90,
-                                            height: 90,
-                                            fit: BoxFit.cover,
-                                          ),
-                                    Positioned(
-                                      bottom: 0,
-                                      left: 0,
-                                      right: 0,
-                                      child: Container(
-                                        height: 30,
-                                        color: Colors.black45,
-                                        child: Center(
-                                          child: Text(
-                                            t[lang]!['editarFoto']!,
-                                            style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 12),
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(height: 20),
-
-                          // ⭐ CAMPOS
-                          CustomTextField(
-                              hintText: t[lang]!['nombre']!,
-                              controller: nombreCtrl),
-                          CustomTextField(
-                              hintText: t[lang]!['apellidos']!,
-                              controller: apellidosCtrl),
-                          CustomTextField(
-                              hintText: t[lang]!['fecha']!,
-                              controller: fechaCtrl),
-                          CustomTextField(
-                              hintText: t[lang]!['domicilio']!,
-                              controller: domicilioCtrl),
-                          CustomTextField(
-                              hintText: t[lang]!['municipio']!,
-                              controller: municipioCtrl),
-                          CustomTextField(
-                              hintText: t[lang]!['cp']!, controller: cpCtrl),
-                          CustomTextField(
-                              hintText: t[lang]!['estado']!,
-                              controller: estadoCtrl),
-                          CustomTextField(
-                              hintText: t[lang]!['rfc']!, controller: rfcCtrl),
-                          CustomTextField(
-                              hintText: t[lang]!['curp']!,
-                              controller: curpCtrl),
-
-                          const SizedBox(height: 20),
-
-                          // ⭐ DOCUMENTO
-                          Text(t[lang]!['doc']!,
-                              style: const TextStyle(fontSize: 15)),
-                          const SizedBox(height: 8),
-                          ElevatedButton.icon(
-                            icon: const Icon(Icons.photo_library),
-                            label: Text(t[lang]!['gallery']!),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              side: const BorderSide(
-                                  color: Color(0xFF003DA5), width: 2),
-                            ),
-                            onPressed: _pickFromGallery,
-                          ),
-
-                          if (documentoImagen != null)
-                            Container(
-                              margin: const EdgeInsets.only(top: 15),
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.grey.shade400),
-                              ),
-                              child: Image.file(
-                                File(documentoImagen!.path),
-                                height: 200,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-
-                          const SizedBox(
-                              height:
-                                  40), // ⭐ ESPACIO PARA QUE NO SE OCUPE EL BOTÓN
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            // ⭐ BOTÓN ACTUALIZAR SIEMPRE VISIBLE
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-              child: CustomButton(
-                color: Colors.white.withOpacity(0.3),
-                title: t[lang]!['guardar']!,
-                ontap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        title: Text(
-                          t[lang]!['alertaTitulo']!,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF003DA5),
-                          ),
-                        ),
-                        content: Text(t[lang]!['alertaMsg']!),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                              context.go('/profilescreen');
-                            },
-                            child: Text(
-                              t[lang]!['ok']!,
-                              style: const TextStyle(color: Color(0xFF003DA5)),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-              ),
-            )
-          ],
         ),
       ),
     );

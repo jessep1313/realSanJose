@@ -17,6 +17,7 @@ import 'package:real_san_jose/view/rayosx/rayosx_screen.dart';
 import 'package:real_san_jose/view/notas/notas_screen.dart';
 import 'package:real_san_jose/view/expediente/expediente_screen.dart';
 import 'package:real_san_jose/view/ayuda/ayuda_screen.dart';
+import 'package:real_san_jose/view/cirugias/cirugias_programadas_screen.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   static String routeName = '/dashboardscreen';
@@ -314,7 +315,11 @@ class HomeTab extends ConsumerWidget {
                         : 'Scheduled surgeries',
                     Icons.medical_services,
                     () {
-                      // Pantalla de Cirugías programadas
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const CirugiasProgramadasScreen()),
+                      );
                     },
                   ),
                   _serviceCard(

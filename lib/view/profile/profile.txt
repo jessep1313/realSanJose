@@ -8,44 +8,17 @@ import 'package:real_san_jose/utils/decoration.dart';
 import 'package:real_san_jose/view/editprofile/editprofilescreen.dart';
 import 'package:real_san_jose/view/notification/notificationscreen.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class Profilescreen extends ConsumerStatefulWidget {
+// ⭐ IMPORT CORRECTO DEL PROVIDER DE IDIOMA
+import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
+
+class Profilescreen extends ConsumerWidget {
   static var routeName = "/profilescreen";
 
   const Profilescreen({super.key});
 
   @override
-  ConsumerState<Profilescreen> createState() => _ProfilescreenState();
-}
-
-class _ProfilescreenState extends ConsumerState<Profilescreen> {
-  String nombreCliente = "";
-  String correoCliente = "";
-  String telefonoCliente = "";
-  String rfcCliente = "";
-  String curpCliente = "";
-
-  @override
-  void initState() {
-    super.initState();
-    _loadProfile();
-  }
-
-  Future<void> _loadProfile() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      nombreCliente = prefs.getString("Fullname") ?? "";
-      correoCliente = prefs.getString("Correo") ?? "";
-      telefonoCliente = prefs.getString("Telefono") ?? "";
-      rfcCliente = prefs.getString("Rfc") ?? "";
-      curpCliente = prefs.getString("Curp") ?? "";
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final lang = ref.watch(languageProvider);
 
     final textos = {
@@ -66,6 +39,13 @@ class _ProfilescreenState extends ConsumerState<Profilescreen> {
         'editar': 'Edit profile',
       }
     };
+
+    // Datos de ejemplo (luego se reemplazan con tu modelo real)
+    final nombreCliente = "Juan Pérez";
+    final correoCliente = "juanperez@gmail.com";
+    final telefonoCliente = "+52 3312345678";
+    final rfcCliente = "PEPJ8001019Q8";
+    final curpCliente = "PEPJ800101HDFRRN01";
 
     return Container(
       decoration: bgDecoration(),
@@ -117,7 +97,7 @@ class _ProfilescreenState extends ConsumerState<Profilescreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // ⭐ DATOS DEL PERFIL (sin imagen de perfil)
+                          // ⭐ DATOS DEL PERFIL
                           Container(
                             width: double.infinity,
                             padding: const EdgeInsets.all(12),
@@ -131,6 +111,12 @@ class _ProfilescreenState extends ConsumerState<Profilescreen> {
                             ),
                             child: Row(
                               children: [
+                                const CircleAvatar(
+                                  foregroundImage: AssetImage(
+                                      'assets/images/specialist.jpg'),
+                                  radius: 35,
+                                ),
+                                const SizedBox(width: 10),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
@@ -196,7 +182,7 @@ class _ProfilescreenState extends ConsumerState<Profilescreen> {
 
                           const SizedBox(height: 20),
 
-                          // ⭐ BANNERS (se mantienen)
+                          // ⭐ BANNERS
                           GestureDetector(
                             onTap: () {
                               launchUrl(Uri.parse(

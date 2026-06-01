@@ -1,25 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:real_san_jose/common/widget/custom_header.dart';
+import 'package:real_san_jose/api/auth_service.dart';
+import 'rayosx_detail_screen.dart';
 import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
-import 'rayosx_detail_screen.dart'; // 👈 importamos la pantalla de detalle
 
-class RayosXScreen extends ConsumerWidget {
+class RayosXScreen extends ConsumerStatefulWidget {
   const RayosXScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => _RayosXScreenState();
+}
+
+class _RayosXScreenState extends ConsumerState<RayosXScreen> {
+  List<Map<String, dynamic>> estudios = [];
+  bool loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchEstudios();
+  }
+
+  Future<void> _fetchEstudios() async {
+    try {
+      final service = AuthService();
+      final data = await service.fetchEstudios();
+
+      setState(() {
+        estudios = data.where((e) => e["TipoDeEstudio"] == "Rayos X").toList();
+        loading = false;
+      });
+    } catch (e) {
+      setState(() => loading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error cargando estudios: $e")),
+      );
+    }
+  }
+
+  String _formatFecha(String fecha) {
+    return fecha.split("T").first; // solo YYYY-MM-DD
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final lang = ref.watch(languageProvider);
     final textos = {
       'es': {'title': 'Rayos X', 'desc': 'Visualiza tus estudios de imagen'},
       'en': {'title': 'X-Rays', 'desc': 'View your imaging studies'},
     };
-
-    final estudios = [
-      {"nombre": lang == 'es' ? "Radiografía de tórax" : "Chest X-Ray", "fecha": "15/01/2026"},
-      {"nombre": lang == 'es' ? "Radiografía de rodilla" : "Knee X-Ray", "fecha": "10/01/2026"},
-      {"nombre": lang == 'es' ? "Radiografía dental" : "Dental X-Ray", "fecha": "05/01/2026"},
-    ];
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -38,44 +68,53 @@ class RayosXScreen extends ConsumerWidget {
                           color: Color(0xFF003DA5))),
                   const SizedBox(height: 10),
                   Text(textos[lang]!['desc']!,
-                      style: const TextStyle(fontSize: 16, color: Colors.black87)),
+                      style:
+                          const TextStyle(fontSize: 16, color: Colors.black87)),
                   const SizedBox(height: 20),
                 ],
               ),
             ),
-
-            // Listado con scroll independiente
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: estudios.length,
-                itemBuilder: (context, index) {
-                  final e = estudios[index];
-                  return Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      side: const BorderSide(color: Color(0xFF003DA5), width: 2),
-                    ),
-                    child: ListTile(
-                      leading: const Icon(Icons.image, color: Color(0xFF009639)),
-                      title: Text(e["nombre"]!),
-                      subtitle: Text(e["fecha"]!),
-                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => RayosXDetailScreen(
-                              nombre: e["nombre"]!,
-                              fecha: e["fecha"]!,
-                            ),
+              child: loading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: estudios.length,
+                      itemBuilder: (context, index) {
+                        final e = estudios[index];
+                        return Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: const BorderSide(
+                                color: Color(0xFF003DA5), width: 2),
+                          ),
+                          child: ListTile(
+                            leading: const Icon(Icons.image,
+                                color: Color(0xFF009639)),
+                            title: Text(e["DescripcionEstudio"] ?? ""),
+                            subtitle: Text(_formatFecha(e["Fecha"] ?? "")),
+                            trailing:
+                                const Icon(Icons.arrow_forward_ios, size: 16),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => RayosXDetailScreen(
+                                    folioOrden: e["FolioOrden"].toString(),
+                                    descripcion: e["DescripcionEstudio"] ?? "",
+                                    fecha: e["Fecha"] ?? "",
+                                    sucursal: e["Sucursal"],
+                                    status: e["Status"],
+                                    linkResultados: e["LinkDeResultados"],
+                                    linkImagenes: e["LinkImagenes"],
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         );
                       },
                     ),
-                  );
-                },
-              ),
             ),
           ],
         ),

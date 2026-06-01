@@ -499,7 +499,7 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
               // ---------------------- LOGO ----------------------
               Image.asset(
                 'assets/icons/logo.jpg',
-                height: 100,
+                height: 90,
               ),
 
               const SizedBox(height: 20),

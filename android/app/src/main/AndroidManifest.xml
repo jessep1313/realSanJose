@@ -8,7 +8,11 @@
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
-        android:label="Real San Jose">
+        android:label="Real San Jose"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:usesCleartextTraffic="true"
+
+        >
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
@@ -35,6 +39,7 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

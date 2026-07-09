@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart'; // 🌟 Tu librería blindada
 import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
 
-class LabResultDetailScreen extends ConsumerWidget {
+class LabResultDetailScreen extends ConsumerStatefulWidget {
   final String folioOrden;
   final String descripcion;
   final String fecha;
@@ -22,7 +22,15 @@ class LabResultDetailScreen extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<LabResultDetailScreen> createState() =>
+      _LabResultDetailScreenState();
+}
+
+class _LabResultDetailScreenState extends ConsumerState<LabResultDetailScreen> {
+  bool _isLoading = true;
+
+  @override
+  Widget build(BuildContext context) {
     final lang = ref.watch(languageProvider);
     final textos = {
       'es': {
@@ -34,6 +42,7 @@ class LabResultDetailScreen extends ConsumerWidget {
         'fecha': 'Fecha',
         'hora': 'Hora',
         'noResults': 'Sin resultados aún',
+        'loading': 'Cargando detalle de resultados...',
       },
       'en': {
         'title': 'Study detail',
@@ -44,14 +53,15 @@ class LabResultDetailScreen extends ConsumerWidget {
         'fecha': 'Date',
         'hora': 'Time',
         'noResults': 'No results yet',
+        'loading': 'Loading result details...',
       },
     };
 
     // separar fecha y hora
-    String fechaSolo = fecha;
+    String fechaSolo = widget.fecha;
     String horaSolo = "";
-    if (fecha.contains("T")) {
-      final parts = fecha.split("T");
+    if (widget.fecha.contains("T")) {
+      final parts = widget.fecha.split("T");
       fechaSolo = parts[0];
       horaSolo = parts.length > 1 ? parts[1] : "";
     }
@@ -61,13 +71,13 @@ class LabResultDetailScreen extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // ⭐ Header con back, logo y idioma
+            // ⭐ Header con back, logo y idioma original de Real San José
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
                   icon: const Icon(Icons.arrow_back,
-                      color: Color(0xFF003DA5), size: 28),
+                      color: Color(0xFF0166B8), size: 28),
                   onPressed: () {
                     Navigator.pop(context);
                   },
@@ -93,16 +103,16 @@ class LabResultDetailScreen extends ConsumerWidget {
 
             const SizedBox(height: 20),
 
-            // ⭐ Datos del estudio con mejor estilo
+            // ⭐ Datos del estudio estructurados
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _infoRow(textos[lang]!['folio']!, folioOrden),
-                  _infoRow(textos[lang]!['hospital']!, sucursal ?? ""),
-                  _infoRow(textos[lang]!['descripcion']!, descripcion),
-                  _infoRow(textos[lang]!['status']!, status ?? ""),
+                  _infoRow(textos[lang]!['folio']!, widget.folioOrden),
+                  _infoRow(textos[lang]!['hospital']!, widget.sucursal ?? ""),
+                  _infoRow(textos[lang]!['descripcion']!, widget.descripcion),
+                  _infoRow(textos[lang]!['status']!, widget.status ?? ""),
                   _infoRow(textos[lang]!['fecha']!, fechaSolo),
                   if (horaSolo.isNotEmpty)
                     _infoRow(textos[lang]!['hora']!, horaSolo),
@@ -111,13 +121,65 @@ class LabResultDetailScreen extends ConsumerWidget {
               ),
             ),
 
-            // ⭐ Contenido principal
+            // ⭐ Contenido Principal Web Seguro e Incrustado
             Expanded(
-              child: linkResultados != null
-                  ? WebViewWidget(
-                      controller: WebViewController()
-                        ..setJavaScriptMode(JavaScriptMode.unrestricted)
-                        ..loadRequest(Uri.parse(linkResultados!)),
+              child: widget.linkResultados != null
+                  ? Stack(
+                      children: [
+                        InAppWebView(
+                          initialUrlRequest:
+                              URLRequest(url: WebUri(widget.linkResultados!)),
+                          initialSettings: InAppWebViewSettings(
+                            javaScriptEnabled:
+                                true, // Necesario para los portales de laboratorio dinámicos
+                            transparentBackground: true,
+                            supportZoom:
+                                true, // Permite pellizcar para leer letras pequeñas del laboratorio
+                            builtInZoomControls: true,
+                            displayZoomControls:
+                                false, // Remueve botones de lupa molestos
+                          ),
+                          onLoadStart: (controller, url) {
+                            setState(() {
+                              _isLoading = true;
+                            });
+                          },
+                          onLoadStop: (controller, url) {
+                            setState(() {
+                              _isLoading = false;
+                            });
+                          },
+                          onReceivedError: (controller, request, error) {
+                            debugPrint(
+                                "Error WebView Laboratorio: ${error.description}");
+                          },
+                        ),
+
+                        // Indicador de carga fluido y limpio (sin const problemáticos)
+                        if (_isLoading)
+                          Container(
+                            color: Colors.white,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Color(0xFF0166B8)),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    textos[lang]!['loading']!,
+                                    style: const TextStyle(
+                                      color: Color(0xFF0166B8),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                      ],
                     )
                   : Center(
                       child: Text(
@@ -142,7 +204,7 @@ class LabResultDetailScreen extends ConsumerWidget {
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
-              color: Color(0xFF003DA5),
+              color: Color(0xFF0166B8),
             ),
           ),
           Expanded(

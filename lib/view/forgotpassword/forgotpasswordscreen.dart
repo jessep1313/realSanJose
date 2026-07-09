@@ -6,33 +6,47 @@ import 'package:real_san_jose/common/widget/custombutton.dart';
 import 'package:real_san_jose/common/widget/customtextfield.dart';
 import 'package:real_san_jose/utils/decoration.dart';
 import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
+import 'package:real_san_jose/api/auth_service.dart';
+import 'package:real_san_jose/view/forgotpassword/verify_code_screen.dart';
 
-// Reutilizamos el provider de idioma definido en OnboardingScreen
-import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
-
-class ForgotPasswordScreen extends ConsumerWidget {
+class ForgotPasswordScreen extends ConsumerStatefulWidget {
   static var routeName = "/forgotscreen";
 
   const ForgotPasswordScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ForgotPasswordScreen> createState() =>
+      _ForgotPasswordScreenState();
+}
+
+class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
+  final TextEditingController emailController = TextEditingController();
+  bool isLoading = false;
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final lang = ref.watch(languageProvider);
 
     final texts = {
       'es': {
         'title': 'Recuperar contraseña',
-        'user': 'RFC / CURP / Correo',
-        'hint': 'Ingresa RFC, CURP o correo',
-        'submit': 'Enviar',
-        'message': 'Ingresa tus datos para recuperar la contraseña.',
+        'user': 'Correo electrónico',
+        'hint': 'Ingresa tu correo',
+        'submit': 'Enviar código',
+        'message': 'Te enviaremos un código de verificación.',
       },
       'en': {
         'title': 'Forgot Password',
-        'user': 'RFC / CURP / Email',
-        'hint': 'Enter RFC, CURP or email',
-        'submit': 'Submit',
-        'message': 'Enter your data to reset password.',
+        'user': 'Email',
+        'hint': 'Enter your email',
+        'submit': 'Send code',
+        'message': 'We will send you a verification code.',
       }
     };
 
@@ -45,7 +59,7 @@ class ForgotPasswordScreen extends ConsumerWidget {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Color(0xFF003DA5)),
             onPressed: () {
-              context.pop(); // Regresa a la pantalla anterior
+              context.pop();
             },
           ),
           actions: [
@@ -110,19 +124,58 @@ class ForgotPasswordScreen extends ConsumerWidget {
                       CustomTextField(
                         color: Colors.grey.withOpacity(0.3),
                         hintText: texts[lang]!['hint']!,
-                        controller: TextEditingController(),
-                        textInputType: TextInputType.text,
-                        leadingIconData: const Icon(Icons.person),
+                        controller: emailController,
+                        textInputType: TextInputType.emailAddress,
+                        leadingIconData: const Icon(Icons.email),
                       ),
                       const SizedBox(height: 10),
-                      CustomButton(
-                        title: texts[lang]!['submit']!,
-                        ontap: () {
-                          // Aquí iría la lógica de recuperación
-                        },
-                        color: const Color(0xFF003DA5), // Pantone azul
-                        textColor: Colors.white,
-                      ),
+                      isLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : CustomButton(
+                              title: texts[lang]!['submit']!,
+                              ontap: () async {
+                                final email = emailController.text.trim();
+                                if (email.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Ingresa tu correo'),
+                                    ),
+                                  );
+                                  return;
+                                }
+                                setState(() => isLoading = true);
+                                try {
+                                  final service = AuthService();
+                                  final result =
+                                      await service.sendActivationCode(email);
+                                  // Si la respuesta es exitosa (aunque sea texto plano)
+                                  if (result['success'] == true ||
+                                      result['message'] != null) {
+                                    // Navegar a la pantalla de verificación
+                                    context.pushNamed(
+                                      VerifyCodeScreen.routeName,
+                                      extra: {'email': email},
+                                    );
+                                  } else {
+                                    throw Exception(
+                                        'No se pudo enviar el código');
+                                  }
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content:
+                                          Text('Error al enviar código: $e'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                } finally {
+                                  if (mounted)
+                                    setState(() => isLoading = false);
+                                }
+                              },
+                              color: const Color(0xFF003DA5),
+                              textColor: Colors.white,
+                            ),
                     ],
                   ),
                 ),
@@ -131,18 +184,14 @@ class ForgotPasswordScreen extends ConsumerWidget {
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    texts[lang]!['message']!,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                ],
+              child: Text(
+                texts[lang]!['message']!,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal,
+                ),
+                textAlign: TextAlign.center,
               ),
             ),
           ],

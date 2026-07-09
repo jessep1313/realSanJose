@@ -3,16 +3,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 // IMPORTA LAS SECCIONES
 import 'package:real_san_jose/view/nosotros/nosotros_screen.dart';
 import 'package:real_san_jose/view/servicios/servicios_screen.dart';
 import 'package:real_san_jose/view/especialidades/especialidades_screen.dart';
 import 'package:real_san_jose/view/maternidad/maternidad_screen.dart';
-import 'package:real_san_jose/view/directorio/directorio_screen.dart';
+//import 'package:real_san_jose/view/directorio/directorio_screen.dart';
 
 import 'package:real_san_jose/view/login/loginscreen.dart';
 import 'package:real_san_jose/view/register/register.dart';
+
+import 'package:real_san_jose/view/recorrido/recorrido_virtual_screen.dart';
 
 final languageProvider = StateProvider<String>((ref) => 'es');
 
@@ -58,9 +61,11 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
       'servicios': 'Servicios médicos',
       'especialidades': 'Especialidades',
       'maternidad': 'Maternidad',
-      'directorio': 'Directorio médico',
       'signup': 'No soy usuario',
       'viewLocations': 'Ver ubicaciones',
+      'virtualTour': 'Recorrido Virtual',
+      'agendar': 'Agendar cita',
+      'misCitas': 'Mis citas',
       'terms': 'Términos y condiciones',
       'locationModal': 'Selecciona una ubicación',
       'hospital1': 'Hospital Lázaro Cárdenas',
@@ -137,6 +142,9 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
       'directorio': 'Medical Directory',
       'signup': 'I am not a user',
       'viewLocations': 'View locations',
+      'virtualTour': 'Virtual Tour',
+      'agendar': 'Schedule appointment',
+      'misCitas': 'My appointments',
       'terms': 'Terms and Conditions',
       'locationModal': 'Select a location',
       'hospital1': 'Lázaro Cárdenas Hospital',
@@ -314,7 +322,7 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
                     onTap: () {
                       Navigator.pop(context);
                       openMap(
-                          "https://maps.google.com/?q=Av.+Lázaro+Cárdenas+4149,+Zapopan,+Jalisco");
+                          "https://maps.app.goo.gl/hfGZHHdFQye7uqN3A?g_st=ac");
                     },
                   ),
                   ListTile(
@@ -323,8 +331,7 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
                     title: Text(texts[lang]!['hospital2']!),
                     onTap: () {
                       Navigator.pop(context);
-                      openMap(
-                          "https://maps.google.com/?q=Av.+Central+911,+Zapopan,+Jalisco");
+                      openMap("https://maps.app.goo.gl/U2U5LmJXsC2xNJTY9");
                     },
                   ),
                 ],
@@ -367,7 +374,7 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
     );
   }
 
-  // ---------------------- MENÚ AZUL ----------------------
+  // ---------------------- MENÚ DESPLEGABLE ----------------------
   Widget _menuGrid(String lang) {
     return Container(
       width: double.infinity,
@@ -401,11 +408,47 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
             Navigator.push(context,
                 MaterialPageRoute(builder: (_) => const MaternidadScreen()));
           }),
-          _menuItem(Icons.people_alt_outlined, texts[lang]!['directorio']!, () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (_) => const DirectorioScreen()));
-          }),
         ],
+      ),
+    );
+  }
+
+  // ---------------------- ITEM DEL MENÚ (estilo tile cuadrado con border azul) ----------------------
+  Widget _squareMenuItem({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+    Color background = Colors.white,
+    Color iconColor = Colors.white,
+    Color textColor = Colors.white,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: background,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+              color: const Color(0xFF003DA5), width: 2), // borde azul
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: iconColor, size: 28),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: textColor,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -414,6 +457,7 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     final lang = ref.watch(languageProvider);
+    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -432,7 +476,7 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
                       icon: Icon(
                         _isMenuOpen ? Icons.close : Icons.menu,
                         size: 28,
-                        color: const Color(0xFF003DA5),
+                        color: const Color(0xFF0166B8),
                       ),
                       onPressed: () {
                         setState(() {
@@ -447,14 +491,14 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
                       child: Row(
                         children: [
                           const Icon(Icons.person_outline,
-                              size: 22, color: Color(0xFF003DA5)),
+                              size: 22, color: Color(0xFF0166B8)),
                           const SizedBox(width: 6),
                           Text(
                             texts[lang]!['loginHeader']!,
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF003DA5),
+                              color: Color(0xFF0166B8),
                             ),
                           ),
                         ],
@@ -484,8 +528,7 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
 
               // ---------------------- BANNER SUPERIOR ----------------------
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Image.asset(
@@ -506,7 +549,7 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
 
               // ---------------------- BANNER INFERIOR ----------------------
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Image.asset(
@@ -519,40 +562,53 @@ class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
 
               const SizedBox(height: 30),
 
-              // ---------------------- BOTONES PRINCIPALES ----------------------
+              // ---------------------- TILES PRINCIPALES (3 TILES estilo "Agendar cita") ----------------------
+              // El orden 1, 2, 3 representa el acomodo solicitado
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: Column(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: GridView.count(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 0.9,
                   children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF009639),
-                        minimumSize: const Size(double.infinity, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onPressed: () => context.push(RegisterScreen.routeName),
-                      child: Text(
-                        texts[lang]!['signup']!,
-                        style: const TextStyle(color: Colors.white),
-                      ),
+                    // 1 -> No soy usuario (navega a registro) - mantiene diseño tipo tile y borde azul
+                    _squareMenuItem(
+                      icon: Icons.person_add,
+                      title: texts[lang]!['signup']!,
+                      onTap: () => context.push(RegisterScreen.routeName),
+                      background: const Color(0xFF8B8E00),
+                      iconColor: Colors.white,
+                      textColor: Colors.white,
                     ),
-                    const SizedBox(height: 12),
-                    OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        minimumSize: const Size(double.infinity, 50),
-                        side: const BorderSide(
-                            color: Color(0xFF003DA5), width: 2),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onPressed: () => showLocationModal(lang),
-                      child: Text(
-                        texts[lang]!['viewLocations']!,
-                        style: const TextStyle(color: Color(0xFF003DA5)),
-                      ),
+
+                    // 2 -> Ver ubicaciones (abre modal) - blanco con borde azul
+                    _squareMenuItem(
+                      icon: Icons.location_on,
+                      title: texts[lang]!['viewLocations']!,
+                      onTap: () => showLocationModal(lang),
+                      background: Colors.white,
+                      iconColor: const Color(0xFF0166B8),
+                      textColor: const Color(0xFF0166B8),
+                    ),
+
+                    // 3 -> Recorrido Virtual (abre WebView)
+                    // dentro de GridView.count children: [...]
+                    _squareMenuItem(
+                      icon: Icons.vrpano,
+                      title: texts[lang]!['virtualTour']!,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const RecorridoVirtualScreen()),
+                        );
+                      },
+                      background: const Color(0xFF003DA5),
+                      iconColor: Colors.white,
+                      textColor: Colors.white,
                     ),
                   ],
                 ),

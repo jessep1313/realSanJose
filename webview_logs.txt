@@ -1,0 +1,472 @@
+06-22 18:24:47.011 W/ProcessStats( 2432): Tracking association SourceState{ddad21a com.cninfotech.real_san_jose/10632 Top #6806045} whose proc state 1 is better than process ProcessState{d1720a2 com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:1/10632 pkg=com.cninfotech.real_san_jose} proc state 2 (4 skipped)
+06-22 18:25:28.754 W/ProcessStats( 2432): Tracking association SourceState{ddad21a com.cninfotech.real_san_jose/10632 Top #6806174} whose proc state 1 is better than process ProcessState{d1720a2 com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:1/10632 pkg=com.cninfotech.real_san_jose} proc state 2 (3 skipped)
+06-22 18:26:06.997 W/ProcessStats( 2432): Tracking association SourceState{ddad21a com.cninfotech.real_san_jose/10632 Top #6806272} whose proc state 1 is better than process ProcessState{d1720a2 com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:1/10632 pkg=com.cninfotech.real_san_jose} proc state 2 (1 skipped)
+06-22 18:27:42.688 V/ResourcesManager(27549): The following library key has been added: ResourcesKey{ mHash=151e7a95 mResDir=null mSplitDirs=[] mOverlayDirs=[] mLibDirs=[/data/app/~~4AXsVQkBPi2QYQuJVBejdA==/com.google.android.webview-hc1mBflxOtYfRwi19Gw9jQ==/base.apk,/system/framework/android.test.base.jar] mDisplayId=0 mOverrideConfig=v36 mCompatInfo={450dpi always-compat} mLoaders=[]}
+06-22 18:27:42.762 I/ActivityManager( 2432): Start proc 28097:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0i473 for  {com.didiglobal.passenger/org.chromium.content.app.SandboxedProcessService0:0}
+06-22 18:27:42.762 I/DynamicHiddenApp_BGProtectManager( 2432): check webview name : com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0check hostingname webview : {com.didiglobal.passenger/org.chromium.content.app.SandboxedProcessService0:0}
+06-22 18:28:55.867 W/ProcessStats( 2432): Tracking association SourceState{ddad21a com.cninfotech.real_san_jose/10632 Top #6806445} whose proc state 1 is better than process ProcessState{d1720a2 com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:1/10632 pkg=com.cninfotech.real_san_jose} proc state 2 (1 skipped)
+06-22 18:35:08.138 I/ActivityManager( 2432): Process PhantomProcessRecord {aacfb8d 27781:27486:webview_zygote/u0a619} died
+06-22 18:36:28.690 V/ResourcesManager(31483): The following library key has been added: ResourcesKey{ mHash=151e7a95 mResDir=null mSplitDirs=[] mOverlayDirs=[] mLibDirs=[/data/app/~~4AXsVQkBPi2QYQuJVBejdA==/com.google.android.webview-hc1mBflxOtYfRwi19Gw9jQ==/base.apk,/system/framework/android.test.base.jar] mDisplayId=0 mOverrideConfig=v36 mCompatInfo={450dpi always-compat} mLoaders=[]}
+06-22 18:36:30.374 V/ResourcesManager(29685): The following library key has been added: ResourcesKey{ mHash=151e7a95 mResDir=null mSplitDirs=[] mOverlayDirs=[] mLibDirs=[/data/app/~~4AXsVQkBPi2QYQuJVBejdA==/com.google.android.webview-hc1mBflxOtYfRwi19Gw9jQ==/base.apk,/system/framework/android.test.base.jar] mDisplayId=0 mOverrideConfig=v36 mCompatInfo={450dpi always-compat} mLoaders=[]}
+06-22 18:50:17.616 I/ActivityManager( 2432): Killing 17780:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:1/u0a632i471 (adj 0): isolated not needed
+06-22 18:51:55.539 E/ProcessStats( 2432): Executing service ServiceState{f0b645d org.chromium.content.app.SandboxedProcessService0 pkg=com.google.android.webview proc=b9dc16e} without owner
+06-22 18:51:55.540 E/ProcessStats( 2432): Binding service ServiceState{f0b645d org.chromium.content.app.SandboxedProcessService0 pkg=com.google.android.webview proc=b9dc16e} without owner
+06-22 18:51:55.540 E/ProcessStats( 2432): Starting service ServiceState{f0b645d org.chromium.content.app.SandboxedProcessService0 pkg=com.google.android.webview proc=b9dc16e} without owner
+06-22 18:51:55.540 E/ProcessStats( 2432): Binding service ServiceState{f0b645d org.chromium.content.app.SandboxedProcessService0 pkg=com.google.android.webview proc=b9dc16e} without owner
+06-22 18:51:55.541 I/ActivityManager( 2432): Killing 12988:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0a279i457 (adj 0): isolated not needed
+06-22 18:51:55.565 I/ActivityManager( 2432): Start proc 16658:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:1/u0i474 for  {com.google.android.googlequicksearchbox/org.chromium.content.app.SandboxedProcessService0:1}
+06-22 18:51:55.565 I/DynamicHiddenApp_BGProtectManager( 2432): check webview name : com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:1check hostingname webview : {com.google.android.googlequicksearchbox/org.chromium.content.app.SandboxedProcessService0:1}
+06-22 18:51:55.581 I/cr_WebViewApkApp(16658): version=149.0.7827.91 (782709103) minSdkVersion=29 processName=com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:1 splits=<none>
+06-22 18:54:08.702 D/nativeloader(19625): Load /data/app/~~TaVyYlepJFqyHv3g1KUsXw==/com.cninfotech.real_san_jose-ZUTa0T66UH4FwoTXTuN-7A==/base.apk!/lib/arm64-v8a/libflutter.so using class loader ns clns-9 (caller=/data/app/~~TaVyYlepJFqyHv3g1KUsXw==/com.cninfotech.real_san_jose-ZUTa0T66UH4FwoTXTuN-7A==/base.apk): ok
+06-22 18:54:08.727 I/flutter (19625): [IMPORTANT:flutter/shell/platform/android/android_context_vk_impeller.cc(62)] Using the Impeller rendering backend (Vulkan).
+06-22 18:54:08.742 I/SV[267106124 MainActivity](19625): onWindowVisibilityChanged(0) true io.flutter.embedding.android.FlutterSurfaceView{febb74c V.E...... ......I. 0,0-0,0} of VRI[MainActivity]@165a4b2
+06-22 18:54:08.744 I/SV[267106124 MainActivity](19625): windowStopped(false) true io.flutter.embedding.android.FlutterSurfaceView{febb74c V.E...... ......ID 0,0-1080,2340} of VRI[MainActivity]@165a4b2
+06-22 18:54:08.746 I/SV[267106124 MainActivity](19625): surfaceCreated 1 #8 io.flutter.embedding.android.FlutterSurfaceView{febb74c V.E...... ......ID 0,0-1080,2340}
+06-22 18:54:08.756 I/SV[267106124 MainActivity](19625): surfaceChanged (1080,2340) 1 #8 io.flutter.embedding.android.FlutterSurfaceView{febb74c V.E...... ......ID 0,0-1080,2340}
+06-22 18:54:12.922 W/WindowOnBackDispatcher(19625): sendCancelIfRunning: isInProgress=false callback=io.flutter.embedding.android.FlutterActivity$1@7285372
+06-22 18:54:15.747 I/InsetsController(19625): setRequestedVisibleTypes: visible=true, mask=ime, host=com.cninfotech.real_san_jose/com.cninfotech.real_san_jose.MainActivity, from=android.view.InsetsController.controlAnimationUnchecked:1604 android.view.InsetsController.applyAnimation:2416 android.view.InsetsController.applyAnimation:2343 android.view.InsetsController.show:1422 android.view.inputmethod.InputMethodManager.showSoftInput:2659 android.view.inputmethod.InputMethodManager.showSoftInput:2571 android.view.inputmethod.InputMethodManager.showSoftInput:2563 android.view.inputmethod.InputMethodManager.showSoftInput:2491 io.flutter.plugin.editing.TextInputPlugin.showTextInput:433 io.flutter.plugin.editing.TextInputPlugin$2.show:114 
+06-22 18:54:23.720 I/flutter (19625): ➡ Enviando login con:
+06-22 18:54:23.721 I/flutter (19625): identificator: moicano324@hotmail.com
+06-22 18:54:23.721 I/flutter (19625): password: Password123
+06-22 18:54:26.249 I/flutter (19625): 📌 STATUS CODE: 200
+06-22 18:54:26.250 I/flutter (19625): 📌 RAW BODY: {"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3ByaW1hcnlzaWQiOiI0IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiJMT1BFWiBQTEFTQ0VOQ0lBIE1PSVNFUyBJU0FJIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsImV4cCI6MTc4MjIxOTE0NywiaXNzIjoiaHR0cHM6Ly93d3cuaHJzai5jb20vIiwiYXVkIjoiaHR0cHM6Ly93d3cuaHJzai5jb20vIn0.uy_6hDCk6fmypHNaxKRFpYQBB8rDuwqHFq0fWz0_YH0","isAdmin":false,"Id":4,"Paterno":"LOPEZ","Materno":"PLASCENCIA","Nombre":"MOISES ISAI","Fullname":"LOPEZ PLASCENCIA MOISES ISAI","FechaNacimiento":"1995-12-28T00:00:00","Sexo":"MASCULINO","Curp":"LOPM951228HJCPLS02","Rfc":"","ServicioMedicoId":null,"Poliza":null,"Correo":"moicano324@hotmail.com","Telefono":"+52 33 1234 5678","Calle":"Av. Reforma","CodigoPostal":"44398","NoExterior":"3","NoInterior":"","Colonia":"Centro","Ciudad":"Guadalajara","Estado":"Jalisco","Pais":"MEXICO","N
+06-22 18:54:26.286 W/WindowOnBackDispatcher(19625): sendCancelIfRunning: isInProgress=false callback=io.flutter.embedding.android.FlutterActivity$1@7285372
+06-22 18:54:28.709 I/flutter (19625): 📌 STATUS CODE: 200
+06-22 18:54:28.710 I/flutter (19625): 📌 RAW BODY: [{"CodigoSucursal":0,"Sucursal":"Lazaro Cardenas","FolioOrden":131515,"FolioAgenda":0,"FolioVisita":33628,"DescripcionEstudio":"ANTIGENO SARS-COV-2","TipoDeEstudio":"Laboratorio","Status":"Atendiendo","Fecha":"2021-01-14T10:54:00","LinkDeResultados":"https://webserviceslc.hrsj.com.mx/sahnet/LgaReporteador/Reporte?reporteId=1&Url=http://172.16.1.31/risnet/api/OrdenesLaboratorio/jsonResults/131515","LinkImagenes":null},{"CodigoSucursal":0,"Sucursal":"Lazaro Cardenas","FolioOrden":155912,"FolioAgenda":0,"FolioVisita":36402,"DescripcionEstudio":"KIT DE URGENCIA SANITARIA PROCESAMIENTO Y MANIPULACION DE MUESTRA LABORATORIO","TipoDeEstudio":"Laboratorio","Status":"Atendiendo","Fecha":"2021-04-16T09:25:00","LinkDeResultados":"https://webserviceslc.hrsj.com.mx/sahnet/LgaReporteador/Reporte?reporteId=1&Url=http://172.16.1.31/risnet/api/OrdenesLaboratorio/jsonResults/155912","LinkImagenes":null},{"CodigoSucursal":0,"Sucursal":"Lazaro Cardenas","FolioOrden":155912,"FolioAgenda":0,"FolioVisita":36402,"Des
+06-22 18:54:29.425 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.PigeonInternalInstanceManager.clear"., null, null)
+06-22 18:54:29.425 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:54:29.425 E/flutter (19625): #1      _PigeonInternalInstanceManagerApi.clear (package:webview_flutter_android/src/android_webkit.g.dart:710)
+06-22 18:54:29.425 E/flutter (19625): <asynchronous suspension>
+06-22 18:54:29.425 E/flutter (19625): 
+06-22 18:54:29.425 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebStorage.instance"., null, null)
+06-22 18:54:29.425 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:54:29.425 E/flutter (19625): #1      WebStorage.pigeonVar_instance.<anonymous closure> (package:webview_flutter_android/src/android_webkit.g.dart:6011)
+06-22 18:54:29.425 E/flutter (19625): <asynchronous suspension>
+06-22 18:54:29.425 E/flutter (19625): 
+06-22 18:54:29.425 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebView.pigeon_defaultConstructor"., null, null)
+06-22 18:54:29.425 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:54:29.425 E/flutter (19625): #1      new WebView.pigeon_new.<anonymous closure> (package:webview_flutter_android/src/android_webkit.g.dart:1781)
+06-22 18:54:29.425 E/flutter (19625): <asynchronous suspension>
+06-22 18:54:29.425 E/flutter (19625): 
+06-22 18:54:29.425 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebView.settings"., null, null)
+06-22 18:54:29.425 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:54:29.425 E/flutter (19625): #1      WebView.pigeonVar_settings.<anonymous closure> (package:webview_flutter_android/src/android_webkit.g.dart:1948)
+06-22 18:54:29.425 E/flutter (19625): <asynchronous suspension>
+06-22 18:54:29.425 E/flutter (19625): 
+06-22 18:54:29.425 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setDomStorageEnabled"., null, null)
+06-22 18:54:29.425 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:54:29.425 E/flutter (19625): #1      WebSettings.setDomStorageEnabled (package:webview_flutter_android/src/android_webkit.g.dart:2576)
+06-22 18:54:29.425 E/flutter (19625): <asynchronous suspension>
+06-22 18:54:29.425 E/flutter (19625): 
+06-22 18:54:29.425 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setJavaScriptCanOpenWindowsAutomatically"., null, null)
+06-22 18:54:29.425 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:54:29.425 E/flutter (19625): #1      WebSettings.setJavaScriptCanOpenWindowsAutomatically (package:webview_flutter_android/src/android_webkit.g.dart:2600)
+06-22 18:54:29.425 E/flutter (19625): <asynchronous suspension>
+06-22 18:54:29.425 E/flutter (19625): 
+06-22 18:54:29.425 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setSupportMultipleWindows"., null, null)
+06-22 18:54:29.425 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:54:29.425 E/flutter (19625): #1      WebSettings.setSupportMultipleWindows (package:webview_flutter_android/src/android_webkit.g.dart:2624)
+06-22 18:54:29.425 E/flutter (19625): <asynchronous suspension>
+06-22 18:54:29.425 E/flutter (19625): 
+06-22 18:54:29.425 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setLoadWithOverviewMode"., null, null)
+06-22 18:54:29.425 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:54:29.425 E/flutter (19625): #1      WebSettings.setLoadWithOverviewMode (package:webview_flutter_android/src/android_webkit.g.dart:2746)
+06-22 18:54:29.425 E/flutter (19625): <asynchronous suspension>
+06-22 18:54:29.425 E/flutter (19625): 
+06-22 18:54:29.426 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setUseWideViewPort"., null, null)
+06-22 18:54:29.426 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:54:29.426 E/flutter (19625): #1      WebSettings.setUseWideViewPort (package:webview_flutter_android/src/android_webkit.g.dart:2771)
+06-22 18:54:29.426 E/flutter (19625): <asynchronous suspension>
+06-22 18:54:29.426 E/flutter (19625): 
+06-22 18:54:29.426 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setDisplayZoomControls"., null, null)
+06-22 18:54:29.426 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:54:29.426 E/flutter (19625): #1      WebSettings.setDisplayZoomControls (package:webview_flutter_android/src/android_webkit.g.dart:2796)
+06-22 18:54:29.426 E/flutter (19625): <asynchronous suspension>
+06-22 18:54:29.426 E/flutter (19625): 
+06-22 18:54:29.426 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setBuiltInZoomControls"., null, null)
+06-22 18:54:29.426 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:54:29.426 E/flutter (19625): #1      WebSettings.setBuiltInZoomControls (package:webview_flutter_android/src/android_webkit.g.dart:2821)
+06-22 18:54:29.426 E/flutter (19625): <asynchronous suspension>
+06-22 18:54:29.426 E/flutter (19625): 
+06-22 18:54:29.426 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.pigeon_defaultConstructor"., null, null)
+06-22 18:54:29.426 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:54:29.426 E/flutter (19625): #1      new WebChromeClient.pigeon_new.<anonymous closure> (package:webview_flutter_android/src/android_webkit.g.dart:4809)
+06-22 18:54:29.426 E/flutter (19625): <asynchronous suspension>
+06-22 18:54:29.426 E/flutter (19625): 
+06-22 18:54:29.426 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebView.setWebChromeClient"., null, null)
+06-22 18:54:29.426 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:54:29.426 E/flutter (19625): #1      WebView.setWebChromeClient (package:webview_flutter_android/src/android_webkit.g.dart:2431)
+06-22 18:54:29.426 E/flutter (19625): <asynchronous suspension>
+06-22 18:54:29.426 E/flutter (19625): 
+06-22 18:54:29.426 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setJavaScriptEnabled"., null, null)
+06-22 18:54:29.426 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:54:29.426 E/flutter (19625): #1      WebSettings.setJavaScriptEnabled (package:webview_flutter_android/src/android_webkit.g.dart:2648)
+06-22 18:54:29.426 E/flutter (19625): <asynchronous suspension>
+06-22 18:54:29.426 E/flutter (19625): 
+06-22 18:54:29.426 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebView.loadUrl"., null, null)
+06-22 18:54:29.426 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:54:29.426 E/flutter (19625): #1      WebView.loadUrl (package:webview_flutter_android/src/android_webkit.g.dart:2029)
+06-22 18:54:29.426 E/flutter (19625): <asynchronous suspension>
+06-22 18:54:29.426 E/flutter (19625): 
+06-22 18:54:29.427 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(error, java.lang.IllegalStateException: Trying to create a platform view of unregistered type: plugins.flutter.io/webview
+06-22 18:54:29.427 E/flutter (19625): 	at io.flutter.plugin.platform.PlatformViewsController.createPlatformView(PlatformViewsController.java:521)
+06-22 18:54:29.427 E/flutter (19625): 	at io.flutter.plugin.platform.PlatformViewsController$1.createForTextureLayer(PlatformViewsController.java:214)
+06-22 18:54:29.427 E/flutter (19625): 	at io.flutter.plugin.platform.PlatformViewsControllerDelegator.createForTextureLayer(PlatformViewsControllerDelegator.java:134)
+06-22 18:54:29.427 E/flutter (19625): 	at io.flutter.embedding.engine.systemchannels.PlatformViewsChannel$1.create(PlatformViewsChannel.java:132)
+06-22 18:54:29.427 E/flutter (19625): 	at io.flutter.embedding.engine.systemchannels.PlatformViewsChannel$1.onMethodCall(PlatformViewsChannel.java:55)
+06-22 18:54:29.427 E/flutter (19625): 	at io.flutter.plugin.common.MethodChannel$IncomingMethodCallHandler.onMessage(MethodChannel.java:267)
+06-22 18:54:29.427 E/flutter (19625): 	at io.flutter.embedding.engine.dart.DartMessenger.invokeHandler(DartMessenger.java:286)
+06-22 18:54:29.427 E/flutter (19625): 	at io.flutter.embedding.engine.dart.DartMessenger.lambda$dispatchMessageToQueue$0$io-flutter-embedding-engine-dart-DartMessenger(DartMessenger.java:313)
+06-22 18:54:29.427 E/flutter (19625): 	at io.flutter.embedding.engine.dart.DartMessenger$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+06-22 18:54:29.427 E/flutter (19625): 	at android.os.Handler.handleCallback(Handler.java:995)
+06-22 18:54:29.427 E/flutter (19625): 	at android.os.Handler.dispatchMessage(Handler.java:103)
+06-22 18:54:29.427 E/flutter (19625): 	at android.os.Looper.loopOnce(Looper.java:273)
+06-22 18:54:29.427 E/flutter (19625): 	at android.os.Looper.loop(Looper.java:363)
+06-22 18:54:29.427 E/flutter (19625): 	at android.app.ActivityThread.main(ActivityThread.java:10060)
+06-22 18:54:29.427 E/flutter (19625): 	at java.lang.reflect.Method.invoke(Native Method)
+06-22 18:54:29.427 E/flutter (19625): 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:632)
+06-22 18:54:29.427 E/flutter (19625): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:975)
+06-22 18:54:29.427 E/flutter (19625): , null, null)
+06-22 18:54:29.427 E/flutter (19625): #0      StandardMethodCodec.decodeEnvelope (package:flutter/src/services/message_codecs.dart:653)
+06-22 18:54:29.427 E/flutter (19625): #1      MethodChannel._invokeMethod (package:flutter/src/services/platform_channel.dart:366)
+06-22 18:54:29.427 E/flutter (19625): <asynchronous suspension>
+06-22 18:54:29.427 E/flutter (19625): #2      SurfaceAndroidViewController._sendCreateMessage (package:flutter/src/services/platform_views.dart:1063)
+06-22 18:54:29.427 E/flutter (19625): <asynchronous suspension>
+06-22 18:54:29.427 E/flutter (19625): #3      AndroidViewController.create (package:flutter/src/services/platform_views.dart:852)
+06-22 18:54:29.427 E/flutter (19625): <asynchronous suspension>
+06-22 18:54:29.427 E/flutter (19625): 
+06-22 18:54:37.407 D/WindowOnBackDispatcher(19625): onBackInvoked, callback=io.flutter.embedding.android.FlutterActivity$1@7285372
+06-22 18:54:38.126 I/SV[267106124 MainActivity](19625): onWindowVisibilityChanged(8) false io.flutter.embedding.android.FlutterSurfaceView{febb74c V.E...... ........ 0,0-1080,2340} of VRI[MainActivity]@165a4b2
+06-22 18:54:38.126 I/SV[267106124 MainActivity](19625): surfaceDestroyed callback.size 1 #2 io.flutter.embedding.android.FlutterSurfaceView{febb74c V.E...... ........ 0,0-1080,2340}
+06-22 18:54:38.133 I/SV[267106124 MainActivity](19625): windowStopped(true) false io.flutter.embedding.android.FlutterSurfaceView{febb74c V.E...... ........ 0,0-1080,2340} of VRI[MainActivity]@165a4b2
+06-22 18:54:45.613 I/HoneySpace.StackRecentsView( 4419): unbindTaskViewHolders Real San Jose Flutter Demo
+06-22 18:55:12.879 D/PerProcessNandswap$NandswapHandler( 2432): nandswap start for non-activity com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:1(pid 16658) action:14 adj:905 type:1
+06-22 18:55:12.903 D/PerProcessNandswap$NandswapHandler( 2432): nandswap end for non-activity com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:1(pid 16658) ret:337154289664 adj:905
+06-22 18:56:30.177 I/HoneySpace.StackRecentsView( 4419): bindTaskViewHolders Real San Jose Flutter Demo
+06-22 18:56:30.962 I/SV[267106124 MainActivity](19625): onWindowVisibilityChanged(0) false io.flutter.embedding.android.FlutterSurfaceView{febb74c V.E...... ......ID 0,0-1080,2340} of VRI[MainActivity]@165a4b2
+06-22 18:56:30.968 I/SV[267106124 MainActivity](19625): windowStopped(false) true io.flutter.embedding.android.FlutterSurfaceView{febb74c V.E...... ......ID 0,0-1080,2340} of VRI[MainActivity]@165a4b2
+06-22 18:56:30.969 I/SV[267106124 MainActivity](19625): surfaceCreated 1 #1 io.flutter.embedding.android.FlutterSurfaceView{febb74c V.E...... ......ID 0,0-1080,2340}
+06-22 18:56:30.980 I/SV[267106124 MainActivity](19625): surfaceChanged (1080,2340) 1 #1 io.flutter.embedding.android.FlutterSurfaceView{febb74c V.E...... ......ID 0,0-1080,2340}
+06-22 18:56:31.312 I/HoneySpace.StackRecentsView( 4419): unbindTaskViewHolders Real San Jose Flutter Demo
+06-22 18:56:33.525 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebView.pigeon_defaultConstructor"., null, null)
+06-22 18:56:33.525 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:56:33.525 E/flutter (19625): #1      new WebView.pigeon_new.<anonymous closure> (package:webview_flutter_android/src/android_webkit.g.dart:1781)
+06-22 18:56:33.525 E/flutter (19625): <asynchronous suspension>
+06-22 18:56:33.525 E/flutter (19625): 
+06-22 18:56:33.525 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebView.settings"., null, null)
+06-22 18:56:33.525 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:56:33.525 E/flutter (19625): #1      WebView.pigeonVar_settings.<anonymous closure> (package:webview_flutter_android/src/android_webkit.g.dart:1948)
+06-22 18:56:33.525 E/flutter (19625): <asynchronous suspension>
+06-22 18:56:33.525 E/flutter (19625): 
+06-22 18:56:33.525 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setDomStorageEnabled"., null, null)
+06-22 18:56:33.525 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:56:33.525 E/flutter (19625): #1      WebSettings.setDomStorageEnabled (package:webview_flutter_android/src/android_webkit.g.dart:2576)
+06-22 18:56:33.525 E/flutter (19625): <asynchronous suspension>
+06-22 18:56:33.525 E/flutter (19625): 
+06-22 18:56:33.526 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setJavaScriptCanOpenWindowsAutomatically"., null, null)
+06-22 18:56:33.526 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:56:33.526 E/flutter (19625): #1      WebSettings.setJavaScriptCanOpenWindowsAutomatically (package:webview_flutter_android/src/android_webkit.g.dart:2600)
+06-22 18:56:33.526 E/flutter (19625): <asynchronous suspension>
+06-22 18:56:33.526 E/flutter (19625): 
+06-22 18:56:33.526 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setSupportMultipleWindows"., null, null)
+06-22 18:56:33.526 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:56:33.526 E/flutter (19625): #1      WebSettings.setSupportMultipleWindows (package:webview_flutter_android/src/android_webkit.g.dart:2624)
+06-22 18:56:33.526 E/flutter (19625): <asynchronous suspension>
+06-22 18:56:33.526 E/flutter (19625): 
+06-22 18:56:33.526 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setLoadWithOverviewMode"., null, null)
+06-22 18:56:33.526 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:56:33.526 E/flutter (19625): #1      WebSettings.setLoadWithOverviewMode (package:webview_flutter_android/src/android_webkit.g.dart:2746)
+06-22 18:56:33.526 E/flutter (19625): <asynchronous suspension>
+06-22 18:56:33.526 E/flutter (19625): 
+06-22 18:56:33.526 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setUseWideViewPort"., null, null)
+06-22 18:56:33.526 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:56:33.526 E/flutter (19625): #1      WebSettings.setUseWideViewPort (package:webview_flutter_android/src/android_webkit.g.dart:2771)
+06-22 18:56:33.526 E/flutter (19625): <asynchronous suspension>
+06-22 18:56:33.526 E/flutter (19625): 
+06-22 18:56:33.526 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setDisplayZoomControls"., null, null)
+06-22 18:56:33.526 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:56:33.526 E/flutter (19625): #1      WebSettings.setDisplayZoomControls (package:webview_flutter_android/src/android_webkit.g.dart:2796)
+06-22 18:56:33.526 E/flutter (19625): <asynchronous suspension>
+06-22 18:56:33.526 E/flutter (19625): 
+06-22 18:56:33.526 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setBuiltInZoomControls"., null, null)
+06-22 18:56:33.526 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:56:33.526 E/flutter (19625): #1      WebSettings.setBuiltInZoomControls (package:webview_flutter_android/src/android_webkit.g.dart:2821)
+06-22 18:56:33.526 E/flutter (19625): <asynchronous suspension>
+06-22 18:56:33.526 E/flutter (19625): 
+06-22 18:56:33.527 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.pigeon_defaultConstructor"., null, null)
+06-22 18:56:33.527 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:56:33.527 E/flutter (19625): #1      new WebChromeClient.pigeon_new.<anonymous closure> (package:webview_flutter_android/src/android_webkit.g.dart:4809)
+06-22 18:56:33.527 E/flutter (19625): <asynchronous suspension>
+06-22 18:56:33.527 E/flutter (19625): 
+06-22 18:56:33.527 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebView.setWebChromeClient"., null, null)
+06-22 18:56:33.527 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:56:33.527 E/flutter (19625): #1      WebView.setWebChromeClient (package:webview_flutter_android/src/android_webkit.g.dart:2431)
+06-22 18:56:33.527 E/flutter (19625): <asynchronous suspension>
+06-22 18:56:33.527 E/flutter (19625): 
+06-22 18:56:33.527 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setJavaScriptEnabled"., null, null)
+06-22 18:56:33.527 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:56:33.527 E/flutter (19625): #1      WebSettings.setJavaScriptEnabled (package:webview_flutter_android/src/android_webkit.g.dart:2648)
+06-22 18:56:33.527 E/flutter (19625): <asynchronous suspension>
+06-22 18:56:33.527 E/flutter (19625): 
+06-22 18:56:33.527 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebView.loadUrl"., null, null)
+06-22 18:56:33.527 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:56:33.527 E/flutter (19625): #1      WebView.loadUrl (package:webview_flutter_android/src/android_webkit.g.dart:2029)
+06-22 18:56:33.527 E/flutter (19625): <asynchronous suspension>
+06-22 18:56:33.527 E/flutter (19625): 
+06-22 18:56:33.529 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(error, java.lang.IllegalStateException: Trying to create a platform view of unregistered type: plugins.flutter.io/webview
+06-22 18:56:33.529 E/flutter (19625): 	at io.flutter.plugin.platform.PlatformViewsController.createPlatformView(PlatformViewsController.java:521)
+06-22 18:56:33.529 E/flutter (19625): 	at io.flutter.plugin.platform.PlatformViewsController$1.createForTextureLayer(PlatformViewsController.java:214)
+06-22 18:56:33.529 E/flutter (19625): 	at io.flutter.plugin.platform.PlatformViewsControllerDelegator.createForTextureLayer(PlatformViewsControllerDelegator.java:134)
+06-22 18:56:33.529 E/flutter (19625): 	at io.flutter.embedding.engine.systemchannels.PlatformViewsChannel$1.create(PlatformViewsChannel.java:132)
+06-22 18:56:33.529 E/flutter (19625): 	at io.flutter.embedding.engine.systemchannels.PlatformViewsChannel$1.onMethodCall(PlatformViewsChannel.java:55)
+06-22 18:56:33.529 E/flutter (19625): 	at io.flutter.plugin.common.MethodChannel$IncomingMethodCallHandler.onMessage(MethodChannel.java:267)
+06-22 18:56:33.529 E/flutter (19625): 	at io.flutter.embedding.engine.dart.DartMessenger.invokeHandler(DartMessenger.java:286)
+06-22 18:56:33.529 E/flutter (19625): 	at io.flutter.embedding.engine.dart.DartMessenger.lambda$dispatchMessageToQueue$0$io-flutter-embedding-engine-dart-DartMessenger(DartMessenger.java:313)
+06-22 18:56:33.529 E/flutter (19625): 	at io.flutter.embedding.engine.dart.DartMessenger$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+06-22 18:56:33.529 E/flutter (19625): 	at android.os.Handler.handleCallback(Handler.java:995)
+06-22 18:56:33.529 E/flutter (19625): 	at android.os.Handler.dispatchMessage(Handler.java:103)
+06-22 18:56:33.529 E/flutter (19625): 	at android.os.Looper.loopOnce(Looper.java:273)
+06-22 18:56:33.529 E/flutter (19625): 	at android.os.Looper.loop(Looper.java:363)
+06-22 18:56:33.529 E/flutter (19625): 	at android.app.ActivityThread.main(ActivityThread.java:10060)
+06-22 18:56:33.529 E/flutter (19625): 	at java.lang.reflect.Method.invoke(Native Method)
+06-22 18:56:33.529 E/flutter (19625): 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:632)
+06-22 18:56:33.529 E/flutter (19625): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:975)
+06-22 18:56:33.529 E/flutter (19625): , null, null)
+06-22 18:56:33.529 E/flutter (19625): #0      StandardMethodCodec.decodeEnvelope (package:flutter/src/services/message_codecs.dart:653)
+06-22 18:56:33.529 E/flutter (19625): #1      MethodChannel._invokeMethod (package:flutter/src/services/platform_channel.dart:366)
+06-22 18:56:33.529 E/flutter (19625): <asynchronous suspension>
+06-22 18:56:33.529 E/flutter (19625): #2      SurfaceAndroidViewController._sendCreateMessage (package:flutter/src/services/platform_views.dart:1063)
+06-22 18:56:33.529 E/flutter (19625): <asynchronous suspension>
+06-22 18:56:33.529 E/flutter (19625): #3      AndroidViewController.create (package:flutter/src/services/platform_views.dart:852)
+06-22 18:56:33.529 E/flutter (19625): <asynchronous suspension>
+06-22 18:56:33.529 E/flutter (19625): 
+06-22 18:56:47.509 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.PigeonInternalInstanceManager.removeStrongReference"., null, null)
+06-22 18:56:47.509 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:56:47.509 E/flutter (19625): #1      _PigeonInternalInstanceManagerApi.removeStrongReference (package:webview_flutter_android/src/android_webkit.g.dart:689)
+06-22 18:56:47.509 E/flutter (19625): <asynchronous suspension>
+06-22 18:56:47.509 E/flutter (19625): 
+06-22 18:56:47.510 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.PigeonInternalInstanceManager.removeStrongReference"., null, null)
+06-22 18:56:47.510 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:56:47.510 E/flutter (19625): #1      _PigeonInternalInstanceManagerApi.removeStrongReference (package:webview_flutter_android/src/android_webkit.g.dart:689)
+06-22 18:56:47.510 E/flutter (19625): <asynchronous suspension>
+06-22 18:56:47.510 E/flutter (19625): 
+06-22 18:56:47.510 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.PigeonInternalInstanceManager.removeStrongReference"., null, null)
+06-22 18:56:47.510 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:56:47.510 E/flutter (19625): #1      _PigeonInternalInstanceManagerApi.removeStrongReference (package:webview_flutter_android/src/android_webkit.g.dart:689)
+06-22 18:56:47.510 E/flutter (19625): <asynchronous suspension>
+06-22 18:56:47.510 E/flutter (19625): 
+06-22 18:56:47.510 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.PigeonInternalInstanceManager.removeStrongReference"., null, null)
+06-22 18:56:47.510 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:56:47.510 E/flutter (19625): #1      _PigeonInternalInstanceManagerApi.removeStrongReference (package:webview_flutter_android/src/android_webkit.g.dart:689)
+06-22 18:56:47.510 E/flutter (19625): <asynchronous suspension>
+06-22 18:56:47.510 E/flutter (19625): 
+06-22 18:56:47.510 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.PigeonInternalInstanceManager.removeStrongReference"., null, null)
+06-22 18:56:47.510 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:56:47.510 E/flutter (19625): #1      _PigeonInternalInstanceManagerApi.removeStrongReference (package:webview_flutter_android/src/android_webkit.g.dart:689)
+06-22 18:56:47.510 E/flutter (19625): <asynchronous suspension>
+06-22 18:56:47.510 E/flutter (19625): 
+06-22 18:56:47.511 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.PigeonInternalInstanceManager.removeStrongReference"., null, null)
+06-22 18:56:47.511 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:56:47.511 E/flutter (19625): #1      _PigeonInternalInstanceManagerApi.removeStrongReference (package:webview_flutter_android/src/android_webkit.g.dart:689)
+06-22 18:56:47.511 E/flutter (19625): <asynchronous suspension>
+06-22 18:56:47.511 E/flutter (19625): 
+06-22 18:56:48.619 I/flutter (19625): 📌 STATUS CODE: 200
+06-22 18:56:48.621 I/flutter (19625): 📌 RAW BODY: [{"CodigoSucursal":0,"Sucursal":"Lazaro Cardenas","FolioOrden":131515,"FolioAgenda":0,"FolioVisita":33628,"DescripcionEstudio":"ANTIGENO SARS-COV-2","TipoDeEstudio":"Laboratorio","Status":"Atendiendo","Fecha":"2021-01-14T10:54:00","LinkDeResultados":"https://webserviceslc.hrsj.com.mx/sahnet/LgaReporteador/Reporte?reporteId=1&Url=http://172.16.1.31/risnet/api/OrdenesLaboratorio/jsonResults/131515","LinkImagenes":null},{"CodigoSucursal":0,"Sucursal":"Lazaro Cardenas","FolioOrden":155912,"FolioAgenda":0,"FolioVisita":36402,"DescripcionEstudio":"KIT DE URGENCIA SANITARIA PROCESAMIENTO Y MANIPULACION DE MUESTRA LABORATORIO","TipoDeEstudio":"Laboratorio","Status":"Atendiendo","Fecha":"2021-04-16T09:25:00","LinkDeResultados":"https://webserviceslc.hrsj.com.mx/sahnet/LgaReporteador/Reporte?reporteId=1&Url=http://172.16.1.31/risnet/api/OrdenesLaboratorio/jsonResults/155912","LinkImagenes":null},{"CodigoSucursal":0,"Sucursal":"Lazaro Cardenas","FolioOrden":155912,"FolioAgenda":0,"FolioVisita":36402,"Des
+06-22 18:56:49.987 I/flutter (19625): Error cargando PDF: Failed to load dynamic library at path: libdartjni.so
+06-22 18:56:49.987 I/flutter (19625): The library was found at the specified path, but it could not be loaded. 
+06-22 18:56:49.987 I/flutter (19625): This might be due to missing dependencies or incorrect file permissions. 
+06-22 18:56:49.987 I/flutter (19625): Please ensure that the file has the correct permissions.
+06-22 18:56:49.987 I/flutter (19625): 
+06-22 18:56:49.987 I/flutter (19625): 
+06-22 18:56:49.987 I/flutter (19625): LateInitializationError: Field '_pdfController@797224910' has not been initialized.
+06-22 18:56:49.988 I/flutter (19625): #0      _PdfWebScreenState.build (package:real_san_jose/view/rayosx/pdf_web_screen.dart)
+06-22 18:56:49.988 I/flutter (19625): #1      StatefulElement.build (package:flutter/src/widgets/framework.dart:5931)
+06-22 18:56:49.988 I/flutter (19625): #2      ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5817)
+06-22 18:56:49.988 I/flutter (19625): #3      StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982)
+06-22 18:56:49.988 I/flutter (19625): #4      Element.rebuild (package:flutter/src/widgets/framework.dart:5529)
+06-22 18:56:49.988 I/flutter (19625): #5      BuildScope._tryRebuild (package:flutter/src/widgets/framework.dart:2750)
+06-22 18:56:49.988 I/flutter (19625): #6      BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2807)
+06-22 18:56:49.988 I/flutter (19625): #7      BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3111)
+06-22 18:56:49.988 I/flutter (19625): #8      WidgetsBinding.drawFrame (package:flutter/src/widgets/binding.dart:1571)
+06-22 18:56:49.988 I/flutter (19625): #9      RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:509)
+06-22 18:56:49.988 I/flutter (19625): #10     SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430)
+06-22 18:56:49.988 I/flutter (19625): #11     SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1345)
+06-22 18:56:49.988 I/flutter (19625): #12     SchedulerBinding._handleDrawFrame (package:flutter/src/scheduler/binding.dart:1198)
+06-22 18:56:49.988 I/flutter (19625): #13     _invoke (dart:ui/hooks.dart:423)
+06-22 18:56:49.988 I/flutter (19625): #14     PlatformDispatcher._drawFrame (dart:ui/platform_dispatcher.dart:447)
+06-22 18:56:49.988 I/flutter (19625): #15     _drawFrame (dart:ui/hooks.dart:395)
+06-22 18:57:20.254 I/SV[267106124 MainActivity](19625): windowStopped(true) false io.flutter.embedding.android.FlutterSurfaceView{febb74c V.E...... ........ 0,0-1080,2340} of VRI[MainActivity]@165a4b2
+06-22 18:57:20.254 I/SV[267106124 MainActivity](19625): surfaceDestroyed callback.size 1 #1 io.flutter.embedding.android.FlutterSurfaceView{febb74c V.E...... ........ 0,0-1080,2340}
+06-22 18:57:20.258 I/SV[267106124 MainActivity](19625): onWindowVisibilityChanged(8) false io.flutter.embedding.android.FlutterSurfaceView{febb74c G.E...... ......I. 0,0-1080,2340} of VRI[MainActivity]@165a4b2
+06-22 18:58:39.345 I/SV[267106124 MainActivity](19625): onWindowVisibilityChanged(0) false io.flutter.embedding.android.FlutterSurfaceView{febb74c V.E...... ......ID 0,0-1080,2340} of VRI[MainActivity]@165a4b2
+06-22 18:58:39.351 I/SV[267106124 MainActivity](19625): windowStopped(false) true io.flutter.embedding.android.FlutterSurfaceView{febb74c V.E...... ......ID 0,0-1080,2340} of VRI[MainActivity]@165a4b2
+06-22 18:58:39.353 I/SV[267106124 MainActivity](19625): surfaceCreated 1 #1 io.flutter.embedding.android.FlutterSurfaceView{febb74c V.E...... ......ID 0,0-1080,2340}
+06-22 18:58:39.363 I/SV[267106124 MainActivity](19625): surfaceChanged (1080,2340) 1 #1 io.flutter.embedding.android.FlutterSurfaceView{febb74c V.E...... ......ID 0,0-1080,2340}
+06-22 18:59:05.495 I/flutter (19625): 📌 STATUS CODE: 200
+06-22 18:59:05.496 I/flutter (19625): 📌 RAW BODY: [{"CodigoSucursal":0,"Sucursal":"Lazaro Cardenas","FolioOrden":131515,"FolioAgenda":0,"FolioVisita":33628,"DescripcionEstudio":"ANTIGENO SARS-COV-2","TipoDeEstudio":"Laboratorio","Status":"Atendiendo","Fecha":"2021-01-14T10:54:00","LinkDeResultados":"https://webserviceslc.hrsj.com.mx/sahnet/LgaReporteador/Reporte?reporteId=1&Url=http://172.16.1.31/risnet/api/OrdenesLaboratorio/jsonResults/131515","LinkImagenes":null},{"CodigoSucursal":0,"Sucursal":"Lazaro Cardenas","FolioOrden":155912,"FolioAgenda":0,"FolioVisita":36402,"DescripcionEstudio":"KIT DE URGENCIA SANITARIA PROCESAMIENTO Y MANIPULACION DE MUESTRA LABORATORIO","TipoDeEstudio":"Laboratorio","Status":"Atendiendo","Fecha":"2021-04-16T09:25:00","LinkDeResultados":"https://webserviceslc.hrsj.com.mx/sahnet/LgaReporteador/Reporte?reporteId=1&Url=http://172.16.1.31/risnet/api/OrdenesLaboratorio/jsonResults/155912","LinkImagenes":null},{"CodigoSucursal":0,"Sucursal":"Lazaro Cardenas","FolioOrden":155912,"FolioAgenda":0,"FolioVisita":36402,"Des
+06-22 18:59:10.869 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebView.pigeon_defaultConstructor"., null, null)
+06-22 18:59:10.869 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:59:10.869 E/flutter (19625): #1      new WebView.pigeon_new.<anonymous closure> (package:webview_flutter_android/src/android_webkit.g.dart:1781)
+06-22 18:59:10.869 E/flutter (19625): <asynchronous suspension>
+06-22 18:59:10.869 E/flutter (19625): 
+06-22 18:59:10.869 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebView.settings"., null, null)
+06-22 18:59:10.869 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:59:10.869 E/flutter (19625): #1      WebView.pigeonVar_settings.<anonymous closure> (package:webview_flutter_android/src/android_webkit.g.dart:1948)
+06-22 18:59:10.869 E/flutter (19625): <asynchronous suspension>
+06-22 18:59:10.869 E/flutter (19625): 
+06-22 18:59:10.869 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setDomStorageEnabled"., null, null)
+06-22 18:59:10.869 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:59:10.869 E/flutter (19625): #1      WebSettings.setDomStorageEnabled (package:webview_flutter_android/src/android_webkit.g.dart:2576)
+06-22 18:59:10.869 E/flutter (19625): <asynchronous suspension>
+06-22 18:59:10.869 E/flutter (19625): 
+06-22 18:59:10.869 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setJavaScriptCanOpenWindowsAutomatically"., null, null)
+06-22 18:59:10.869 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:59:10.869 E/flutter (19625): #1      WebSettings.setJavaScriptCanOpenWindowsAutomatically (package:webview_flutter_android/src/android_webkit.g.dart:2600)
+06-22 18:59:10.869 E/flutter (19625): <asynchronous suspension>
+06-22 18:59:10.869 E/flutter (19625): 
+06-22 18:59:10.870 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setSupportMultipleWindows"., null, null)
+06-22 18:59:10.870 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:59:10.870 E/flutter (19625): #1      WebSettings.setSupportMultipleWindows (package:webview_flutter_android/src/android_webkit.g.dart:2624)
+06-22 18:59:10.870 E/flutter (19625): <asynchronous suspension>
+06-22 18:59:10.870 E/flutter (19625): 
+06-22 18:59:10.870 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setLoadWithOverviewMode"., null, null)
+06-22 18:59:10.870 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:59:10.870 E/flutter (19625): #1      WebSettings.setLoadWithOverviewMode (package:webview_flutter_android/src/android_webkit.g.dart:2746)
+06-22 18:59:10.870 E/flutter (19625): <asynchronous suspension>
+06-22 18:59:10.870 E/flutter (19625): 
+06-22 18:59:10.870 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setUseWideViewPort"., null, null)
+06-22 18:59:10.870 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:59:10.870 E/flutter (19625): #1      WebSettings.setUseWideViewPort (package:webview_flutter_android/src/android_webkit.g.dart:2771)
+06-22 18:59:10.870 E/flutter (19625): <asynchronous suspension>
+06-22 18:59:10.870 E/flutter (19625): 
+06-22 18:59:10.871 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setDisplayZoomControls"., null, null)
+06-22 18:59:10.871 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:59:10.871 E/flutter (19625): #1      WebSettings.setDisplayZoomControls (package:webview_flutter_android/src/android_webkit.g.dart:2796)
+06-22 18:59:10.871 E/flutter (19625): <asynchronous suspension>
+06-22 18:59:10.871 E/flutter (19625): 
+06-22 18:59:10.874 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setBuiltInZoomControls"., null, null)
+06-22 18:59:10.874 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:59:10.874 E/flutter (19625): #1      WebSettings.setBuiltInZoomControls (package:webview_flutter_android/src/android_webkit.g.dart:2821)
+06-22 18:59:10.874 E/flutter (19625): <asynchronous suspension>
+06-22 18:59:10.874 E/flutter (19625): 
+06-22 18:59:10.874 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.pigeon_defaultConstructor"., null, null)
+06-22 18:59:10.874 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:59:10.874 E/flutter (19625): #1      new WebChromeClient.pigeon_new.<anonymous closure> (package:webview_flutter_android/src/android_webkit.g.dart:4809)
+06-22 18:59:10.874 E/flutter (19625): <asynchronous suspension>
+06-22 18:59:10.874 E/flutter (19625): 
+06-22 18:59:10.874 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebView.setWebChromeClient"., null, null)
+06-22 18:59:10.874 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:59:10.874 E/flutter (19625): #1      WebView.setWebChromeClient (package:webview_flutter_android/src/android_webkit.g.dart:2431)
+06-22 18:59:10.874 E/flutter (19625): <asynchronous suspension>
+06-22 18:59:10.874 E/flutter (19625): 
+06-22 18:59:10.874 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setJavaScriptEnabled"., null, null)
+06-22 18:59:10.874 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:59:10.874 E/flutter (19625): #1      WebSettings.setJavaScriptEnabled (package:webview_flutter_android/src/android_webkit.g.dart:2648)
+06-22 18:59:10.874 E/flutter (19625): <asynchronous suspension>
+06-22 18:59:10.874 E/flutter (19625): 
+06-22 18:59:10.874 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebView.loadUrl"., null, null)
+06-22 18:59:10.874 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 18:59:10.874 E/flutter (19625): #1      WebView.loadUrl (package:webview_flutter_android/src/android_webkit.g.dart:2029)
+06-22 18:59:10.874 E/flutter (19625): <asynchronous suspension>
+06-22 18:59:10.874 E/flutter (19625): 
+06-22 18:59:10.875 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(error, java.lang.IllegalStateException: Trying to create a platform view of unregistered type: plugins.flutter.io/webview
+06-22 18:59:10.875 E/flutter (19625): 	at io.flutter.plugin.platform.PlatformViewsController.createPlatformView(PlatformViewsController.java:521)
+06-22 18:59:10.875 E/flutter (19625): 	at io.flutter.plugin.platform.PlatformViewsController$1.createForTextureLayer(PlatformViewsController.java:214)
+06-22 18:59:10.875 E/flutter (19625): 	at io.flutter.plugin.platform.PlatformViewsControllerDelegator.createForTextureLayer(PlatformViewsControllerDelegator.java:134)
+06-22 18:59:10.875 E/flutter (19625): 	at io.flutter.embedding.engine.systemchannels.PlatformViewsChannel$1.create(PlatformViewsChannel.java:132)
+06-22 18:59:10.875 E/flutter (19625): 	at io.flutter.embedding.engine.systemchannels.PlatformViewsChannel$1.onMethodCall(PlatformViewsChannel.java:55)
+06-22 18:59:10.875 E/flutter (19625): 	at io.flutter.plugin.common.MethodChannel$IncomingMethodCallHandler.onMessage(MethodChannel.java:267)
+06-22 18:59:10.875 E/flutter (19625): 	at io.flutter.embedding.engine.dart.DartMessenger.invokeHandler(DartMessenger.java:286)
+06-22 18:59:10.875 E/flutter (19625): 	at io.flutter.embedding.engine.dart.DartMessenger.lambda$dispatchMessageToQueue$0$io-flutter-embedding-engine-dart-DartMessenger(DartMessenger.java:313)
+06-22 18:59:10.875 E/flutter (19625): 	at io.flutter.embedding.engine.dart.DartMessenger$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+06-22 18:59:10.875 E/flutter (19625): 	at android.os.Handler.handleCallback(Handler.java:995)
+06-22 18:59:10.875 E/flutter (19625): 	at android.os.Handler.dispatchMessage(Handler.java:103)
+06-22 18:59:10.875 E/flutter (19625): 	at android.os.Looper.loopOnce(Looper.java:273)
+06-22 18:59:10.875 E/flutter (19625): 	at android.os.Looper.loop(Looper.java:363)
+06-22 18:59:10.875 E/flutter (19625): 	at android.app.ActivityThread.main(ActivityThread.java:10060)
+06-22 18:59:10.875 E/flutter (19625): 	at java.lang.reflect.Method.invoke(Native Method)
+06-22 18:59:10.875 E/flutter (19625): 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:632)
+06-22 18:59:10.875 E/flutter (19625): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:975)
+06-22 18:59:10.875 E/flutter (19625): , null, null)
+06-22 18:59:10.875 E/flutter (19625): #0      StandardMethodCodec.decodeEnvelope (package:flutter/src/services/message_codecs.dart:653)
+06-22 18:59:10.875 E/flutter (19625): #1      MethodChannel._invokeMethod (package:flutter/src/services/platform_channel.dart:366)
+06-22 18:59:10.875 E/flutter (19625): <asynchronous suspension>
+06-22 18:59:10.875 E/flutter (19625): #2      SurfaceAndroidViewController._sendCreateMessage (package:flutter/src/services/platform_views.dart:1063)
+06-22 18:59:10.875 E/flutter (19625): <asynchronous suspension>
+06-22 18:59:10.875 E/flutter (19625): #3      AndroidViewController.create (package:flutter/src/services/platform_views.dart:852)
+06-22 18:59:10.875 E/flutter (19625): <asynchronous suspension>
+06-22 18:59:10.875 E/flutter (19625): 
+06-22 18:59:48.189 I/SV[267106124 MainActivity](19625): onWindowVisibilityChanged(8) false io.flutter.embedding.android.FlutterSurfaceView{febb74c V.E...... ........ 0,0-1080,2340} of VRI[MainActivity]@165a4b2
+06-22 18:59:48.190 I/SV[267106124 MainActivity](19625): surfaceDestroyed callback.size 1 #2 io.flutter.embedding.android.FlutterSurfaceView{febb74c V.E...... ........ 0,0-1080,2340}
+06-22 18:59:48.194 I/SV[267106124 MainActivity](19625): windowStopped(true) false io.flutter.embedding.android.FlutterSurfaceView{febb74c V.E...... ........ 0,0-1080,2340} of VRI[MainActivity]@165a4b2
+06-22 19:00:09.075 I/SV[267106124 MainActivity](19625): onWindowVisibilityChanged(0) false io.flutter.embedding.android.FlutterSurfaceView{febb74c V.E...... ......ID 0,0-1080,2340} of VRI[MainActivity]@165a4b2
+06-22 19:00:09.078 I/SV[267106124 MainActivity](19625): windowStopped(false) true io.flutter.embedding.android.FlutterSurfaceView{febb74c V.E...... ......ID 0,0-1080,2340} of VRI[MainActivity]@165a4b2
+06-22 19:00:09.079 I/SV[267106124 MainActivity](19625): surfaceCreated 1 #1 io.flutter.embedding.android.FlutterSurfaceView{febb74c V.E...... ......ID 0,0-1080,2340}
+06-22 19:00:09.095 I/SV[267106124 MainActivity](19625): surfaceChanged (1080,2340) 1 #1 io.flutter.embedding.android.FlutterSurfaceView{febb74c V.E...... ......ID 0,0-1080,2340}
+06-22 19:00:11.082 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebView.pigeon_defaultConstructor"., null, null)
+06-22 19:00:11.082 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 19:00:11.082 E/flutter (19625): #1      new WebView.pigeon_new.<anonymous closure> (package:webview_flutter_android/src/android_webkit.g.dart:1781)
+06-22 19:00:11.082 E/flutter (19625): <asynchronous suspension>
+06-22 19:00:11.082 E/flutter (19625): 
+06-22 19:00:11.082 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebView.settings"., null, null)
+06-22 19:00:11.082 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 19:00:11.082 E/flutter (19625): #1      WebView.pigeonVar_settings.<anonymous closure> (package:webview_flutter_android/src/android_webkit.g.dart:1948)
+06-22 19:00:11.082 E/flutter (19625): <asynchronous suspension>
+06-22 19:00:11.082 E/flutter (19625): 
+06-22 19:00:11.082 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setDomStorageEnabled"., null, null)
+06-22 19:00:11.082 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 19:00:11.082 E/flutter (19625): #1      WebSettings.setDomStorageEnabled (package:webview_flutter_android/src/android_webkit.g.dart:2576)
+06-22 19:00:11.082 E/flutter (19625): <asynchronous suspension>
+06-22 19:00:11.082 E/flutter (19625): 
+06-22 19:00:11.082 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setJavaScriptCanOpenWindowsAutomatically"., null, null)
+06-22 19:00:11.082 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 19:00:11.082 E/flutter (19625): #1      WebSettings.setJavaScriptCanOpenWindowsAutomatically (package:webview_flutter_android/src/android_webkit.g.dart:2600)
+06-22 19:00:11.082 E/flutter (19625): <asynchronous suspension>
+06-22 19:00:11.082 E/flutter (19625): 
+06-22 19:00:11.082 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setSupportMultipleWindows"., null, null)
+06-22 19:00:11.082 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 19:00:11.082 E/flutter (19625): #1      WebSettings.setSupportMultipleWindows (package:webview_flutter_android/src/android_webkit.g.dart:2624)
+06-22 19:00:11.082 E/flutter (19625): <asynchronous suspension>
+06-22 19:00:11.082 E/flutter (19625): 
+06-22 19:00:11.082 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setLoadWithOverviewMode"., null, null)
+06-22 19:00:11.082 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 19:00:11.082 E/flutter (19625): #1      WebSettings.setLoadWithOverviewMode (package:webview_flutter_android/src/android_webkit.g.dart:2746)
+06-22 19:00:11.082 E/flutter (19625): <asynchronous suspension>
+06-22 19:00:11.082 E/flutter (19625): 
+06-22 19:00:11.082 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setUseWideViewPort"., null, null)
+06-22 19:00:11.082 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 19:00:11.082 E/flutter (19625): #1      WebSettings.setUseWideViewPort (package:webview_flutter_android/src/android_webkit.g.dart:2771)
+06-22 19:00:11.082 E/flutter (19625): <asynchronous suspension>
+06-22 19:00:11.082 E/flutter (19625): 
+06-22 19:00:11.082 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setDisplayZoomControls"., null, null)
+06-22 19:00:11.082 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 19:00:11.082 E/flutter (19625): #1      WebSettings.setDisplayZoomControls (package:webview_flutter_android/src/android_webkit.g.dart:2796)
+06-22 19:00:11.082 E/flutter (19625): <asynchronous suspension>
+06-22 19:00:11.082 E/flutter (19625): 
+06-22 19:00:11.082 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setBuiltInZoomControls"., null, null)
+06-22 19:00:11.082 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 19:00:11.082 E/flutter (19625): #1      WebSettings.setBuiltInZoomControls (package:webview_flutter_android/src/android_webkit.g.dart:2821)
+06-22 19:00:11.082 E/flutter (19625): <asynchronous suspension>
+06-22 19:00:11.082 E/flutter (19625): 
+06-22 19:00:11.083 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.pigeon_defaultConstructor"., null, null)
+06-22 19:00:11.083 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 19:00:11.083 E/flutter (19625): #1      new WebChromeClient.pigeon_new.<anonymous closure> (package:webview_flutter_android/src/android_webkit.g.dart:4809)
+06-22 19:00:11.083 E/flutter (19625): <asynchronous suspension>
+06-22 19:00:11.083 E/flutter (19625): 
+06-22 19:00:11.083 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebView.setWebChromeClient"., null, null)
+06-22 19:00:11.083 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 19:00:11.083 E/flutter (19625): #1      WebView.setWebChromeClient (package:webview_flutter_android/src/android_webkit.g.dart:2431)
+06-22 19:00:11.083 E/flutter (19625): <asynchronous suspension>
+06-22 19:00:11.083 E/flutter (19625): 
+06-22 19:00:11.083 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebSettings.setJavaScriptEnabled"., null, null)
+06-22 19:00:11.083 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 19:00:11.083 E/flutter (19625): #1      WebSettings.setJavaScriptEnabled (package:webview_flutter_android/src/android_webkit.g.dart:2648)
+06-22 19:00:11.083 E/flutter (19625): <asynchronous suspension>
+06-22 19:00:11.083 E/flutter (19625): 
+06-22 19:00:11.083 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(channel-error, Unable to establish connection on channel: "dev.flutter.pigeon.webview_flutter_android.WebView.loadUrl"., null, null)
+06-22 19:00:11.083 E/flutter (19625): #0      _extractReplyValueOrThrow (package:webview_flutter_android/src/android_webkit.g.dart:23)
+06-22 19:00:11.083 E/flutter (19625): #1      WebView.loadUrl (package:webview_flutter_android/src/android_webkit.g.dart:2029)
+06-22 19:00:11.083 E/flutter (19625): <asynchronous suspension>
+06-22 19:00:11.083 E/flutter (19625): 
+06-22 19:00:11.083 E/flutter (19625): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(error, java.lang.IllegalStateException: Trying to create a platform view of unregistered type: plugins.flutter.io/webview
+06-22 19:00:11

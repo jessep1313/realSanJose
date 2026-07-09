@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 // Nuevas pantallas
 import 'package:real_san_jose/view/agendar/agendar_screen.dart';
+import 'package:real_san_jose/view/agendar/agendar_cirugia_screen.dart';
 import 'package:real_san_jose/view/lab/lab_results_screen.dart';
 import 'package:real_san_jose/view/rayosx/rayosx_screen.dart';
 import 'package:real_san_jose/view/notas/notas_screen.dart';
@@ -81,7 +82,6 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
       screens: [
         HomeTab(fullname: fullname, curp: curp),
         ScheduleScreen(),
-        ChatScreen(),
         Profilescreen(),
         Container(),
       ],
@@ -98,12 +98,7 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
           activeColorPrimary: CupertinoColors.white,
           inactiveColorPrimary: CupertinoColors.white,
         ),
-        PersistentBottomNavBarItem(
-          icon: const Icon(Icons.chat_bubble_outline, size: 20),
-          title: textos[lang]!['chat']!,
-          activeColorPrimary: CupertinoColors.white,
-          inactiveColorPrimary: CupertinoColors.white,
-        ),
+
         PersistentBottomNavBarItem(
           icon: const Icon(Icons.person_outline, size: 20),
           title: textos[lang]!['profile']!,
@@ -153,8 +148,8 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
       decoration: NavBarDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColor.appAlternateColor,
-            const Color(0xFF003DA5),
+            AppColor.appAlternateColorw,
+            const Color(0xFF8B8E00),
           ],
         ),
       ),
@@ -235,7 +230,7 @@ class HomeTab extends ConsumerWidget {
               ],
             ),
 
-            const SizedBox(height: 25), // ⭐ MÁS ESPACIO DESPUÉS DEL HEADER
+            const SizedBox(height: 10), // ⭐ MÁS ESPACIO DESPUÉS DEL HEADER
 
             // ⭐ SALUDO CENTRADO + NOMBRE DEBAJO
             Column(
@@ -243,27 +238,27 @@ class HomeTab extends ConsumerWidget {
                 Text(
                   textos[lang]!['hola']!,
                   style: const TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF003DA5),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  fullname,
-                  style: const TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF0166B8),
                   ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 4),
                 Text(
+                  fullname,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 2),
+                Text(
                   "CURP: $curp",
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 12,
                     color: Colors.grey[700],
                   ),
                   textAlign: TextAlign.center,
@@ -304,11 +299,25 @@ class HomeTab extends ConsumerWidget {
                   ),
                   _serviceCard(
                     lang == 'es' ? 'Programar cirugía' : 'Schedule surgery',
-                    Icons.local_hospital,
+                    Icons.medical_services,
                     () {
-                      // Pantalla de Programar Cirugía
+                      final sucursales = [
+                        {"id": 1, "nombre": "Sucursal Centro"},
+                        {"id": 2, "nombre": "Sucursal Norte"},
+                      ];
+                      final aseguradoras = ["AXA", "GNP", "Mapfre"];
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => AgendarCirugiaScreen(
+                            sucursales: sucursales,
+                            aseguradoras: aseguradoras,
+                          ),
+                        ),
+                      );
                     },
                   ),
+
                   _serviceCard(
                     lang == 'es'
                         ? 'Cirugías programadas'
@@ -343,6 +352,17 @@ class HomeTab extends ConsumerWidget {
                       );
                     },
                   ),
+                  // ⭐ NUEVA OPCIÓN: NOTAS MÉDICAS
+                  _serviceCard(
+                    lang == 'es' ? 'Notas médicas' : 'Medical notes',
+                    Icons.note_alt,
+                    () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const NotasScreen()),
+                      );
+                    },
+                  ),
                   _serviceCard(
                     lang == 'es' ? 'Histórico' : 'History',
                     Icons.folder_shared,
@@ -354,13 +374,58 @@ class HomeTab extends ConsumerWidget {
                       );
                     },
                   ),
+                  // ⭐ NUEVO: Agendar cita médica
                   _serviceCard(
-                    lang == 'es' ? 'Ayuda' : 'Help',
-                    Icons.help_outline,
+                    lang == 'es'
+                        ? 'Agendar cita médica'
+                        : 'Book medical appointment',
+                    Icons.local_hospital,
                     () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const AyudaScreen()),
+                      showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          title: Text(
+                              lang == 'es' ? 'Próximamente' : 'Coming soon'),
+                          content: Text(lang == 'es'
+                              ? 'Esta función estará disponible próximamente.'
+                              : 'This feature will be available soon.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () =>
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop(),
+                              child: Text(lang == 'es' ? 'Cerrar' : 'Close'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+
+                  // ⭐ NUEVO: Mis citas médicas
+                  _serviceCard(
+                    lang == 'es'
+                        ? 'Mis citas médicas'
+                        : 'My medical appointments',
+                    Icons.assignment,
+                    () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          title: Text(
+                              lang == 'es' ? 'Próximamente' : 'Coming soon'),
+                          content: Text(lang == 'es'
+                              ? 'Esta función estará disponible próximamente.'
+                              : 'This feature will be available soon.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () =>
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop(),
+                              child: Text(lang == 'es' ? 'Cerrar' : 'Close'),
+                            ),
+                          ],
+                        ),
                       );
                     },
                   ),
@@ -381,7 +446,7 @@ class HomeTab extends ConsumerWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
           side: const BorderSide(
-            color: Color(0xFF003DA5),
+            color: Color(0xFF8B8E00),
             width: 2,
           ),
         ),
@@ -390,12 +455,12 @@ class HomeTab extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, color: const Color(0xFF009639), size: 28),
+              Icon(icon, color: const Color(0xFF0166B8), size: 28),
               const SizedBox(height: 6),
               Text(
                 title,
                 style: const TextStyle(
-                  color: Color(0xFF009639),
+                  color: Color(0xFF0166B8),
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),

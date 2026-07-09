@@ -6,6 +6,7 @@ import 'package:real_san_jose/common/widget/custom_header.dart';
 import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:real_san_jose/api/auth_service.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 
 class AgendarScreen extends ConsumerStatefulWidget {
   const AgendarScreen({super.key});
@@ -20,12 +21,12 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
   int? estudioSeleccionado;
 
   DateTime? selectedDay;
-  String? horarioSeleccionado;
+  DateTime? horarioSeleccionado; // Ahora guarda DateTime local
 
   List<Map<String, dynamic>> catalogoEstudios = [];
   bool cargandoCatalogo = false;
 
-  List<String> horariosDisponibles = [];
+  List<DateTime> horariosDisponibles = []; // Ahora lista de DateTime
   bool cargandoHorarios = false;
 
   String? lastLang;
@@ -33,17 +34,15 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
     final lang = ref.watch(languageProvider);
-
     if (lastLang != lang) {
       lastLang = lang;
-
       tipoCita = null;
       hospitalSeleccionado = null;
       estudioSeleccionado = null;
       catalogoEstudios = [];
       horariosDisponibles = [];
+      horarioSeleccionado = null;
     }
   }
 
@@ -72,11 +71,14 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
 
   // ⭐ Cargar horarios disponibles desde API
   Future<void> cargarHorarios() async {
-    if (estudioSeleccionado == null || hospitalSeleccionado == null) return;
+    if (estudioSeleccionado == null ||
+        hospitalSeleccionado == null ||
+        selectedDay == null) return;
 
     setState(() {
       cargandoHorarios = true;
       horariosDisponibles = [];
+      horarioSeleccionado = null;
     });
 
     final service = AuthService();
@@ -88,8 +90,10 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
         selectedDay!,
       );
 
+      // Convertir cada string UTC a DateTime local
       setState(() {
-        horariosDisponibles = lista;
+        horariosDisponibles =
+            lista.map((s) => DateTime.parse(s).toLocal()).toList();
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -107,7 +111,7 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
     final textos = {
       'es': {
         'title': 'Agendar cita',
-        'desc': 'Selecciona tipo de cita, hospital, estudio, fecha y horario',
+        'desc': 'Selecciona fecha, tipo de cita, hospital, estudio y horario',
         'tipo': 'Tipo de cita',
         'hospital': 'Selecciona hospital',
         'estudio': 'Selecciona estudio',
@@ -120,7 +124,7 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
       },
       'en': {
         'title': 'Book appointment',
-        'desc': 'Select type, hospital, study, date and time',
+        'desc': 'Select date, type, hospital, study and time',
         'tipo': 'Appointment type',
         'hospital': 'Select hospital',
         'estudio': 'Select study',
@@ -150,23 +154,42 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Título y descripción
                     Text(
                       textos[lang]!['title']!,
                       style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF003DA5),
+                        color: Color(0xFF0166B8),
                       ),
                     ),
-
                     const SizedBox(height: 10),
-
                     Text(
                       textos[lang]!['desc']!,
                       style:
                           const TextStyle(fontSize: 16, color: Colors.black87),
                     ),
+                    const SizedBox(height: 20),
 
+                    // ⭐ CALENDARIO (PRIMERO)
+                    CalendarDatePicker(
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2020),
+                      lastDate: DateTime.now()
+                          .add(const Duration(days: 7)), // ⬅️ Límite 7 días
+                      onDateChanged: (date) {
+                        setState(() {
+                          selectedDay = date;
+                          horariosDisponibles = [];
+                          horarioSeleccionado = null;
+                        });
+                        // Si ya hay estudio y hospital, recargar horarios
+                        if (estudioSeleccionado != null &&
+                            hospitalSeleccionado != null) {
+                          cargarHorarios();
+                        }
+                      },
+                    ),
                     const SizedBox(height: 20),
 
                     // ⭐ TIPO DE CITA
@@ -188,6 +211,7 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
                           estudioSeleccionado = null;
                           catalogoEstudios = [];
                           horariosDisponibles = [];
+                          horarioSeleccionado = null;
                         });
 
                         if (value == 1 || value == 2) {
@@ -195,10 +219,9 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
                         }
                       },
                     ),
-
                     const SizedBox(height: 20),
 
-                    // ⭐ HOSPITAL
+                    // ⭐ HOSPITAL (si tipo cita seleccionado)
                     if (tipoCita != null)
                       _buildDropdown(
                         label: textos[lang]!['hospital']!,
@@ -213,14 +236,15 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
                           setState(() {
                             hospitalSeleccionado = value;
                             horariosDisponibles = [];
+                            horarioSeleccionado = null;
                           });
-
-                          if (estudioSeleccionado != null) {
+                          // Si ya hay estudio y fecha, cargar horarios
+                          if (estudioSeleccionado != null &&
+                              selectedDay != null) {
                             cargarHorarios();
                           }
                         },
                       ),
-
                     const SizedBox(height: 20),
 
                     // ⭐ ESTUDIOS (RX / LAB)
@@ -244,7 +268,7 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
                                   height: 20,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    color: Color(0xFF003DA5),
+                                    color: Color(0xFF0166B8),
                                   ),
                                 ),
                                 const SizedBox(width: 12),
@@ -252,44 +276,43 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
                               ],
                             )
                           else if (catalogoEstudios.isNotEmpty)
-                            _buildDropdown(
-                              label: "",
-                              value: estudioSeleccionado,
-                              items: catalogoEstudios
-                                  .map(
-                                    (e) => DropdownMenuItem(
-                                      value: e["id"],
-                                      child: Text(e["descripcion"].toString()),
+                            DropdownSearch<Map<String, dynamic>>(
+                              items: catalogoEstudios,
+                              itemAsString: (e) => e["descripcion"].toString(),
+                              selectedItem: estudioSeleccionado == null
+                                  ? null
+                                  : catalogoEstudios.firstWhere(
+                                      (e) => e["id"] == estudioSeleccionado,
+                                      orElse: () => <String, dynamic>{},
                                     ),
-                                  )
-                                  .toList(),
                               onChanged: (value) {
                                 setState(() {
-                                  estudioSeleccionado = value;
+                                  estudioSeleccionado = value?["id"];
                                   horariosDisponibles = [];
+                                  horarioSeleccionado = null;
                                 });
-                                cargarHorarios();
+                                if (hospitalSeleccionado != null &&
+                                    selectedDay != null) {
+                                  cargarHorarios();
+                                }
                               },
+                              dropdownDecoratorProps: DropDownDecoratorProps(
+                                dropdownSearchDecoration: InputDecoration(
+                                  labelText: textos[lang]!['estudio']!,
+                                  hintText: lang == 'es'
+                                      ? 'Selecciona estudio'
+                                      : 'Select study', // 🔹 placeholder
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                              ),
+                              popupProps: const PopupProps.menu(
+                                showSearchBox: true,
+                              ),
                             ),
                         ],
                       ),
-
-                    const SizedBox(height: 20),
-
-                    // ⭐ CALENDARIO
-                    CalendarDatePicker(
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(2020),
-                      lastDate: DateTime(2030),
-                      onDateChanged: (date) {
-                        setState(() => selectedDay = date);
-                        if (estudioSeleccionado != null &&
-                            hospitalSeleccionado != null) {
-                          cargarHorarios();
-                        }
-                      },
-                    ),
-
                     const SizedBox(height: 20),
 
                     // ⭐ HORARIOS DISPONIBLES
@@ -298,10 +321,9 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF003DA5),
+                        color: Color(0xFF0166B8),
                       ),
                     ),
-
                     const SizedBox(height: 10),
 
                     if (cargandoHorarios)
@@ -309,7 +331,7 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
                         child: Padding(
                           padding: EdgeInsets.all(20),
                           child: CircularProgressIndicator(
-                            color: Color(0xFF003DA5),
+                            color: Color(0xFF0166B8),
                           ),
                         ),
                       )
@@ -324,25 +346,23 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
                       Wrap(
                         spacing: 10,
                         runSpacing: 10,
-                        children: horariosDisponibles.map((h) {
-                          // Parsear el string completo a DateTime
-                          final hora = DateTime.parse(h);
-                          // Formatear solo HH:mm
+                        children: horariosDisponibles.map((horaLocal) {
+                          // Formatear solo HH:mm para mostrar
                           final horaStr =
-                              "${hora.hour.toString().padLeft(2, '0')}:${hora.minute.toString().padLeft(2, '0')}";
-
-                          final selected = horarioSeleccionado == h;
+                              "${horaLocal.hour.toString().padLeft(2, '0')}:${horaLocal.minute.toString().padLeft(2, '0')}";
+                          final selected = horarioSeleccionado == horaLocal;
 
                           return ChoiceChip(
-                            label: Text(horaStr), // se muestra solo la hora
+                            label: Text(horaStr),
                             selected: selected,
-                            selectedColor: const Color(0xFF003DA5),
+                            selectedColor: const Color(0xFF0166B8),
                             labelStyle: TextStyle(
                               color: selected ? Colors.white : Colors.black,
                             ),
                             onSelected: (_) {
-                              // se guarda el string completo con fecha y zona horaria
-                              setState(() => horarioSeleccionado = h);
+                              setState(() {
+                                horarioSeleccionado = horaLocal;
+                              });
                             },
                           );
                         }).toList(),
@@ -361,7 +381,7 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton.icon(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF009639),
+            backgroundColor: const Color(0xFF8B8E00),
             minimumSize: const Size(double.infinity, 50),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
@@ -380,19 +400,26 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
                 horarioSeleccionado != null) {
               try {
                 final service = AuthService();
+                String fechaStr_calendario =
+                    selectedDay!.toString().split(' ')[0]; // "2026-06-30"
+
+                // Formatear el DateTime local a ISO sin zona horaria
+
+                final fechaHora =
+                    "${fechaStr_calendario}T${horarioSeleccionado!.hour.toString().padLeft(2, '0')}:${horarioSeleccionado!.minute.toString().padLeft(2, '0')}:00";
+
                 final result = await service.crearCita(
                   estudioId: estudioSeleccionado!,
                   sucursal: hospitalSeleccionado!,
-                  fechaHora:
-                      horarioSeleccionado!, // string completo con fecha y hora
+                  fechaHora: fechaHora,
                 );
 
                 // Parsear fecha/hora para mostrar bonito
-                final fechaHora = DateTime.parse(result["FechaHora"]);
+                final fechaHoraResult = DateTime.parse(result["FechaHora"]);
                 final fechaStr =
-                    "${fechaHora.year}-${fechaHora.month.toString().padLeft(2, '0')}-${fechaHora.day.toString().padLeft(2, '0')}";
+                    "${fechaHoraResult.year}-${fechaHoraResult.month.toString().padLeft(2, '0')}-${fechaHoraResult.day.toString().padLeft(2, '0')}";
                 final horaStr =
-                    "${fechaHora.hour.toString().padLeft(2, '0')}:${fechaHora.minute.toString().padLeft(2, '0')}";
+                    "${fechaHoraResult.hour.toString().padLeft(2, '0')}:${fechaHoraResult.minute.toString().padLeft(2, '0')}";
 
                 // Mostrar modal con folio y fecha/hora
                 showDialog(
@@ -404,8 +431,8 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
                     actions: [
                       TextButton(
                         onPressed: () {
-                          Navigator.of(ctx).pop(); // cerrar modal
-                          // Opción 1: limpiar valores
+                          Navigator.of(ctx).pop();
+                          // Limpiar campos y regresar al dashboard
                           setState(() {
                             tipoCita = null;
                             hospitalSeleccionado = null;
@@ -415,7 +442,6 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
                             catalogoEstudios = [];
                             horariosDisponibles = [];
                           });
-                          // Opción 2: redirigir a DashboardScreen
                           Navigator.pushReplacementNamed(
                               context, "/dashboardscreen");
                         },
@@ -458,7 +484,7 @@ class _AgendarScreenState extends ConsumerState<AgendarScreen> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            border: Border.all(color: Color(0xFF003DA5), width: 2),
+            border: Border.all(color: Color(0xFF0166B8), width: 2),
             borderRadius: BorderRadius.circular(12),
           ),
           child: DropdownButtonHideUnderline(

@@ -16,6 +16,8 @@ import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:real_san_jose/api/auth_service.dart';
 import 'package:real_san_jose/view/activation/activation_screen.dart';
+import 'package:real_san_jose/view/register/ine_camera_screen.dart';
+import 'package:real_san_jose/view/register/passport_camera_screen.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   static var routeName = "/registerscreen";
@@ -101,12 +103,66 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     super.dispose();
   }
 
+  void _mostrarCargando({String mensaje = 'Obteniendo información...'}) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        content: Row(
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(width: 20),
+            Expanded(
+              child: Text(
+                mensaje,
+                style: const TextStyle(fontSize: 16),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _ocultarCargando() {
+    if (mounted) Navigator.of(context, rootNavigator: true).pop();
+  }
+
   Future<void> _pickIneFromGallery() async {
     final archivo = await picker.pickImage(source: ImageSource.gallery);
+    if (archivo == null) return;
 
-    if (archivo != null) {
-      setState(() => ineFrente = archivo);
-      await _procesarIne(File(archivo.path));
+    setState(() => ineFrente = archivo);
+    _mostrarCargando();
+
+    final service = AuthService();
+    try {
+      final result = await service.procesarIne(File(archivo.path));
+      final datos = result['Datos'] as Map<String, dynamic>?;
+
+      if (datos != null) {
+        paternoCtrl.text = datos['ApellidoPaterno']?.toString() ?? '';
+        maternoCtrl.text = datos['ApellidoMaterno']?.toString() ?? '';
+        nombreCtrl.text = datos['Nombre']?.toString() ?? '';
+        curpCtrl.text = datos['Curp']?.toString() ?? '';
+        sexo = datos['Sexo']?.toString() ?? 'MASCULINO';
+
+        final fechaRaw = datos['FechaNacimiento']?.toString() ?? '';
+        if (fechaRaw.isNotEmpty) {
+          final parts = fechaRaw.split('T');
+          fechaCtrl.text = parts.isNotEmpty ? parts[0] : '';
+        }
+        rfcCtrl.text = '';
+        setState(() {});
+      } else {
+        throw Exception('No se encontraron datos en la respuesta');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error procesando INE: $e")),
+      );
+    } finally {
+      _ocultarCargando();
     }
   }
 
@@ -134,30 +190,67 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     }
   }
 
-  Future<void> _pickIneFront() async {
+  Future<void> _pickIneFront_3() async {
     final archivo = await picker.pickImage(source: ImageSource.camera);
-    if (archivo != null) {
-      setState(() => ineFrente = archivo);
+    if (archivo == null) return;
 
-      final service = AuthService();
-      try {
-        final result = await service.procesarIne(File(archivo.path));
+    setState(() => ineFrente = archivo);
+    _mostrarCargando(); // 👈 Muestra el diálogo
 
-        // Llenar campos con la respuesta del backend
-        paternoCtrl.text = result['Paterno'] ?? '';
-        maternoCtrl.text = result['Materno'] ?? '';
-        nombreCtrl.text = result['Nombre'] ?? '';
-        fechaCtrl.text = result['FechaNacimiento'] ?? '';
-        sexo = result['Sexo'] ?? 'MASCULINO';
-        curpCtrl.text = result['Curp'] ?? '';
-        rfcCtrl.text = result['Rfc'] ?? '';
+    final service = AuthService();
+    try {
+      final result = await service.procesarIne(File(archivo.path));
+      final datos = result['Datos'] as Map<String, dynamic>?;
 
+      if (datos != null) {
+        paternoCtrl.text = datos['ApellidoPaterno']?.toString() ?? '';
+        maternoCtrl.text = datos['ApellidoMaterno']?.toString() ?? '';
+        nombreCtrl.text = datos['Nombre']?.toString() ?? '';
+        curpCtrl.text = datos['Curp']?.toString() ?? '';
+        sexo = datos['Sexo']?.toString() ?? 'MASCULINO';
+
+        final fechaRaw = datos['FechaNacimiento']?.toString() ?? '';
+        if (fechaRaw.isNotEmpty) {
+          final parts = fechaRaw.split('T');
+          fechaCtrl.text = parts.isNotEmpty ? parts[0] : '';
+        }
+        rfcCtrl.text = ''; // RFC no viene en INE
         setState(() {});
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error procesando INE: $e")),
-        );
+      } else {
+        throw Exception('No se encontraron datos en la respuesta');
       }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error procesando INE: $e")),
+      );
+    } finally {
+      _ocultarCargando(); // 👈 Siempre cierra el diálogo
+    }
+  }
+
+  Future<void> _pickIneFront() async {
+    // Navegar a la pantalla de cámara con overlay
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const IneCameraScreen(), // nueva pantalla con overlay
+      ),
+    );
+
+    if (result != null && result is Map<String, dynamic>) {
+      // Procesar datos regresados de la cámara
+      paternoCtrl.text = result['ApellidoPaterno']?.toString() ?? '';
+      maternoCtrl.text = result['ApellidoMaterno']?.toString() ?? '';
+      nombreCtrl.text = result['Nombre']?.toString() ?? '';
+      curpCtrl.text = result['Curp']?.toString() ?? '';
+      sexo = result['Sexo']?.toString() ?? 'MASCULINO';
+
+      final fechaRaw = result['FechaNacimiento']?.toString() ?? '';
+      if (fechaRaw.isNotEmpty) {
+        final parts = fechaRaw.split('T');
+        fechaCtrl.text = parts.isNotEmpty ? parts[0] : '';
+      }
+      setState(() {});
     }
   }
 
@@ -171,29 +264,66 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     if (archivo != null) setState(() => documentoImagen = archivo);
   }
 
-  Future<void> _pickPassportPhoto() async {
+  Future<void> _pickPassportPhoto_3() async {
     final archivo = await picker.pickImage(source: ImageSource.camera);
-    if (archivo != null) {
-      setState(() => documentoImagen = archivo);
+    if (archivo == null) return;
 
-      final service = AuthService();
-      try {
-        final result = await service.procesarPasaporte(File(archivo.path));
+    setState(() => documentoImagen = archivo);
+    _mostrarCargando(
+        mensaje: 'Procesando pasaporte...'); // mensaje personalizado
 
-        // Llenar campos con la respuesta del backend
-        pasaporteCtrl.text = result['Pasaporte'] ?? '';
-        nombreCtrl.text = result['Nombre'] ?? '';
-        paternoCtrl.text = result['Paterno'] ?? '';
-        maternoCtrl.text = result['Materno'] ?? '';
-        fechaCtrl.text = result['FechaNacimiento'] ?? '';
-        sexo = result['Sexo'] ?? 'MASCULINO';
+    final service = AuthService();
+    try {
+      final result = await service.procesarPasaporte(File(archivo.path));
+      final datos = result['Datos'] as Map<String, dynamic>?;
 
+      if (datos != null) {
+        pasaporteCtrl.text =
+            datos['Pasaporte']?.toString() ?? ''; // o 'NumeroPasaporte'
+        nombreCtrl.text = datos['Nombre']?.toString() ?? '';
+        paternoCtrl.text = datos['ApellidoPaterno']?.toString() ?? '';
+        maternoCtrl.text = datos['ApellidoMaterno']?.toString() ?? '';
+        sexo = datos['Sexo']?.toString() ?? 'MASCULINO';
+
+        final fechaRaw = datos['FechaNacimiento']?.toString() ?? '';
+        if (fechaRaw.isNotEmpty) {
+          final parts = fechaRaw.split('T');
+          fechaCtrl.text = parts.isNotEmpty ? parts[0] : '';
+        }
         setState(() {});
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error procesando pasaporte: $e")),
-        );
+      } else {
+        throw Exception('No se encontraron datos en la respuesta');
       }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error procesando pasaporte: $e")),
+      );
+    } finally {
+      _ocultarCargando();
+    }
+  }
+
+  Future<void> _pickPassportPhoto() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const PassportCameraScreen(),
+      ),
+    );
+
+    if (result != null && result is Map<String, dynamic>) {
+      pasaporteCtrl.text = result['Pasaporte']?.toString() ?? '';
+      nombreCtrl.text = result['Nombre']?.toString() ?? '';
+      paternoCtrl.text = result['ApellidoPaterno']?.toString() ?? '';
+      maternoCtrl.text = result['ApellidoMaterno']?.toString() ?? '';
+      sexo = result['Sexo']?.toString() ?? 'MASCULINO';
+
+      final fechaRaw = result['FechaNacimiento']?.toString() ?? '';
+      if (fechaRaw.isNotEmpty) {
+        final parts = fechaRaw.split('T');
+        fechaCtrl.text = parts.isNotEmpty ? parts[0] : '';
+      }
+      setState(() {});
     }
   }
 
@@ -544,7 +674,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(context).colorScheme.copyWith(
-                  primary: const Color(0xFF003DA5),
+                  primary: const Color(0xFF0166B8),
                   onPrimary: Colors.white,
                   surface: Colors.white,
                   onSurface: Colors.black,
@@ -600,7 +730,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF003DA5),
+                      color: Color(0xFF0166B8),
                     ),
                   ),
                   const SizedBox(height: 15),
@@ -1134,7 +1264,7 @@ data in certain situations.
           elevation: 0,
           backgroundColor: Colors.white,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Color(0xFF003DA5)),
+            icon: const Icon(Icons.arrow_back, color: Color(0xFF0166B8)),
             onPressed: () => context.push(OnboardingScreen.routeName),
           ),
           actions: [
@@ -1268,7 +1398,7 @@ data in certain situations.
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.white,
                                       side: const BorderSide(
-                                          color: Color(0xFF003DA5), width: 2)),
+                                          color: Color(0xFF0166B8), width: 2)),
                                   onPressed: _pickIneFront,
                                 ),
                               ),
@@ -1280,7 +1410,7 @@ data in certain situations.
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.white,
                                       side: const BorderSide(
-                                          color: Color(0xFF003DA5), width: 2)),
+                                          color: Color(0xFF0166B8), width: 2)),
                                   onPressed: _pickIneBack,
                                 ),
                               ),
@@ -1325,7 +1455,7 @@ data in certain situations.
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
                               side: const BorderSide(
-                                  color: Color(0xFF003DA5), width: 2),
+                                  color: Color(0xFF0166B8), width: 2),
                             ),
                             onPressed: _pickIneFromGallery,
                           ),
@@ -1341,7 +1471,7 @@ data in certain situations.
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white,
                                 side: const BorderSide(
-                                    color: Color(0xFF003DA5), width: 2)),
+                                    color: Color(0xFF0166B8), width: 2)),
                             onPressed: _pickPassportPhoto,
                           ),
                           if (documentoImagen != null)

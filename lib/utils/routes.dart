@@ -18,92 +18,104 @@ import 'package:real_san_jose/view/servicemanagment/servicemanagementscreen.dart
 import 'package:real_san_jose/view/servicemanagment/widget/availabletimeselect.dart';
 import 'package:real_san_jose/view/splash/splashscreen.dart';
 import 'package:real_san_jose/view/activation/activation_screen.dart';
+import 'package:real_san_jose/view/forgotpassword/verify_code_screen.dart'; // ⬅️ NUEVO
+import 'package:real_san_jose/view/forgotpassword/new_password_screen.dart'; // ⬅️ NUEVO
 
 import '../view/register/register.dart';
 
-final GoRouter router = GoRouter(routes: [
-  GoRoute(
-    path: SplashScreen.routeName,
-    builder: (context, state) => const SplashScreen(),
-  ),
-  GoRoute(
-    path: OnboardingScreen.routeName,
-    builder: (context, state) => OnboardingScreen(),
-  ),
-  GoRoute(
-    path: LoginScreen.routeName,
-    builder: (context, state) => LoginScreen(),
-  ),
-  GoRoute(
-    path: RegisterScreen.routeName,
-    builder: (context, state) => RegisterScreen(),
-  ),
-  GoRoute(
-    path: ActivationScreen.routeName,
-    builder: (context, state) {
-      // Aquí recibimos el correo que mandamos desde RegisterScreen
-      final email = state.extra as String;
-      return ActivationScreen(email: email);
-    },
-  ),
-  GoRoute(
-    path: ForgotPasswordScreen.routeName,
-    builder: (context, state) => ForgotPasswordScreen(),
-  ),
-  GoRoute(
-    path: DashboardScreen.routeName,
-    builder: (context, state) => const DashboardScreen(),
-  ),
-  GoRoute(
-    path: ReportScreen.routeName,
-    builder: (context, state) => ReportScreen(),
-  ),
-  GoRoute(
-    path: ConsultHistoryScreen.routeName,
-    builder: (context, state) => ConsultHistoryScreen(),
-  ),
-  GoRoute(
-    path: PatientScreen.routeName,
-    builder: (context, state) => PatientScreen(),
-  ),
-  GoRoute(
-    path: CallScreen.routeName,
-    builder: (context, state) => const CallScreen(),
-  ),
-  GoRoute(
-    path: ChatDetailScreen.routeName,
-    builder: (context, state) => const ChatDetailScreen(),
-  ),
-  GoRoute(
-    path: PatientDetailsScreen.routeName,
-    builder: (context, state) => PatientDetailsScreen(),
-  ),
-  GoRoute(
-    path: NotificationScreen.routeName,
-    builder: (context, state) => const NotificationScreen(),
-  ),
-  GoRoute(
-    path: BankAccountScreen.routeName,
-    builder: (context, state) => BankAccountScreen(),
-  ),
-  GoRoute(
-    path: EditProfileScreen.routeName,
-    builder: (context, state) => EditProfileScreen(),
-  ),
-  GoRoute(
-    path: ServiceManagementScreen.routeName,
-    builder: (context, state) => ServiceManagementScreen(),
-  ),
-  GoRoute(
-    path: AvailabletimeselectScreen.routeName,
-    builder: (context, state) => AvailabletimeselectScreen(
-      state.extra as int,
+final GoRouter router = GoRouter(
+  routes: [
+    GoRoute(
+      path: SplashScreen.routeName,
+      builder: (context, state) => const SplashScreen(),
     ),
-  ),
-  GoRoute(
-    path: DetailsScreen.routeName,
-    builder: (context, state) => DetailsScreen(
-      schedule: state.extra as Schedule,
+    GoRoute(
+      path: OnboardingScreen.routeName,
+      builder: (context, state) => OnboardingScreen(),
     ),
-  ),
-]);
+    GoRoute(
+      path: LoginScreen.routeName,
+      builder: (context, state) => LoginScreen(),
+    ),
+    GoRoute(
+      path: RegisterScreen.routeName,
+      builder: (context, state) => RegisterScreen(),
+    ),
+    GoRoute(
+      path: ActivationScreen.routeName,
+      builder: (context, state) {
+        final email = state.extra as String;
+        return ActivationScreen(email: email);
+      },
+    ),
+    GoRoute(
+      path: ForgotPasswordScreen.routeName,
+      builder: (context, state) => ForgotPasswordScreen(),
+    ),
+    // ⭐ VERIFICACIÓN DE CÓDIGO
+    GoRoute(
+      path: '/verifycode',
+      name: VerifyCodeScreen.routeName, // 👈 añade el name
+      builder: (context, state) {
+        final args = state.extra as Map<String, String>;
+        return VerifyCodeScreen(email: args['email']!);
+      },
+    ),
+    GoRoute(
+      path: DashboardScreen.routeName,
+      builder: (context, state) => const DashboardScreen(),
+    ),
+    GoRoute(
+      path: ReportScreen.routeName,
+      builder: (context, state) => ReportScreen(),
+    ),
+    GoRoute(
+      path: ConsultHistoryScreen.routeName,
+      builder: (context, state) => ConsultHistoryScreen(),
+    ),
+    GoRoute(
+      path: PatientScreen.routeName,
+      builder: (context, state) => PatientScreen(),
+    ),
+    GoRoute(
+      path: CallScreen.routeName,
+      builder: (context, state) => const CallScreen(),
+    ),
+    GoRoute(
+      path: ChatDetailScreen.routeName,
+      builder: (context, state) => const ChatDetailScreen(),
+    ),
+    GoRoute(
+      path: PatientDetailsScreen.routeName,
+      builder: (context, state) => PatientDetailsScreen(),
+    ),
+    GoRoute(
+      path: NotificationScreen.routeName,
+      builder: (context, state) => const NotificationScreen(),
+    ),
+    GoRoute(
+      path: BankAccountScreen.routeName,
+      builder: (context, state) => BankAccountScreen(),
+    ),
+    GoRoute(
+      path: EditProfileScreen.routeName,
+      builder: (context, state) => EditProfileScreen(),
+    ),
+    GoRoute(
+      path: ServiceManagementScreen.routeName,
+      builder: (context, state) => ServiceManagementScreen(),
+    ),
+    GoRoute(
+      path: AvailabletimeselectScreen.routeName,
+      builder: (context, state) => AvailabletimeselectScreen(
+        state.extra as int,
+      ),
+    ),
+    GoRoute(
+      path: DetailsScreen.routeName,
+      builder: (context, state) => DetailsScreen(
+        schedule: state.extra as Schedule,
+      ),
+    ),
+  ],
+);

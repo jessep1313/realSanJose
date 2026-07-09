@@ -141,7 +141,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           elevation: 0,
           backgroundColor: Colors.white,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Color(0xFF003DA5)),
+            icon: const Icon(Icons.arrow_back, color: Color(0xFF0166B8)),
             onPressed: () => context.push(OnboardingScreen.routeName),
           ),
           actions: [
@@ -267,7 +267,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                         ? "Cargando..."
                                         : texts[lang]!['login']!,
                                     ontap: isLoading ? null : () => doLogin(),
-                                    color: const Color(0xFF003DA5),
+                                    color: const Color(0xFF0166B8),
                                     textColor: Colors.white,
                                   ),
                                   const SizedBox(height: 40),

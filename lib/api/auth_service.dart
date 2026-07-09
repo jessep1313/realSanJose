@@ -398,7 +398,7 @@ class AuthService {
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      return {'success': true, 'message': response.body};
     } else {
       throw Exception(
           "Error enviando código: ${response.statusCode} ${response.body}");
@@ -418,6 +418,28 @@ class AuthService {
         "Email": email,
         "Code": code,
       }),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception(
+          "Error activando usuario: ${response.statusCode} ${response.body}");
+    }
+  }
+
+  Future<Map<String, dynamic>> UserPasswordUpdate(
+      String email, String code, String newPassword) async {
+    final url = Uri.parse("$baseUrl/auth/user/activation");
+
+    final response = await http.post(
+      url,
+      headers: {
+        "Authorization": "Bearer $masterToken",
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode(
+          {"Email": email, "Code": code, "NewPassword": newPassword}),
     );
 
     if (response.statusCode == 200) {
@@ -538,6 +560,95 @@ class AuthService {
       return List<Map<String, dynamic>>.from(jsonDecode(response.body));
     } else {
       throw Exception("Error al obtener cirugías: ${response.statusCode}");
+    }
+  }
+
+  // ---------------------------------------------------------
+  // ⭐ NOTAS MÉDICAS
+  // ---------------------------------------------------------
+  Future<List<Map<String, dynamic>>> fetchNotasMedicas() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userToken = prefs.getString("token_usuario") ?? "";
+
+    final url = Uri.parse("$baseUrl/paciente/expediente/notasmedicas");
+
+    final response = await http.get(
+      url,
+      headers: {
+        "Authorization": "Bearer $userToken",
+        "Accept": "application/json",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return List<Map<String, dynamic>>.from(data);
+    } else {
+      throw Exception("Error al obtener notas médicas: ${response.statusCode}");
+    }
+  }
+
+  // Envía la solicitud exactamente como el curl
+  Future<http.Response> postCirugia(Map<String, dynamic> body) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userToken = prefs.getString("token_usuario") ?? "";
+    final url = Uri.parse("$baseUrl/paciente/agenda/cirugia");
+
+    // DEBUG: opcional, imprime lo que se enviará
+    print("POST $url");
+    print("Body: ${jsonEncode(body)}");
+
+    final response = await http.post(
+      url,
+      headers: {
+        "Authorization": "Bearer $userToken",
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode(body),
+    );
+
+    print("Status: ${response.statusCode}");
+    print("Response body: ${response.body}");
+
+    return response;
+  }
+
+  Future<String> cancelarCita({
+    required int agendaId,
+    required int sucursal,
+    required String fechaHora,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userToken = prefs.getString("token_usuario") ?? "";
+
+    final url = Uri.parse("$baseUrl/paciente/agenda/rxlab");
+    print("AGENDA $agendaId");
+    print("AGENDA $fechaHora");
+    print("AGENDA $sucursal");
+
+    final response = await http.put(
+      url,
+      headers: {
+        "Authorization": "Bearer $userToken",
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode({
+        "AgendaId": agendaId,
+        "Sucursal": sucursal,
+        "Cancelar": true,
+        "FechaHora": fechaHora,
+      }),
+    );
+
+    if (response.statusCode == 204) {
+      // 🔹 Detectar idioma guardado en prefs
+      final lang = prefs.getString("lang") ?? "es";
+      return lang == "es"
+          ? "Cita cancelada exitosamente"
+          : "Appointment cancelled successfully";
+    } else {
+      throw Exception(
+          "Error al cancelar cita: ${response.statusCode} ${response.body}");
     }
   }
 }

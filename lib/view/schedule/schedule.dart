@@ -2,15 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:real_san_jose/common/widget/borderradius.dart';
+import 'package:real_san_jose/common/widget/custom_header.dart'; // ⬅️ Importar
 import 'package:real_san_jose/provider/scheduleprovider.dart';
-import 'package:real_san_jose/utils/decoration.dart';
-import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
 import 'package:real_san_jose/api/auth_service.dart';
+import 'package:real_san_jose/view/onboarding/onboardingscreen.dart';
 
 class ScheduleScreen extends ConsumerStatefulWidget {
   static String routeName = "/schedulescreen";
-
   const ScheduleScreen({super.key});
 
   @override
@@ -19,8 +17,6 @@ class ScheduleScreen extends ConsumerStatefulWidget {
 
 class ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   ScrollController controller = ScrollController();
-  DateTime selectedDate = DateTime.now();
-
   List<Map<String, dynamic>> citas = [];
   bool cargandoCitas = false;
 
@@ -28,7 +24,7 @@ class ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   void initState() {
     controller.addListener(scrollListener);
     super.initState();
-    cargarCitas(); // carga inicial con fecha actual
+    cargarCitas();
   }
 
   void scrollListener() {
@@ -44,18 +40,50 @@ class ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     }
   }
 
+  void _confirmarCancelacion(
+      int folioAgenda, int codigoSucursal, String fechaHoraIso) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Confirmar"),
+        content: const Text("¿Está seguro de cancelar la cita?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text("No"),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(ctx).pop();
+              try {
+                final service = AuthService();
+                final msg = await service.cancelarCita(
+                  agendaId: folioAgenda,
+                  sucursal: codigoSucursal,
+                  fechaHora: fechaHoraIso,
+                );
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(msg)),
+                );
+                cargarCitas(); // 🔹 recarga el listado
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Error al cancelar cita: $e")),
+                );
+              }
+            },
+            child: const Text("Sí"),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> cargarCitas() async {
     setState(() => cargandoCitas = true);
     try {
       final service = AuthService();
-      final todas = await service.fetchCitas();
-
-      final fechaStr = DateFormat("yyyy-MM-dd").format(selectedDate);
-      citas = todas.where((c) {
-        final fechaApi = DateTime.parse(c["Fecha"]);
-        final fechaApiStr = DateFormat("yyyy-MM-dd").format(fechaApi);
-        return fechaApiStr == fechaStr;
-      }).toList();
+      citas = await service.fetchCitas();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Error cargando citas: $e")),
@@ -69,207 +97,98 @@ class ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   Widget build(BuildContext context) {
     final lang = ref.watch(languageProvider);
 
-    final dayNames = {
-      'es': ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-      'en': ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-    };
+    // Filtrar próximas y pasadas
+    final now = DateTime.now();
+    final proximas = citas.where((c) {
+      final fecha = DateTime.parse(c["Fecha"]);
+      return fecha.isAfter(now) || fecha.isAtSameMomentAs(now);
+    }).toList();
 
-    // Semana actual desde el día seleccionado
-    List<DateTime> weekDays =
-        List.generate(7, (i) => selectedDate.add(Duration(days: i)));
+    final pasadas = citas.where((c) {
+      final fecha = DateTime.parse(c["Fecha"]);
+      return fecha.isBefore(now);
+    }).toList();
 
-    return Container(
-      decoration: bgDecoration(),
+    return DefaultTabController(
+      length: 2,
       child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Container(
-          width: double.infinity,
-          margin: const EdgeInsets.only(bottom: 10),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: borderRadius(),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15),
-            child: SafeArea(
-              child: Column(
-                children: [
-                  // Header
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Icon(Icons.notifications_none,
-                          color: Color(0xFF003DA5), size: 28),
-                      Image.asset('assets/icons/logo.jpg', height: 90),
-                      DropdownButton<String>(
-                        value: lang,
-                        underline: const SizedBox(),
-                        items: const [
-                          DropdownMenuItem(value: 'es', child: Text('ES 🇲🇽')),
-                          DropdownMenuItem(value: 'en', child: Text('EN 🇺🇸')),
-                        ],
-                        onChanged: (value) {
-                          if (value != null) {
-                            ref.read(languageProvider.notifier).state = value;
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Column(
+            children: [
+              const CustomHeader(),
+              const SizedBox(height: 10),
 
-                  // Texto del día seleccionado
-                  Text(
-                    DateFormat('EEEE dd MMMM yyyy',
-                            lang == 'es' ? 'es_ES' : 'en_US')
-                        .format(selectedDate),
-                    style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF003DA5)),
-                  ),
-                  const SizedBox(height: 10),
-
-                  // Flechas y carrusel de días
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.arrow_back_ios,
-                            color: Color(0xFF003DA5)),
-                        onPressed: () {
-                          final prevDay =
-                              selectedDate.subtract(const Duration(days: 1));
-                          // Solo permitir regresar hasta el día actual
-                          if (!prevDay.isBefore(DateTime.now())) {
-                            setState(() => selectedDate = prevDay);
-                            cargarCitas();
-                          }
-                        },
-                      ),
-                      Expanded(
-                        child: SizedBox(
-                          height: 70,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: weekDays.length,
-                            itemBuilder: (context, index) {
-                              final date = weekDays[index];
-                              final isSelected = date.day == selectedDate.day &&
-                                  date.month == selectedDate.month &&
-                                  date.year == selectedDate.year;
-
-                              return GestureDetector(
-                                onTap: () {
-                                  setState(() => selectedDate = date);
-                                  cargarCitas();
-                                },
-                                child: Container(
-                                  margin:
-                                      const EdgeInsets.symmetric(horizontal: 6),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 8),
-                                  decoration: BoxDecoration(
-                                    color: isSelected
-                                        ? const Color(0xFF003DA5)
-                                        : Colors.grey[200],
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        dayNames[lang]![
-                                            date.weekday % 7], // nombre corto
-                                        style: TextStyle(
-                                          color: isSelected
-                                              ? Colors.white
-                                              : Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Text(
-                                        '${date.day}',
-                                        style: TextStyle(
-                                          color: isSelected
-                                              ? Colors.white
-                                              : Colors.black,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.arrow_forward_ios,
-                            color: Color(0xFF003DA5)),
-                        onPressed: () {
-                          final nextWeek =
-                              selectedDate.add(const Duration(days: 7));
-                          setState(() => selectedDate = nextWeek);
-                          cargarCitas();
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 15),
-
-                  // Listado de citas
-                  Expanded(
-                    child: cargandoCitas
-                        ? const Center(
-                            child: CircularProgressIndicator(
-                                color: Color(0xFF003DA5)))
-                        : citas.isEmpty
-                            ? Center(
-                                child: Text(
-                                  lang == 'es'
-                                      ? "No hay citas para este día"
-                                      : "No appointments for this day",
-                                  style: const TextStyle(color: Colors.red),
-                                ),
-                              )
-                            : ListView.builder(
-                                controller: controller,
-                                itemCount: citas.length,
-                                itemBuilder: (context, index) {
-                                  final cita = citas[index];
-                                  final fechaHora =
-                                      DateTime.parse(cita["Fecha"]);
-                                  final fechaStr = DateFormat("yyyy-MM-dd")
-                                      .format(fechaHora);
-                                  final horaStr =
-                                      DateFormat("HH:mm").format(fechaHora);
-
-                                  final icono = cita["DescripcionEstudio"]
-                                          .toString()
-                                          .toUpperCase()
-                                          .contains("RX")
-                                      ? Icons.image_search
-                                      : Icons.biotech;
-
-                                  return _appointmentCard(
-                                    icon: icono,
-                                    title: cita["DescripcionEstudio"] ??
-                                        "Consulta",
-                                    subtitle:
-                                        "Folio: ${cita["FolioAgenda"]} | $fechaStr a las $horaStr",
-                                    status: cita["Status"] ?? "",
-                                  );
-                                },
-                              ),
-                  ),
+              // Tabs
+              TabBar(
+                labelColor: const Color(0xFF0166B8),
+                unselectedLabelColor: Colors.grey,
+                indicatorColor: const Color(0xFF0166B8),
+                tabs: [
+                  Tab(text: lang == 'es' ? 'Próximas' : 'Upcoming'),
+                  Tab(text: lang == 'es' ? 'Pasadas' : 'Past'),
                 ],
               ),
-            ),
+
+              Expanded(
+                child: cargandoCitas
+                    ? const Center(
+                        child:
+                            CircularProgressIndicator(color: Color(0xFF0166B8)))
+                    : TabBarView(
+                        children: [
+                          _buildList(proximas, lang,
+                              cancelable: true), // ✅ botón activo
+                          _buildList(pasadas, lang,
+                              cancelable: false), // ✅ botón desactivado
+                        ],
+                      ),
+              ),
+            ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildList(List<Map<String, dynamic>> lista, String lang,
+      {bool cancelable = false}) {
+    if (lista.isEmpty) {
+      return Center(
+        child: Text(
+          lang == 'es'
+              ? "No hay citas en esta sección"
+              : "No appointments in this section",
+          style: const TextStyle(color: Colors.red),
+        ),
+      );
+    }
+
+    return ListView.builder(
+      controller: controller,
+      itemCount: lista.length,
+      itemBuilder: (context, index) {
+        final cita = lista[index];
+        final fechaHora = DateTime.parse(cita["Fecha"]);
+        final fechaStr = DateFormat("yyyy-MM-dd").format(fechaHora);
+        final horaStr = DateFormat("HH:mm").format(fechaHora);
+
+        final icono =
+            cita["DescripcionEstudio"].toString().toUpperCase().contains("RX")
+                ? Icons.image_search
+                : Icons.biotech;
+
+        return _appointmentCard(
+          icon: icono,
+          title: cita["DescripcionEstudio"] ?? "Consulta",
+          subtitle: "Folio: ${cita["FolioAgenda"]} | $fechaStr a las $horaStr",
+          status: cita["Status"] ?? "",
+          codigoSucursal: cita["CodigoSucursal"] ?? 0,
+          folioAgenda: cita["FolioAgenda"],
+          fechaHoraIso: cita["Fecha"],
+          cancelable: cancelable, // 🔹 aquí decides
+        );
+      },
     );
   }
 
@@ -278,18 +197,49 @@ class ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     required String title,
     required String subtitle,
     required String status,
+    required int codigoSucursal,
+    required int folioAgenda,
+    required String fechaHoraIso,
+    bool cancelable = false, // 🔹 por defecto no cancelable
   }) {
+    final hospital = codigoSucursal == 0
+        ? "Hospital Lázaro Cárdenas"
+        : "Hospital Valle Real";
+
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: const BorderSide(color: Color(0xFF003DA5), width: 2),
+        side: const BorderSide(color: Color(0xFF0166B8), width: 2),
       ),
       elevation: 2,
-      child: ListTile(
-        leading: Icon(icon, color: const Color(0xFF009639), size: 32),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(subtitle),
-        trailing: Text(status, style: const TextStyle(color: Colors.grey)),
+      child: Column(
+        children: [
+          ListTile(
+            leading: Icon(icon, color: const Color(0xFF8B8E00), size: 32),
+            title: Text(title,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Text("$subtitle\nHospital: $hospital"),
+            trailing: Text(status, style: const TextStyle(color: Colors.grey)),
+          ),
+          if (cancelable && status.toLowerCase() != "cancelada")
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                ),
+                icon: const Icon(Icons.cancel, color: Colors.white),
+                label: const Text("Cancelar cita",
+                    style: TextStyle(color: Colors.white)),
+                onPressed: () {
+                  _confirmarCancelacion(
+                      folioAgenda, codigoSucursal, fechaHoraIso);
+                },
+              ),
+            ),
+        ],
       ),
     );
   }

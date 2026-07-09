@@ -1,0 +1,576 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+// IMPORTA LAS SECCIONES
+import 'package:real_san_jose/view/nosotros/nosotros_screen.dart';
+import 'package:real_san_jose/view/servicios/servicios_screen.dart';
+import 'package:real_san_jose/view/especialidades/especialidades_screen.dart';
+import 'package:real_san_jose/view/maternidad/maternidad_screen.dart';
+//import 'package:real_san_jose/view/directorio/directorio_screen.dart';
+
+import 'package:real_san_jose/view/login/loginscreen.dart';
+import 'package:real_san_jose/view/register/register.dart';
+
+final languageProvider = StateProvider<String>((ref) => 'es');
+
+class OnboardingScreen extends ConsumerStatefulWidget {
+  static var routeName = "/onboardingscreen";
+
+  const OnboardingScreen({super.key});
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      OnBoardingScreenState();
+}
+
+class OnBoardingScreenState extends ConsumerState<OnboardingScreen> {
+  bool _isMenuOpen = false;
+
+  Future<void> openMap(String url) async {
+    final Uri uri = Uri.parse(url);
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+  Future<void> saveLanguage(String lang) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('app_language', lang);
+  }
+
+  Future<void> loadLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final lang = prefs.getString('app_language') ?? 'es';
+    ref.read(languageProvider.notifier).state = lang;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadLanguage();
+  }
+
+  final texts = {
+    'es': {
+      'loginHeader': 'Iniciar sesión',
+      'nosotros': 'Nosotros',
+      'servicios': 'Servicios médicos',
+      'especialidades': 'Especialidades',
+      'maternidad': 'Maternidad',
+      'signup': 'No soy usuario',
+      'viewLocations': 'Ver ubicaciones',
+      'terms': 'Términos y condiciones',
+      'locationModal': 'Selecciona una ubicación',
+      'hospital1': 'Hospital Lázaro Cárdenas',
+      'hospital2': 'Hospital Valle Real',
+      'termsTitle': 'Términos y Condiciones',
+      'termsText': '''
+        El presente documento establece los términos y las condiciones mediante las cuales se regirá el uso de la aplicación móvil, operada por Hospital Real San José S.C.
+
+        El usuario se compromete a leer los términos y condiciones aquí establecidas, previamente a su registro en la aplicación. En caso de instalarla, se entiende que acepta la totalidad de lo estipulado.
+
+        El Usuario reconoce que la información personal que brinda a la aplicación es legal, real y verídica.
+
+        USO Y ALCANCES
+
+        El usuario entiende y acepta que, aunque la app es operada por Hospital Real San José S.C., la información contenida podrá ser referida por un tercero, limitándose a la relación médico‑paciente.
+
+        La app permitirá visualizar información del usuario y realizar transacciones habilitadas según su perfil. El administrador podrá modificar funcionalidades sin previo aviso.
+
+        Los tiempos de respuesta y solicitudes serán procesados conforme a las especificaciones de cada movimiento.
+
+        El usuario acepta que los registros electrónicos constituyen prueba plena.
+
+        REQUISITOS DE USO
+
+        El usuario declara ser mayor de edad y contar con un dispositivo móvil seguro. Hospital Real San José S.C. no es responsable por la seguridad del dispositivo ni garantiza funcionamiento en todos los sistemas operativos.
+
+        OBLIGACIONES DEL USUARIO
+
+        El usuario se compromete a NO:
+        a) Usar la app con fines ilícitos.
+        b) Reproducir o distribuir contenidos sin autorización.
+        c) Realizar acciones que dañen la app.
+        d) Manipular derechos de autor.
+        e) Usar información para fines comerciales o envío masivo.
+        f) Permitir acceso a terceros con su clave.
+        g) Realizar acciones que afecten derechos de terceros o el funcionamiento de la app.
+
+        PROPIEDAD INTELECTUAL
+
+        Todos los contenidos están protegidos por derechos de autor. Queda prohibida su reproducción sin autorización.
+
+        USO DE INFORMACIÓN Y PRIVACIDAD
+
+        El usuario autoriza el tratamiento de sus datos como paciente, conforme a la legislación vigente.
+
+        LÍMITE DE RESPONSABILIDAD
+
+        Hospital Real San José S.C. no será responsable por:
+        a) Pérdida o robo del dispositivo.
+        b) Pérdida de información por fuerza mayor.
+        c) Errores del usuario.
+        d) Fallas del operador móvil.
+        e) Fallas de la app por fuerza mayor.
+
+        SUSPENSIÓN
+
+        Hospital Real San José S.C. podrá suspender el acceso por incumplimiento.
+
+        ACEPTACIÓN
+
+        El usuario acepta haber leído y entendido estos términos. Su uso continuo implica aceptación de modificaciones.
+
+        JURISDICCIÓN
+
+        Se rige por las leyes de los Estados Unidos Mexicanos.
+        ''',
+    },
+    'en': {
+      'loginHeader': 'Sign in',
+      'nosotros': 'About Us',
+      'servicios': 'Medical Services',
+      'especialidades': 'Specialties',
+      'maternidad': 'Maternity',
+      'directorio': 'Medical Directory',
+      'signup': 'I am not a user',
+      'viewLocations': 'View locations',
+      'terms': 'Terms and Conditions',
+      'locationModal': 'Select a location',
+      'hospital1': 'Lázaro Cárdenas Hospital',
+      'hospital2': 'Valle Real Hospital',
+      'termsTitle': 'Terms and Conditions',
+      'termsText': '''
+          This document establishes the terms and conditions governing the use of the mobile application operated by Hospital Real San José S.C.
+
+          By installing the app, the user acknowledges having read and accepted all terms and conditions.
+
+          The user confirms that all personal and clinical information provided is truthful and accurate.
+
+          USE AND SCOPE
+
+          Although the app is operated by Hospital Real San José S.C., certain information may be managed by third parties, limited to the doctor‑patient relationship.
+
+          The app allows users to view their information and perform transactions enabled according to their profile. Functionalities may be modified without prior notice.
+
+          Electronic records constitute full legal evidence.
+
+          REQUIREMENTS
+
+          Users must be of legal age and use a secure mobile device. Hospital Real San José S.C. is not responsible for device security nor guarantees compatibility with all operating systems.
+
+          USER OBLIGATIONS
+
+          Users must NOT:
+          a) Use the app for unlawful purposes.
+          b) Reproduce or distribute content without authorization.
+          c) Damage or overload the app.
+          d) Manipulate copyright.
+          e) Use information for commercial or mass‑messaging purposes.
+          f) Allow third‑party access with their credentials.
+          g) Perform actions that affect third parties or the app’s operation.
+
+          INTELLECTUAL PROPERTY
+
+          All content is protected by copyright. Reproduction is prohibited without authorization.
+
+          PRIVACY AND DATA USE
+
+          Users authorize the processing of their data as patients, in accordance with applicable law.
+
+          LIMITATION OF LIABILITY
+
+          Hospital Real San José S.C. is not responsible for:
+          a) Loss or theft of the device.
+          b) Loss of information due to force majeure.
+          c) User errors.
+          d) Mobile operator failures.
+          e) App failures due to force majeure.
+
+          SUSPENSION
+
+          Access may be suspended for violations of these terms.
+
+          ACCEPTANCE
+
+          Continued use of the app constitutes acceptance of any modifications.
+
+          JURISDICTION
+
+          Governed by the laws of the United Mexican States.
+          ''',
+    }
+  };
+
+  // ---------------------- MODAL TÉRMINOS ----------------------
+  void showTermsModal(String lang) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) {
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.75,
+          minChildSize: 0.50,
+          maxChildSize: 0.95,
+          builder: (_, controller) {
+            return Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 5,
+                    margin: const EdgeInsets.only(bottom: 15),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade400,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  Text(
+                    texts[lang]!['termsTitle']!,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF003DA5),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      controller: controller,
+                      child: Text(
+                        texts[lang]!['termsText']!,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          height: 1.4,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // ---------------------- MODAL UBICACIONES ----------------------
+  void showLocationModal(String lang) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // ⭐ permite controlar altura total
+      backgroundColor: Colors.transparent, // ⭐ para que se vea flotante
+      builder: (_) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.35, // ⭐ SUBE MÁS EL MODAL
+          minChildSize: 0.30,
+          maxChildSize: 0.60,
+          expand: false,
+          builder: (_, controller) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+              ),
+              padding: const EdgeInsets.all(20),
+              child: ListView(
+                controller: controller,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      margin: const EdgeInsets.only(bottom: 15),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade400,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                  Text(
+                    texts[lang]!['locationModal']!,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF003DA5),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ListTile(
+                    leading: const Icon(Icons.local_hospital,
+                        color: Color(0xFF009639)),
+                    title: Text(texts[lang]!['hospital1']!),
+                    onTap: () {
+                      Navigator.pop(context);
+                      openMap(
+                          "https://maps.app.goo.gl/hfGZHHdFQye7uqN3A?g_st=ac");
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.local_hospital,
+                        color: Color(0xFF003DA5)),
+                    title: Text(texts[lang]!['hospital2']!),
+                    onTap: () {
+                      Navigator.pop(context);
+                      openMap("https://maps.app.goo.gl/U2U5LmJXsC2xNJTY9");
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // ---------------------- ITEM DEL MENÚ ----------------------
+  Widget _menuItem(IconData icon, String title, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.white, width: 1.5),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: Colors.white, size: 22),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
+                maxLines: 2,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ---------------------- MENÚ AZUL ----------------------
+  Widget _menuGrid(String lang) {
+    return Container(
+      width: double.infinity,
+      color: const Color(0xFF003DA5),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      child: GridView.count(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        crossAxisCount: 2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 3.2,
+        children: [
+          _menuItem(Icons.info_outline, texts[lang]!['nosotros']!, () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const NosotrosScreen()));
+          }),
+          _menuItem(Icons.local_hospital, texts[lang]!['servicios']!, () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const ServiciosScreen()));
+          }),
+          _menuItem(
+              Icons.medical_services_outlined, texts[lang]!['especialidades']!,
+              () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => const EspecialidadesScreen()));
+          }),
+          _menuItem(Icons.child_friendly, texts[lang]!['maternidad']!, () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const MaternidadScreen()));
+          }),
+        ],
+      ),
+    );
+  }
+
+  // ---------------------- UI PRINCIPAL ----------------------
+  @override
+  Widget build(BuildContext context) {
+    final lang = ref.watch(languageProvider);
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // ---------------------- HEADER ----------------------
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        _isMenuOpen ? Icons.close : Icons.menu,
+                        size: 28,
+                        color: const Color(0xFF0166B8),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isMenuOpen = !_isMenuOpen;
+                        });
+                      },
+                    ),
+
+                    // INICIAR SESIÓN (con icono)
+                    InkWell(
+                      onTap: () => context.push(LoginScreen.routeName),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.person_outline,
+                              size: 22, color: Color(0xFF0166B8)),
+                          const SizedBox(width: 6),
+                          Text(
+                            texts[lang]!['loginHeader']!,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF0166B8),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    DropdownButton<String>(
+                      value: lang,
+                      underline: const SizedBox(),
+                      items: const [
+                        DropdownMenuItem(value: 'es', child: Text('ES 🇲🇽')),
+                        DropdownMenuItem(value: 'en', child: Text('EN 🇺🇸')),
+                      ],
+                      onChanged: (value) {
+                        if (value != null) {
+                          ref.read(languageProvider.notifier).state = value;
+                          saveLanguage(value);
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+              // ---------------------- MENÚ DESPLEGABLE ----------------------
+              if (_isMenuOpen) _menuGrid(lang),
+
+              // ---------------------- BANNER SUPERIOR ----------------------
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    'assets/images/banner1.avif',
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+
+              // ---------------------- LOGO ----------------------
+              Image.asset(
+                'assets/icons/logo.jpg',
+                height: 90,
+              ),
+
+              const SizedBox(height: 20),
+
+              // ---------------------- BANNER INFERIOR ----------------------
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    'assets/images/banner2.avif',
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 30),
+
+              // ---------------------- BOTONES PRINCIPALES ----------------------
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: Column(
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF8B8E00),
+                        minimumSize: const Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () => context.push(RegisterScreen.routeName),
+                      child: Text(
+                        texts[lang]!['signup']!,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 50),
+                        side: const BorderSide(
+                            color: Color(0xFF003DA5), width: 2),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () => showLocationModal(lang),
+                      child: Text(
+                        texts[lang]!['viewLocations']!,
+                        style: const TextStyle(color: Color(0xFF0166B8)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 25),
+
+              // ---------------------- TÉRMINOS ----------------------
+              GestureDetector(
+                onTap: () => showTermsModal(lang),
+                child: Text(
+                  texts[lang]!['terms']!,
+                  style: const TextStyle(
+                    color: Colors.black54,
+                    fontSize: 14,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 40),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

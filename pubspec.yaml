@@ -2,7 +2,7 @@ name: real_san_jose
 description: "A new Flutter project."
 publish_to: 'none'
 
-version: 1.0.2+1
+version: 1.0.4+100
 
 environment:
   sdk: ^3.5.0
@@ -14,6 +14,7 @@ dependencies:
   # OCR ML Kit
   google_mlkit_text_recognition: ^0.15.1
   image_picker: ^0.8.7+5
+  camera: ^0.10.0+4
 
 
   # Íconos y utilidades
@@ -24,7 +25,7 @@ dependencies:
   carousel_slider_plus: ^7.1.0
   persistent_bottom_nav_bar: ^6.2.1
   dropdown_button2: ^2.3.9
-  url_launcher: ^6.3.1
+  url_launcher: ^6.3.2
   pin_code_text_field: ^1.8.0
   fluttertoast: ^8.2.10
   flutter_svg: ^2.0.10+1
@@ -37,11 +38,16 @@ dependencies:
 
   # 📊 Gráficas
   fl_chart: ^0.69.0
+  dropdown_search: ^5.0.6
 
 
 
   # 💾 Almacenamiento local
   shared_preferences: ^2.2.2
+  http: ^1.6.0
+  path_provider: ^2.1.6
+  flutter_pdfview: ^1.4.4
+  flutter_inappwebview: ^6.1.5
 
 dependency_overrides:
   shared_preferences_android: ^2.2.2
@@ -53,13 +59,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^5.0.0
   webview_flutter: ^4.7.0
-  pdfx: ^2.0.1
   dio: ^5.4.0
-  path_provider: ^2.1.2
-
-
-
-
 flutter_icons:
   android: "launcher_icon"
   ios: true

@@ -52,7 +52,7 @@ class _CirugiasProgramadasState
               child: cirugias.isEmpty
                   ? const Center(
                       child:
-                          CircularProgressIndicator(color: Color(0xFF003DA5)))
+                          CircularProgressIndicator(color: Color(0xFF0166B8)))
                   : ListView.builder(
                       padding: const EdgeInsets.all(16),
                       itemCount: cirugias.length,
@@ -64,7 +64,7 @@ class _CirugiasProgramadasState
                               borderRadius: BorderRadius.circular(12)),
                           child: ListTile(
                             leading: const Icon(Icons.local_hospital,
-                                color: Color(0xFF009639)),
+                                color: Color(0xFF8B8E00)),
                             title: Text(c["Descripcion"] ?? "Sin descripción"),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,

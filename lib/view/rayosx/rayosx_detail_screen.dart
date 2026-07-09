@@ -74,7 +74,7 @@ class RayosXDetailScreen extends ConsumerWidget {
               children: [
                 IconButton(
                   icon: const Icon(Icons.arrow_back,
-                      color: Color(0xFF003DA5), size: 28),
+                      color: Color(0xFF0166B8), size: 28),
                   onPressed: () {
                     Navigator.pop(context);
                   },
@@ -160,7 +160,7 @@ class RayosXDetailScreen extends ConsumerWidget {
                         ),
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size.fromHeight(60),
-                          backgroundColor: const Color(0xFF009639),
+                          backgroundColor: const Color(0xFF8B8E00),
                           foregroundColor: Colors.white,
                           alignment: Alignment.center,
                           shape: RoundedRectangleBorder(
@@ -197,7 +197,7 @@ class RayosXDetailScreen extends ConsumerWidget {
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
-              color: Color(0xFF003DA5),
+              color: Color(0xFF0166B8),
             ),
           ),
           Expanded(

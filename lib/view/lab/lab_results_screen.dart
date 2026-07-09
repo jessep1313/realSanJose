@@ -72,7 +72,7 @@ class _LabResultsScreenState extends ConsumerState<LabResultsScreen> {
                     style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF003DA5)),
+                        color: Color(0xFF0166B8)),
                   ),
                   const SizedBox(height: 10),
                   Text(
@@ -95,11 +95,11 @@ class _LabResultsScreenState extends ConsumerState<LabResultsScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                             side: const BorderSide(
-                                color: Color(0xFF003DA5), width: 2),
+                                color: Color(0xFF0166B8), width: 2),
                           ),
                           child: ListTile(
                             leading: const Icon(Icons.biotech,
-                                color: Color(0xFF009639)),
+                                color: Color(0xFF8B8E00)),
                             title: Text(r["DescripcionEstudio"] ?? ""),
                             subtitle: Text(_formatFecha(r["Fecha"] ?? "")),
                             trailing:

@@ -65,7 +65,7 @@ class _RayosXScreenState extends ConsumerState<RayosXScreen> {
                       style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF003DA5))),
+                          color: Color(0xFF0166B8))),
                   const SizedBox(height: 10),
                   Text(textos[lang]!['desc']!,
                       style:
@@ -86,11 +86,11 @@ class _RayosXScreenState extends ConsumerState<RayosXScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                             side: const BorderSide(
-                                color: Color(0xFF003DA5), width: 2),
+                                color: Color(0xFF0166B8), width: 2),
                           ),
                           child: ListTile(
                             leading: const Icon(Icons.image,
-                                color: Color(0xFF009639)),
+                                color: Color(0xFF8B8E00)),
                             title: Text(e["DescripcionEstudio"] ?? ""),
                             subtitle: Text(_formatFecha(e["Fecha"] ?? "")),
                             trailing:

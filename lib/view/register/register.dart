@@ -228,7 +228,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     }
   }
 
-  Future<void> _pickIneFront() async {
+  Future<void> _pickIneFront_4() async {
     // Navegar a la pantalla de cámara con overlay
     final result = await Navigator.push(
       context,
@@ -254,10 +254,55 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     }
   }
 
-  Future<void> _pickIneBack() async {
-    final archivo = await picker.pickImage(source: ImageSource.camera);
-    if (archivo != null) setState(() => ineReverso = archivo);
+  Future<void> _pickIneFront() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const IneCameraScreen(),
+      ),
+    );
+
+    if (result != null && result is Map<String, dynamic>) {
+      // Los nombres de las claves dependen de la API: ApellidoPaterno, ApellidoMaterno, Nombre, Curp, FechaNacimiento, Sexo
+      paternoCtrl.text = result['ApellidoPaterno']?.toString() ?? '';
+      maternoCtrl.text = result['ApellidoMaterno']?.toString() ?? '';
+      nombreCtrl.text = result['Nombre']?.toString() ?? '';
+      curpCtrl.text = result['Curp']?.toString() ?? '';
+      sexo = (result['Sexo']?.toString() ?? 'MASCULINO')
+              .toUpperCase()
+              .contains('M')
+          ? 'FEMENINO'
+          : 'MASCULINO';
+
+      // Fecha: la API puede devolver "1986-07-03T00:00:00" o "03/07/1986"
+      final fechaRaw = result['FechaNacimiento']?.toString() ?? '';
+      if (fechaRaw.isNotEmpty) {
+        if (RegExp(r'^\d{4}-\d{2}-\d{2}').hasMatch(fechaRaw)) {
+          fechaCtrl.text = fechaRaw.split('T')[0];
+        } else {
+          // intentar dd/mm/yyyy -> convertir a yyyy-MM-dd
+          final match =
+              RegExp(r'(\d{2})[\/\-](\d{2})[\/\-](\d{4})').firstMatch(fechaRaw);
+          if (match != null) {
+            final dd = match.group(1)!;
+            final mm = match.group(2)!;
+            final yyyy = match.group(3)!;
+            fechaCtrl.text = '$yyyy-$mm-$dd';
+          }
+        }
+      }
+
+      setState(() {});
+    } else {
+      // Si result no es Map, opcional: mostrar mensaje o debug
+      debugPrint('Resultado cámara: $result');
+    }
   }
+
+  //Future<void> _pickIneBack() async {
+  //final archivo = await picker.pickImage(source: ImageSource.camera);
+  //if (archivo != null) setState(() => ineReverso = archivo);
+  //}
 
   Future<void> _pickPassportPhoto_2() async {
     final archivo = await picker.pickImage(source: ImageSource.camera);
@@ -303,7 +348,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     }
   }
 
-  Future<void> _pickPassportPhoto() async {
+  Future<void> _pickPassportPhoto_4() async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -324,6 +369,44 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         fechaCtrl.text = parts.isNotEmpty ? parts[0] : '';
       }
       setState(() {});
+    }
+  }
+
+  Future<void> _pickPassportPhoto() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const PassportCameraScreen(),
+      ),
+    );
+
+    if (result != null && result is Map<String, dynamic>) {
+      // Ajusta las claves según lo que devuelva tu API (ej: 'Pasaporte', 'Nombre', 'ApellidoPaterno', 'ApellidoMaterno', 'FechaNacimiento', 'Sexo')
+      pasaporteCtrl.text = result['Pasaporte']?.toString() ?? '';
+      nombreCtrl.text = result['Nombre']?.toString() ?? '';
+      paternoCtrl.text = result['ApellidoPaterno']?.toString() ?? '';
+      maternoCtrl.text = result['ApellidoMaterno']?.toString() ?? '';
+      sexo = result['Sexo']?.toString() ?? 'MASCULINO';
+
+      final fechaRaw = result['FechaNacimiento']?.toString() ?? '';
+      if (fechaRaw.isNotEmpty) {
+        if (RegExp(r'^\d{4}-\d{2}-\d{2}').hasMatch(fechaRaw)) {
+          fechaCtrl.text = fechaRaw.split('T')[0];
+        } else {
+          final match =
+              RegExp(r'(\d{2})[\/\-](\d{2})[\/\-](\d{4})').firstMatch(fechaRaw);
+          if (match != null) {
+            final dd = match.group(1)!;
+            final mm = match.group(2)!;
+            final yyyy = match.group(3)!;
+            fechaCtrl.text = '$yyyy-$mm-$dd';
+          }
+        }
+      }
+
+      setState(() {});
+    } else {
+      debugPrint('Resultado cámara pasaporte: $result');
     }
   }
 
@@ -1402,20 +1485,9 @@ data in certain situations.
                                   onPressed: _pickIneFront,
                                 ),
                               ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: ElevatedButton.icon(
-                                  icon: const Icon(Icons.camera_alt_outlined),
-                                  label: Text(textos[lang]!['reverso']!),
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.white,
-                                      side: const BorderSide(
-                                          color: Color(0xFF0166B8), width: 2)),
-                                  onPressed: _pickIneBack,
-                                ),
-                              ),
                             ],
                           ),
+
                           const SizedBox(height: 15),
                           if (ineFrente != null)
                             Column(

@@ -2,24 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/io_client.dart';
 
 class AuthService {
   final String baseUrl = "https://webservicesvr.hrsj.com.mx/aptest/api";
   final String masterToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3ByaW1hcnlzaWQiOiIwIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiJTeXN0ZW0iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJTeXN0ZW0iLCJleHAiOjIwODU2Nzk2MjYsImlzcyI6Imh0dHBzOi8vd3d3Lmhyc2ouY29tLyIsImF1ZCI6Imh0dHBzOi8vd3d3Lmhyc2ouY29tLyJ9.LDBJArf2oJe_QWhqZ514ger6_iXWXlGMeoRsyCp7qgc";
-
-  HttpClient _createHttpClient() {
-    final client = HttpClient();
-    client.badCertificateCallback =
-        (X509Certificate cert, String host, int port) =>
-            true; // ⚠️ acepta todos
-    return client;
-  }
-
-  http.Client _insecureClient() {
-    return IOClient(_createHttpClient());
-  }
 
   // ---------------------------------------------------------
   // LOGIN
@@ -27,9 +14,8 @@ class AuthService {
   Future<Map<String, dynamic>> login(
       String identificator, String password) async {
     final url = Uri.parse("$baseUrl/auth/login");
-    final client = _insecureClient(); // usa el cliente inseguro
 
-    final response = await client.post(
+    final response = await http.post(
       url,
       headers: {
         "Authorization": "Bearer $masterToken",
@@ -57,8 +43,7 @@ class AuthService {
   // ---------------------------------------------------------
   Future<List<Map<String, dynamic>>> fetchAseguradoras() async {
     final url = Uri.parse("$baseUrl/catalogos/aseguradoras");
-    final client = _insecureClient(); // usa el cliente inseguro
-    final response = await client.get(
+    final response = await http.get(
       url,
       headers: {
         "Authorization": "Bearer $masterToken",
@@ -117,9 +102,7 @@ class AuthService {
   Future<List<Map<String, dynamic>>> fetchRx() async {
     final url = Uri.parse("$baseUrl/catalogos/servicios/rx");
 
-    final client = _insecureClient(); // usa el cliente inseguro
-
-    final response = await client.get(
+    final response = await http.get(
       url,
       headers: {
         "Authorization": "Bearer $masterToken",
@@ -169,9 +152,7 @@ class AuthService {
   Future<List<Map<String, dynamic>>> fetchLab() async {
     final url = Uri.parse("$baseUrl/catalogos/servicios/lab");
 
-    final client = _insecureClient(); // usa el cliente inseguro
-
-    final response = await client.get(
+    final response = await http.get(
       url,
       headers: {
         "Authorization": "Bearer $masterToken",
@@ -220,8 +201,7 @@ class AuthService {
   // ---------------------------------------------------------
   Future<Map<String, dynamic>> register(Map<String, dynamic> payload) async {
     final url = Uri.parse("$baseUrl/auth/singup");
-    final client = _insecureClient(); // usa el cliente inseguro
-    final response = await client.post(
+    final response = await http.post(
       url,
       headers: {
         "Authorization": "Bearer $masterToken",
@@ -284,9 +264,7 @@ class AuthService {
     print("➡ URL: $url");
     print("➡ Usando userToken: $userToken");
 
-    final client = _insecureClient(); // usa el cliente inseguro
-
-    final response = await client.get(
+    final response = await http.get(
       url,
       headers: {
         "Authorization": "Bearer $userToken",
@@ -319,9 +297,8 @@ class AuthService {
     final userToken = prefs.getString("token_usuario") ?? "";
 
     final url = Uri.parse("$baseUrl/paciente/agenda/rxlab");
-    final client = _insecureClient(); // usa el cliente inseguro
 
-    final response = await client.post(
+    final response = await http.post(
       url,
       headers: {
         "Authorization": "Bearer $userToken",
@@ -350,9 +327,8 @@ class AuthService {
     final userToken = prefs.getString("token_usuario") ?? "";
 
     final url = Uri.parse("$baseUrl/paciente/expediente/estudios");
-    final client = _insecureClient(); // usa el cliente inseguro
 
-    final response = await client.get(
+    final response = await http.get(
       url,
       headers: {
         "Authorization": "Bearer $userToken",
@@ -371,7 +347,7 @@ class AuthService {
   // ---------------------------------------------------------
   // PROCESAR INE
   // ---------------------------------------------------------
-  Future<Map<String, dynamic>> procesarIne_2(File archivo) async {
+  Future<Map<String, dynamic>> procesarIne(File archivo) async {
     final url = Uri.parse("$baseUrl/auth/idfile/ine");
 
     final request = http.MultipartRequest("POST", url)
@@ -385,34 +361,6 @@ class AuthService {
       return jsonDecode(respStr);
     } else {
       throw Exception("Error procesando INE: ${response.statusCode} $respStr");
-    }
-  }
-
-  Future<Map<String, dynamic>> procesarIne(File archivo) async {
-    final url = Uri.parse("$baseUrl/auth/idfile/ine");
-
-    print("📌 Entrando a procesarIne()");
-    print("➡ Archivo: ${archivo.path}");
-
-    final client = _insecureClient(); // usa el cliente inseguro
-    final request = http.MultipartRequest("POST", url)
-      ..headers["Authorization"] = "Bearer $masterToken"
-      ..files.add(await http.MultipartFile.fromPath("archivo", archivo.path));
-
-    print("➡ Headers: ${request.headers}");
-    print("➡ Files adjuntos: ${request.files.map((f) => f.filename).toList()}");
-
-    final streamedResponse = await client.send(request);
-    print("📌 STATUS CODE: ${streamedResponse.statusCode}");
-
-    final respStr = await streamedResponse.stream.bytesToString();
-    print("📌 RAW RESPONSE: $respStr");
-
-    if (streamedResponse.statusCode == 200) {
-      return jsonDecode(respStr);
-    } else {
-      throw Exception(
-          "Error procesando INE: ${streamedResponse.statusCode} $respStr");
     }
   }
 
@@ -439,9 +387,8 @@ class AuthService {
 
   Future<Map<String, dynamic>> sendActivationCode(String email) async {
     final url = Uri.parse("$baseUrl/auth/user/sendcode");
-    final client = _insecureClient(); // usa el cliente inseguro
 
-    final response = await client.post(
+    final response = await http.post(
       url,
       headers: {
         "Authorization": "Bearer $masterToken",
@@ -460,9 +407,8 @@ class AuthService {
 
   Future<Map<String, dynamic>> activateUser(String email, String code) async {
     final url = Uri.parse("$baseUrl/auth/user/activation");
-    final client = _insecureClient(); // usa el cliente inseguro
 
-    final response = await client.post(
+    final response = await http.post(
       url,
       headers: {
         "Authorization": "Bearer $masterToken",
@@ -485,9 +431,8 @@ class AuthService {
   Future<Map<String, dynamic>> UserPasswordUpdate(
       String email, String code, String newPassword) async {
     final url = Uri.parse("$baseUrl/auth/user/activation");
-    final client = _insecureClient(); // usa el cliente inseguro
 
-    final response = await client.post(
+    final response = await http.post(
       url,
       headers: {
         "Authorization": "Bearer $masterToken",
@@ -508,9 +453,8 @@ class AuthService {
   Future<List<dynamic>> getEstudios(String tokenUsuario) async {
     final url = Uri.parse(
         "https://webservicesvr.hrsj.com.mx/aptest/api/paciente/expediente/estudios");
-    final client = _insecureClient(); // usa el cliente inseguro
 
-    final response = await client.get(
+    final response = await http.get(
       url,
       headers: {
         "Authorization": "Bearer $tokenUsuario",
@@ -533,9 +477,8 @@ class AuthService {
     final userToken = prefs.getString("token_usuario") ?? "";
 
     final url = Uri.parse("$baseUrl/paciente/expediente/estudios");
-    final client = _insecureClient(); // usa el cliente inseguro
 
-    final response = await client.get(
+    final response = await http.get(
       url,
       headers: {
         "Authorization": "Bearer $userToken",
@@ -561,9 +504,7 @@ class AuthService {
 
     final url = Uri.parse("$baseUrl/paciente");
 
-    final client = _insecureClient(); // usa el cliente inseguro
-
-    final response = await client.put(
+    final response = await http.put(
       url,
       headers: {
         "Authorization": "Bearer $userToken",
@@ -585,9 +526,8 @@ class AuthService {
     final userToken = prefs.getString("token_usuario") ?? "";
 
     final url = Uri.parse("$baseUrl/paciente/expediente/visitas");
-    final client = _insecureClient(); // usa el cliente inseguro
 
-    final response = await client.get(
+    final response = await http.get(
       url,
       headers: {
         "Authorization": "Bearer $userToken",
@@ -607,9 +547,8 @@ class AuthService {
     final userToken = prefs.getString("token_usuario") ?? "";
 
     final url = Uri.parse("$baseUrl/paciente/agenda/cirugia");
-    final client = _insecureClient(); // usa el cliente inseguro
 
-    final response = await client.get(
+    final response = await http.get(
       url,
       headers: {
         "Authorization": "Bearer $userToken",
@@ -632,9 +571,8 @@ class AuthService {
     final userToken = prefs.getString("token_usuario") ?? "";
 
     final url = Uri.parse("$baseUrl/paciente/expediente/notasmedicas");
-    final client = _insecureClient(); // usa el cliente inseguro
 
-    final response = await client.get(
+    final response = await http.get(
       url,
       headers: {
         "Authorization": "Bearer $userToken",
@@ -655,13 +593,12 @@ class AuthService {
     final prefs = await SharedPreferences.getInstance();
     final userToken = prefs.getString("token_usuario") ?? "";
     final url = Uri.parse("$baseUrl/paciente/agenda/cirugia");
-    final client = _insecureClient(); // usa el cliente inseguro
 
     // DEBUG: opcional, imprime lo que se enviará
     print("POST $url");
     print("Body: ${jsonEncode(body)}");
 
-    final response = await client.post(
+    final response = await http.post(
       url,
       headers: {
         "Authorization": "Bearer $userToken",
@@ -685,13 +622,11 @@ class AuthService {
     final userToken = prefs.getString("token_usuario") ?? "";
 
     final url = Uri.parse("$baseUrl/paciente/agenda/rxlab");
-    final client = _insecureClient(); // usa el cliente inseguro
-
     print("AGENDA $agendaId");
     print("AGENDA $fechaHora");
     print("AGENDA $sucursal");
 
-    final response = await client.put(
+    final response = await http.put(
       url,
       headers: {
         "Authorization": "Bearer $userToken",

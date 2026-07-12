@@ -1,6 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:real_san_jose/api/auth_service.dart';
 
 class PassportCameraScreen extends StatefulWidget {
@@ -14,142 +15,190 @@ class _PassportCameraScreenState extends State<PassportCameraScreen> {
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
   bool _isProcessing = false;
+  bool _isInitialized = false;
 
   @override
   void initState() {
     super.initState();
+    // Forzar orientación horizontal al abrir la pantalla
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
     _initCamera();
   }
 
   Future<void> _initCamera() async {
-    final cameras = await availableCameras();
-    final firstCamera = cameras.first;
+    try {
+      final cameras = await availableCameras();
+      final backCamera = cameras.firstWhere(
+        (c) => c.lensDirection == CameraLensDirection.back,
+        orElse: () => cameras.first,
+      );
 
-    _controller = CameraController(
-      firstCamera,
-      ResolutionPreset.medium,
-      enableAudio: false,
-    );
+      _controller = CameraController(
+        backCamera,
+        ResolutionPreset.max, // máxima resolución
+        enableAudio: false,
+      );
 
-    _initializeControllerFuture = _controller.initialize();
-    setState(() {});
+      _initializeControllerFuture = _controller.initialize();
+      await _initializeControllerFuture;
+
+      // Forzar zoom neutral (1.0) si el dispositivo lo soporta
+      try {
+        await _controller.setZoomLevel(1.0);
+      } catch (_) {}
+
+      _isInitialized = true;
+      if (mounted) setState(() {});
+    } catch (e, st) {
+      debugPrint("Error inicializando cámara: $e\n$st");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("No se pudo inicializar la cámara: $e")),
+        );
+      }
+    }
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    // Restaurar orientaciones al salir
+    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+    try {
+      _controller.dispose();
+    } catch (_) {}
     super.dispose();
   }
 
   Future<void> _captureAndProcess() async {
+    if (!_isInitialized) return;
     setState(() => _isProcessing = true);
+
     try {
       await _initializeControllerFuture;
-      final image = await _controller.takePicture();
+      final XFile image = await _controller.takePicture();
+
+      final file = File(image.path);
+      debugPrint("📌 Foto capturada: ${file.lengthSync()} bytes");
+      debugPrint("📌 Ruta foto: ${image.path}");
 
       final service = AuthService();
-      final result = await service.procesarPasaporte(File(image.path));
+      final response = await service.procesarPasaporte(file);
 
-      Navigator.pop(context, result); // regresa datos al RegisterScreen
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error procesando pasaporte: $e")),
-      );
+      if (response is Map && response['Datos'] is Map) {
+        Navigator.pop(context, Map<String, dynamic>.from(response['Datos']));
+      } else {
+        Navigator.pop(context, response);
+      }
+    } catch (e, st) {
+      debugPrint("Error en captura/procesado: $e\n$st");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error procesando pasaporte: $e")),
+        );
+      }
     } finally {
-      setState(() => _isProcessing = false);
+      if (mounted) setState(() => _isProcessing = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (!_isInitialized) {
+      return const Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    final previewSize = _controller.value.previewSize;
+    final previewWidth =
+        previewSize?.width ?? MediaQuery.of(context).size.width;
+    final previewHeight =
+        previewSize?.height ?? MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: Colors.black,
-      body: FutureBuilder<void>(
-        future: _initializeControllerFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return Stack(
-              children: [
-                SizedBox.expand(
-                  child: FittedBox(
-                    fit: BoxFit.cover,
-                    child: SizedBox(
-                      width: _controller.value.previewSize?.height ?? 0,
-                      height: _controller.value.previewSize?.width ?? 0,
-                      child: CameraPreview(_controller),
-                    ),
-                  ),
-                ),
+      body: Stack(
+        children: [
+          // Preview a pantalla completa (similar a la app nativa)
+          SizedBox.expand(
+            child: FittedBox(
+              fit: BoxFit.cover,
+              child: SizedBox(
+                width: previewWidth,
+                height: previewHeight,
+                child: CameraPreview(_controller),
+              ),
+            ),
+          ),
 
-                // Overlay transparente vertical
-                Align(
-                  alignment: Alignment.center,
-                  child: Container(
-                    width: 420, // ancho
-                    height: 200, // bajo → horizontal
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.white, width: 3),
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.transparent,
-                    ),
-                    child: Center(
-                      child: Text(
-                        "Coloca tu INE aquí", // o "Coloca tu pasaporte aquí"
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.8),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
+          // Overlay transparente tipo guía con medidas EXACTAS 420x200 (centrado)
+          Align(
+            alignment: Alignment.center,
+            child: Container(
+              width: 420, // EXACTO según tu requerimiento
+              height: 200, // EXACTO según tu requerimiento
+              decoration: BoxDecoration(
+                border:
+                    Border.all(color: Colors.white.withOpacity(0.95), width: 3),
+                borderRadius: BorderRadius.circular(12),
+                color: Colors.transparent,
+              ),
+              child: Center(
+                child: Text(
+                  "Coloca tu pasaporte aquí",
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.85),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
                 ),
+              ),
+            ),
+          ),
 
-                // Indicador de orientación
-                Positioned(
-                  bottom: 40,
-                  left: 0,
-                  right: 0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.phone_android,
-                          color: Colors.greenAccent, size: 28),
-                      const SizedBox(width: 8),
-                      const Text(
-                        "Usa el teléfono en modo horizontal",
-                        style: TextStyle(color: Colors.white, fontSize: 14),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Botón de captura
-                Positioned(
-                  bottom: 100,
-                  left: 0,
-                  right: 0,
-                  child: Center(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueAccent,
-                        shape: const CircleBorder(),
-                        padding: const EdgeInsets.all(20),
-                      ),
-                      onPressed: _isProcessing ? null : _captureAndProcess,
-                      child: _isProcessing
-                          ? const CircularProgressIndicator(color: Colors.white)
-                          : const Icon(Icons.camera_alt,
-                              color: Colors.white, size: 32),
-                    ),
-                  ),
-                ),
+          // Indicador de orientación (opcional)
+          Positioned(
+            top: 12,
+            left: 12,
+            child: Row(
+              children: const [
+                Icon(Icons.screen_rotation, color: Colors.white70),
+                SizedBox(width: 8),
+                Text("Horizontal", style: TextStyle(color: Colors.white70)),
               ],
-            );
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
+            ),
+          ),
+
+          // Botón de captura
+          Positioned(
+            bottom: 18,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  shape: const CircleBorder(),
+                  padding: const EdgeInsets.all(18),
+                ),
+                onPressed: _isProcessing ? null : _captureAndProcess,
+                child: _isProcessing
+                    ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                            color: Colors.white, strokeWidth: 2),
+                      )
+                    : const Icon(Icons.camera_alt,
+                        color: Colors.white, size: 28),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
